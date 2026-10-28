@@ -28,7 +28,7 @@ public final class NodeFeature extends Feature<NodeFeatureConfig> {
         if (level.getBlockState(risen).isAir() || level.getBlockState(risen).canBeReplaced()) {
             pos = risen;
         }
-        if (pos.getY() > level.getMaxBuildHeight()) {
+        if (pos.getY() >= level.getMaxBuildHeight()) {
             return false;
         }
         return NodeGenerator.createRandomNodeAt(

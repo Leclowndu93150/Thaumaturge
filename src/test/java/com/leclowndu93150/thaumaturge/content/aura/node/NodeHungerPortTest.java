@@ -124,7 +124,7 @@ class NodeHungerPortTest {
         hunger.tick(level, BlockPos.ZERO, 10);
 
         verify(entity).hurt(damageSource, 1.0F);
-        verify(entity).push(anyDouble(), anyDouble(), anyDouble());
+        verify(entity).addDeltaMovement(any(Vec3.class));
     }
 
     @Test
@@ -187,7 +187,7 @@ class NodeHungerPortTest {
         hunger.tick(firstLevel, BlockPos.ZERO, 10);
         hunger.tick(secondLevel, BlockPos.ZERO, 11);
 
-        verify(entity, times(1)).push(anyDouble(), anyDouble(), anyDouble());
+        verify(entity, times(1)).addDeltaMovement(any(Vec3.class));
         verify(secondLevel, never()).getEntitiesOfClass(eq(Entity.class), any(AABB.class), any());
     }
 
@@ -274,18 +274,22 @@ class NodeHungerPortTest {
 
         hunger.tick(level, BlockPos.ZERO, 10);
 
-        verify(entity, never()).push(anyDouble(), anyDouble(), anyDouble());
+        verify(entity, never()).addDeltaMovement(any(Vec3.class));
         verify(entity, never()).hurt(any(DamageSource.class), anyFloat());
     }
 
     @Test
-    void playerCanBePulledButDoesNotFeedAspectEssenceToTheNode() throws Exception {
+    void playerFeedsItsEntityEssenceToTheNode() throws Exception {
         NodeHunger hunger = new NodeHunger(node());
         Player player = mock(Player.class);
+        AspectList essence = AspectList.EMPTY.add(Holder.direct(mock(IAspect.class)), 1);
         Method method = NodeHunger.class.getDeclaredMethod("essenceOf", Entity.class);
         method.setAccessible(true);
+        try (MockedStatic<EntityAspects> entityAspects = mockStatic(EntityAspects.class)) {
+            entityAspects.when(() -> EntityAspects.of(player)).thenReturn(essence);
 
-        assertEquals(AspectList.EMPTY, method.invoke(hunger, player));
+            assertEquals(essence, method.invoke(hunger, player));
+        }
     }
 
     @Test

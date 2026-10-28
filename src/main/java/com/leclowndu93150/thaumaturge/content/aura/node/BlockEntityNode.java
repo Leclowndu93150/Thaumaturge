@@ -70,6 +70,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private static final int LOCK_ADVANCED_REGEN_FACTOR = 20;
     private static final int UNSTABLE_CURE_ROLL = 10000;
     private static final int FADING_CURE_ROLL = 12500;
+    private static final int DECAY_REMOVAL_ODDS = 20;
+    private static final int DECAY_MODIFIER_ODDS = 5;
+    private static final int DECAY_FADE_ODDS = 5;
     private static final int MAX_DECOMPOSE_DEPTH = 8;
 
     private final NodeHunger hunger = new NodeHunger(this);
@@ -114,10 +117,13 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void applyNodeData(NodeData data) {
-        setNodeType(data.type());
-        setNodeModifier(data.modifier().orElse(null));
-        this.aspects = data.aspects();
-        this.aspectsBase = data.aspectsBase();
+        nodeType = data.type();
+        nodeModifier = data.modifier().orElse(null);
+        aspects = data.aspects();
+        aspectsBase = data.aspectsBase();
+        refreshIndex();
+        regeneration = -1;
+        changed();
     }
 
     public NodeType getNodeType() {
@@ -231,10 +237,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         return aspectsBase;
     }
 
-    public int getNodeVisBase(Holder<IAspect> aspect) {
-        return aspectsBase.amountOf(aspect);
-    }
-
     @Override
     public int fill(Holder<IAspect> aspect, int amount) {
         int capped = Math.min(amount, Math.max(0, aspectsBase.amountOf(aspect) - aspects.amountOf(aspect)));
@@ -250,8 +252,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (aspects.amountOf(aspect) < amount) {
             return false;
         }
-        aspects = reduce(aspects, aspect, amount);
-        syncContents();
+        if (amount > 0) {
+            aspects = reduce(aspects, aspect, amount);
+            syncContents();
+        }
         return true;
     }
 
@@ -300,13 +304,11 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             return;
         }
         centivis.clear();
-        if (energized && !this.energized) {
+        if (energized) {
             aspectsBaseOriginal = aspectsBase;
             aspectsBase = decomposeToPrimals(aspectsBase);
-            // Transducers consume the live store while charging; conversion restores the node's original capacity
-            // as primal vis rather than preserving only that depleted charging remainder.
             aspects = aspectsBase;
-        } else if (!energized && this.energized && aspectsBaseOriginal != null) {
+        } else if (aspectsBaseOriginal != null) {
             aspectsBase = aspectsBaseOriginal;
             aspectsBaseOriginal = null;
         }
@@ -521,9 +523,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT
                 && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION
-                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST)
-                && nodeModifier != NodeModifier.BRIGHT;
-        if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0) {
+                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST);
+        if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0 && nodeModifier != NodeModifier.BRIGHT) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;
             } else if (nodeModifier == NodeModifier.PALE) {
@@ -543,20 +544,20 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         for (AspectInstance entry : aspectsBase.entries()) {
             if (aspects.amountOf(entry.aspect()) <= 0) {
                 int remaining = entry.amount() - 1;
-                if (remaining > 0 && random.nextInt(20) != 0) {
+                if (remaining > 0 && random.nextInt(DECAY_REMOVAL_ODDS) != 0) {
                     aspectsBase = reduce(aspectsBase, entry.aspect(), 1);
                 } else {
                     aspects = reduce(aspects, entry.aspect(), aspects.amountOf(entry.aspect()));
                     aspectsBase = reduce(aspectsBase, entry.aspect(), remaining + 1);
-                    if (random.nextInt(5) == 0) {
+                    if (random.nextInt(DECAY_MODIFIER_ODDS) == 0) {
                         if (nodeModifier == NodeModifier.BRIGHT) {
                             nodeModifier = null;
                         } else if (nodeModifier == null) {
                             nodeModifier = NodeModifier.PALE;
                         }
-                        if (nodeModifier == NodeModifier.PALE && random.nextInt(5) == 0) {
-                            nodeModifier = NodeModifier.FADING;
-                        }
+                    }
+                    if (nodeModifier == NodeModifier.PALE && random.nextInt(DECAY_FADE_ODDS) == 0) {
+                        nodeModifier = NodeModifier.FADING;
                     }
                 }
                 nodeChange();
@@ -578,10 +579,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             return LOCK_ADVANCED_REGEN_FACTOR;
         }
         return 1;
-    }
-
-    public int getLock() {
-        return lock;
     }
 
     private static boolean isGenerated(ServerLevel level, BlockPos pos) {
@@ -609,8 +606,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         int oldLock = lock;
         int nextLock = 0;
-        if (allowLock()
-                && !serverLevel.hasNeighborSignal(below)
+        if (!serverLevel.hasNeighborSignal(below)
                 && serverLevel.getBlockState(below).getBlock() instanceof BlockNodeStabilizer stabilizer) {
             nextLock = stabilizer.isAdvanced() ? LOCK_ADVANCED : LOCK_BASIC;
         }
@@ -621,10 +617,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     protected boolean allowDischarge() {
-        return true;
-    }
-
-    protected boolean allowLock() {
         return true;
     }
 
@@ -723,19 +715,19 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                         ResourceKey<IAspect> key = primal.unwrapKey().orElseThrow();
                         serverLevel.addFreshEntity(new EntityAspectOrb(
                                 serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
-                        return true;
+                        change = true;
                     }
                 }
             } else if (random.nextBoolean() && random.nextInt(UNSTABLE_CURE_ROLL / lock) == 0) {
                 setNodeType(NodeType.NORMAL);
                 nodeChange();
-                return true;
+                change = true;
             }
         }
         if (nodeModifier == NodeModifier.FADING && lock > 0 && random.nextInt(FADING_CURE_ROLL / lock) == 0) {
             nodeModifier = NodeModifier.PALE;
             nodeChange();
-            return true;
+            change = true;
         }
         return change;
     }

@@ -17,10 +17,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
-/**
- * Persistent index used by the node locator command. Unloaded chunks are never loaded to populate
- * it; {@link BlockEntityNode} registers nodes as their chunks naturally load.
- */
 public final class NodeLocationIndex extends SavedData {
     private static final String DATA_NAME = "thaumaturge_node_locations";
     private static final double REACHED_DISTANCE_SQ = 10.0 * 10.0;
@@ -72,7 +68,6 @@ public final class NodeLocationIndex extends SavedData {
                 .map(BlockPos::of);
     }
 
-    /** Returns the nearest indexed node of any type within {@code maxDistance}. */
     public Optional<BlockPos> findNearestAny(BlockPos origin, double maxDistance) {
         double maxDistanceSq = maxDistance * maxDistance;
         return nodes.values().stream()
@@ -86,7 +81,6 @@ public final class NodeLocationIndex extends SavedData {
     private static NodeLocationIndex load(CompoundTag tag, HolderLookup.Provider registries) {
         NodeLocationIndex index = new NodeLocationIndex();
         if (tag.contains("LegacyMigrationComplete")) {
-            // Rewrite legacy index data without the retired migration marker.
             index.setDirty();
         }
         if (tag.contains("nodes", Tag.TAG_LIST)) {
@@ -102,7 +96,6 @@ public final class NodeLocationIndex extends SavedData {
                                 .ifPresent(type -> index.nodes.get(type).add(pos.asLong())));
             }
         } else {
-            // Migrate the original packed-position format used before the main-branch codec.
             ListTag nodeList = tag.getList("Nodes", Tag.TAG_COMPOUND);
             for (Tag value : nodeList) {
                 CompoundTag node = (CompoundTag) value;

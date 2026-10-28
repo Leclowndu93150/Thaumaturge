@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
+import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -37,6 +38,9 @@ public final class BlockNode extends Block implements EntityBlock {
 
     private static final VoxelShape SHAPE = box(4.8, 4.8, 4.8, 11.2, 11.2, 11.2);
     private static final float PRIMORDIAL_PEARL_FLUX_POLLUTION = 25.0F;
+    private static final float PEARL_EXPLOSION_BASE = 3.0F;
+    private static final float PEARL_EXPLOSION_SPREAD = 5.0F;
+    private static final float PEARL_EXPLOSION_SPREAD_RESEARCHED = 3.0F;
 
     public BlockNode(BlockBehaviour.Properties properties) {
         super(properties);
@@ -89,7 +93,7 @@ public final class BlockNode extends Block implements EntityBlock {
     public static @Nullable ItemInteractionResult tryPrimordialPearl(
             ItemStack stack, Level level, BlockPos pos, Player player) {
         if (!stack.is(TTItems.PRIMORDIAL_PEARL.get())
-                || stack.getDamageValue() > 2
+                || stack.getDamageValue() > PrimordialPearlItem.PEARL_MAX_DAMAGE
                 || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)
                 || node.isEnergized()) {
             return null;
@@ -104,8 +108,10 @@ public final class BlockNode extends Block implements EntityBlock {
             stack.shrink(1);
         }
 
-        float strength = 3.0F + serverLevel.random.nextFloat() * (researched ? 3.0F : 5.0F);
         AuraHelper.polluteAura(serverLevel, pos, PRIMORDIAL_PEARL_FLUX_POLLUTION, true);
+        float strength = PEARL_EXPLOSION_BASE
+                + serverLevel.random.nextFloat()
+                        * (researched ? PEARL_EXPLOSION_SPREAD_RESEARCHED : PEARL_EXPLOSION_SPREAD);
         serverLevel.explode(
                 null, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, strength, Level.ExplosionInteraction.BLOCK);
         for (int i = 0; i < 33; i++) {

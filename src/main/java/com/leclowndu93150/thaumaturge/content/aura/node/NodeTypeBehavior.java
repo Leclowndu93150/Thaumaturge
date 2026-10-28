@@ -37,7 +37,6 @@ final class NodeTypeBehavior {
 
     private NodeTypeBehavior() {}
 
-    /** Returns true when depletion should stop this node's tick before biome spread. */
     static boolean tick(BlockEntityNode node, ServerLevel level, BlockPos pos, int tickCounter, RandomSource random) {
         return switch (node.getNodeType()) {
             case TAINTED -> {
@@ -108,7 +107,7 @@ final class NodeTypeBehavior {
         double centreX = pos.getX() + BLOCK_CENTER;
         double centreY = pos.getY() + BLOCK_CENTER;
         double centreZ = pos.getZ() + BLOCK_CENTER;
-        if (!level.hasNearbyAlivePlayer(centreX, centreY, centreZ, GUARD_PLAYER_RANGE)
+        if (level.getNearestPlayer(centreX, centreY, centreZ, GUARD_PLAYER_RANGE, false) == null
                 || guardsNear(level, pos) > GUARD_LIMIT) {
             return;
         }
@@ -117,8 +116,8 @@ final class NodeTypeBehavior {
             return;
         }
         double x = pos.getX() + BLOCK_CENTER + (random.nextDouble() - random.nextDouble()) * GUARD_PLACEMENT_REACH;
-        double z = pos.getZ() + BLOCK_CENTER + (random.nextDouble() - random.nextDouble()) * GUARD_PLACEMENT_REACH;
         int y = pos.getY() + random.nextInt(GUARD_VERTICAL_REACH * 2 + 1) - GUARD_VERTICAL_REACH;
+        double z = pos.getZ() + BLOCK_CENTER + (random.nextDouble() - random.nextDouble()) * GUARD_PLACEMENT_REACH;
         guard.moveTo(x, y, z, random.nextFloat() * WHOLE_TURN, 0.0F);
         if (!guard.checkSpawnRules(level, MobSpawnType.EVENT) || !guard.checkSpawnObstruction(level)) {
             guard.discard();

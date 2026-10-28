@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -20,13 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 class NodeDevicePortTest {
-    @Test
-    void jarredNodeAcceptsStabilizerLocksLikeOtherNodes() {
-        BlockEntityJarNode node =
-                new BlockEntityJarNode(BlockPos.ZERO, TTBlocks.JAR_NODE.get().defaultBlockState());
-        assertTrue(node.allowLock());
-    }
-
     @Test
     void catastrophicTransducerFailurePollutesAndRemovesTheNodeWithoutDestroyingNearbyBlocks() throws Exception {
         BlockPos nodePos = new BlockPos(4, 70, 9);

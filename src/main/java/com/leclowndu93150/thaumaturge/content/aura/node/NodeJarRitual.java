@@ -51,7 +51,7 @@ public final class NodeJarRitual {
         if (node.isJarring()) {
             return true;
         }
-        if (!PlayerResearchAccess.of(player).knows(RESEARCH_NODE_JAR)) {
+        if (!PlayerResearchAccess.of(player).hasCompleted(RESEARCH_NODE_JAR)) {
             TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.no_research");
             return true;
         }
@@ -102,13 +102,13 @@ public final class NodeJarRitual {
         }
         NodeData data = new NodeData(
                 node.getNodeType(), Optional.ofNullable(modifier), node.getAspects(), node.getAspectsBase());
-        level.removeBlockEntity(nodePos);
         level.setBlock(nodePos, TTBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL);
         if (level.getBlockEntity(nodePos) instanceof BlockEntityJarNode jar) {
             jar.applyNodeData(data);
             jar.setChanged();
-            level.sendBlockUpdated(nodePos, jar.getBlockState(), jar.getBlockState(), Block.UPDATE_ALL);
         }
+        BlockState current = level.getBlockState(nodePos);
+        level.sendBlockUpdated(nodePos, current, current, Block.UPDATE_ALL);
         Effects.bamf(level, nodePos).withSound().fancy().send();
     }
 

@@ -107,21 +107,10 @@ public final class NodeGenerator {
         return createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
     }
 
-    /**
-     * Places a specifically Tainted natural node while preserving the normal Tainted-Lands
-     * aura/aspect roll. The ordinary generator already makes roughly half of non-Pure nodes in
-     * Tainted Lands TAINTED; retrying the data roll here keeps those exact 2.25x-strength semantics
-     * instead of fabricating a weaker post-hoc type conversion.
-     */
     public static boolean createGuaranteedTaintedNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
         return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.TAINTED);
     }
 
-    /**
-     * Places a specifically Hungry natural node while retaining the ordinary Tainted-Lands
-     * aura/aspect roll. This is used for the single hungry-node landmark in each natural Tainted
-     * Lands patch; it does not affect the configured chance for all other nodes.
-     */
     public static boolean createGuaranteedHungryNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
         return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.HUNGRY);
     }
@@ -171,19 +160,6 @@ public final class NodeGenerator {
             boolean small,
             int specialRarity,
             int baseAura) {
-        return rollRandomNodeData(level, pos, random, silverwood, eerie, small, specialRarity, baseAura, null);
-    }
-
-    private static @Nullable NodeData rollRandomNodeData(
-            ServerLevelAccessor level,
-            BlockPos pos,
-            RandomSource random,
-            boolean silverwood,
-            boolean eerie,
-            boolean small,
-            int specialRarity,
-            int baseAura,
-            @Nullable NodeType requiredType) {
         Holder<Biome> biome = level.getBiome(pos);
         BiomeAuraModifier auraModifier = biome.getData(TTDataMaps.BIOME_AURA_MODIFIER);
         float biomeStrength = scaleBiomeStrength(baseAura, auraModifier == null ? 1.0F : auraModifier.value());
@@ -203,9 +179,6 @@ public final class NodeGenerator {
         Draft draft = new Draft();
         for (RollStage stage : PIPELINE) {
             stage.apply(context, draft);
-        }
-        if (requiredType != null && draft.type != requiredType) {
-            return null;
         }
         AspectList aspects = fromMap(draft.tally);
         return new NodeData(draft.type, Optional.ofNullable(draft.modifier), aspects, aspects);
@@ -294,9 +267,7 @@ public final class NodeGenerator {
 
     private static boolean configureNode(
             BlockEntityNode node, NodeType type, @Nullable NodeModifier modifier, AspectList aspects) {
-        node.setNodeType(type);
-        node.setNodeModifier(modifier);
-        node.setAspects(aspects);
+        node.applyNodeData(new NodeData(type, Optional.ofNullable(modifier), aspects, aspects));
         node.setChanged();
         return true;
     }
@@ -364,9 +335,6 @@ public final class NodeGenerator {
         List<Holder<IAspect>> aspects = new ArrayList<>(target.keySet());
         int committed = target.values().stream().mapToInt(Integer::intValue).sum();
         int extra = Math.max(0, budget - committed);
-        if (aspects.isEmpty() || extra == 0) {
-            return;
-        }
         double[] weights = new double[aspects.size()];
         double weightSum = 0.0;
         for (int index = 0; index < aspects.size(); index++) {
@@ -429,7 +397,7 @@ public final class NodeGenerator {
         float strength = context.biomeStrength();
         if (draft.type != NodeType.PURE && context.biome().is(TTBiomeTags.IS_TAINTED)) {
             strength *= TAINTED_STRENGTH_FACTOR;
-            if (random.nextBoolean() && !ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+            if (!ThaumaturgeCommonConfig.WUSS_MODE.get() && random.nextBoolean()) {
                 draft.type = NodeType.TAINTED;
                 strength *= TAINTED_STRENGTH_FACTOR;
             }

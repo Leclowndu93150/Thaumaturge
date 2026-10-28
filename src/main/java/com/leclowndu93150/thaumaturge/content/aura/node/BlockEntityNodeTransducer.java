@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
@@ -17,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -34,8 +34,12 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     private static final int NOT_SYNCED = Integer.MIN_VALUE;
     private static final int BOLT_INTERVAL = 10;
     private static final float BOLT_WIDTH = 0.06F;
+    private static final int UNSET_COUNT = -1;
+    private static final double BLOCK_CENTRE = 0.5;
+    private static final double TOP_BOLT_HEIGHT = 0.8;
+    private static final double UNDERSIDE_BOLT_HEIGHT = 0.1;
 
-    private int count = -1;
+    private int count = UNSET_COUNT;
     private int status = STATUS_IDLE;
     private int syncedCount = NOT_SYNCED;
     private int syncedStatus = NOT_SYNCED;
@@ -65,83 +69,90 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     }
 
     public void serverTick(Level level, BlockPos pos) {
-        if (count == -1 || level.getGameTime() % RECHECK_INTERVAL == 0) {
-            checkStatus(level, pos);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
-        BlockEntity below = level.getBlockEntity(pos.below());
-        if (status == STATUS_NODE
-                && count >= CHARGE_TARGET
-                && below instanceof BlockEntityNode node
-                && !node.isEnergized()) {
+        BlockPos nodePos = pos.below();
+        BlockEntityNode node = serverLevel.getBlockEntity(nodePos) instanceof BlockEntityNode found ? found : null;
+        boolean stabilized = hasStabilizer(serverLevel, pos);
+        long time = serverLevel.getGameTime();
+        int previousCount = count;
+        int previousStatus = status;
+        boolean lostStabilizer = false;
+        if (count == UNSET_COUNT || time % RECHECK_INTERVAL == 0) {
+            if (node != null && node.isEnergized() && !stabilized) {
+                catastrophicFailure(serverLevel, nodePos);
+                node = null;
+                lostStabilizer = true;
+                status = STATUS_IDLE;
+                count = REVERT_THRESHOLD;
+            } else {
+                checkStatus(node);
+            }
+        }
+        RandomSource random = serverLevel.getRandom();
+        if (!lostStabilizer) {
+            charge(node, serverLevel.hasNeighborSignal(pos), stabilized, random);
+        }
+        if (node != null && status == STATUS_NODE && count >= CHARGE_TARGET && !node.isEnergized()) {
             node.setEnergized(true);
-            checkStatus(level, pos);
-            setChanged();
+            status = STATUS_ENERGIZED;
         }
-        if (status == STATUS_ENERGIZED
-                && count <= REVERT_THRESHOLD
-                && below instanceof BlockEntityNode node
-                && node.isEnergized()) {
+        if (node != null && node.isEnergized() && count <= REVERT_THRESHOLD) {
             node.setEnergized(false);
             List<AspectInstance> stored = node.getAspects().entries();
             for (AspectInstance entry : stored) {
                 node.drain(entry.aspect(), entry.amount());
             }
             status = STATUS_IDLE;
-            setChanged();
-            return;
         }
-        if (status != STATUS_IDLE && level.hasNeighborSignal(pos) && below instanceof BlockEntityNode node) {
-            if (count < CHARGE_TARGET && hasStabilizer(level, pos)) {
-                count++;
-                if (status == STATUS_NODE) {
-                    AspectList stored = node.getAspects();
-                    if (!stored.isEmpty()) {
-                        List<AspectInstance> entries = stored.entries();
-                        AspectInstance chosen = entries.get(level.getRandom().nextInt(entries.size()));
-                        node.drain(chosen.aspect(), 1);
-                    }
-                }
-                setChanged();
-            }
-        } else if (count > 0) {
-            count--;
+        if (count != previousCount || status != previousStatus) {
             setChanged();
         }
-        if (count > CHARGE_TARGET) {
-            count = CHARGE_TARGET;
-        }
-        if (level.getGameTime() % SYNC_INTERVAL == 0 && (count != syncedCount || status != syncedStatus)) {
+        if (time % SYNC_INTERVAL == 0 && (count != syncedCount || status != syncedStatus)) {
             syncedCount = count;
             syncedStatus = status;
-            level.sendBlockUpdated(pos, getBlockState(), getBlockState(), 3);
+            serverLevel.sendBlockUpdated(pos, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
-        if (level instanceof ServerLevel serverLevel
-                && count > REVERT_THRESHOLD
-                && count < CHARGE_TARGET
-                && level.getGameTime() % BOLT_INTERVAL == 0) {
-            if (level.getRandom().nextBoolean()) {
-                Effects.arcBolt(
-                                serverLevel,
-                                new Vec3(
-                                        pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5,
-                                        pos.getY() + 0.5,
-                                        pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
-                        .to(Vec3.atCenterOf(pos.below()))
-                        .width(BOLT_WIDTH)
-                        .send();
+        if (node != null && count > REVERT_THRESHOLD && count < CHARGE_TARGET && time % BOLT_INTERVAL == 0) {
+            showBolts(serverLevel, pos, nodePos, stabilized, random);
+        }
+    }
+
+    private void charge(@Nullable BlockEntityNode node, boolean powered, boolean stabilized, RandomSource random) {
+        if (node == null || status == STATUS_IDLE || !powered) {
+            if (count > 0) {
+                count--;
             }
-            if (level.getRandom().nextBoolean() && hasStabilizer(level, pos)) {
-                Effects.arcBolt(
-                                serverLevel,
-                                new Vec3(
-                                        pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5,
-                                        pos.getY() - 1.5,
-                                        pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
-                        .to(Vec3.atCenterOf(pos.below()))
-                        .width(BOLT_WIDTH)
-                        .send();
+        } else if (stabilized && count < CHARGE_TARGET) {
+            count++;
+            if (status == STATUS_NODE) {
+                drainOnePoint(node, random);
             }
         }
+    }
+
+    private static void drainOnePoint(BlockEntityNode node, RandomSource random) {
+        List<AspectInstance> entries = node.getAspects().entries();
+        if (!entries.isEmpty()) {
+            node.drain(entries.get(random.nextInt(entries.size())).aspect(), 1);
+        }
+    }
+
+    private static void showBolts(
+            ServerLevel level, BlockPos pos, BlockPos nodePos, boolean stabilized, RandomSource random) {
+        Vec3 nodeCentre = Vec3.atCenterOf(nodePos);
+        if (random.nextBoolean()) {
+            bolt(level, pos, TOP_BOLT_HEIGHT, nodeCentre);
+        }
+        if (stabilized && random.nextBoolean()) {
+            bolt(level, pos, UNDERSIDE_BOLT_HEIGHT, nodeCentre);
+        }
+    }
+
+    private static void bolt(ServerLevel level, BlockPos pos, double height, Vec3 target) {
+        Vec3 origin = new Vec3(pos.getX() + BLOCK_CENTRE, pos.getY() + height, pos.getZ() + BLOCK_CENTRE);
+        Effects.arcBolt(level, origin).to(target).width(BOLT_WIDTH).send();
     }
 
     @Override
@@ -154,28 +165,18 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         return saveWithoutMetadata(registries);
     }
 
-    private void checkStatus(Level level, BlockPos pos) {
-        BlockPos nodePos = pos.below();
-        if (level.getBlockEntity(nodePos) instanceof BlockEntityNode node) {
-            if (node.isEnergized() && !hasStabilizer(level, pos)) {
-                if (level instanceof ServerLevel serverLevel) {
-                    catastrophicFailure(serverLevel, nodePos);
-                }
-                status = STATUS_IDLE;
-                count = REVERT_THRESHOLD;
-                setChanged();
-                return;
-            }
-            boolean wasEnergized = status == STATUS_ENERGIZED;
-            status = node.isEnergized() ? STATUS_ENERGIZED : STATUS_NODE;
-            if (node.isEnergized() && (!wasEnergized || count == -1)) {
-                count = CHARGE_TARGET;
-            } else {
-                count = Math.max(0, count);
-            }
-        } else {
+    private void checkStatus(@Nullable BlockEntityNode node) {
+        if (node == null) {
             status = STATUS_IDLE;
             count = 0;
+            return;
+        }
+        boolean wasEnergized = status == STATUS_ENERGIZED;
+        status = node.isEnergized() ? STATUS_ENERGIZED : STATUS_NODE;
+        if (node.isEnergized() && (!wasEnergized || count == UNSET_COUNT)) {
+            count = CHARGE_TARGET;
+        } else {
+            count = Math.max(0, count);
         }
     }
 
@@ -218,7 +219,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         float previousRenderCount = getRenderCount(0.0F);
         super.loadAdditional(input, registries);
-        count = input.contains("Count") ? input.getInt("Count") : -1;
+        count = input.contains("Count") ? input.getInt("Count") : UNSET_COUNT;
         status = input.getInt("Status");
         if (level != null && level.isClientSide()) {
             animationFromCount = animationInitialized ? previousRenderCount : getCount();

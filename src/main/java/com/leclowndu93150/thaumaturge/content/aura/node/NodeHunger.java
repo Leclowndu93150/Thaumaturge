@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
-import com.leclowndu93150.thaumaturge.content.particle.BoreDebrisParticleOptions;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import java.util.ArrayList;
@@ -15,10 +14,11 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,7 +47,8 @@ final class NodeHunger {
     private static final double MAW_RADIUS = 1.4;
     private static final float GROWTH_CAPACITY_WEIGHT = 2.0F;
     private static final int FRAGMENTS_PER_GLIMPSE = 3;
-    private static final double FRAGMENT_KICK = 0.03;
+    private static final double FRAGMENT_SPEED = 0.3;
+    private static final double FRAGMENT_LIFT = 0.05;
 
     private final BlockEntityNode node;
     private final List<Entity> pulled = new ArrayList<>();
@@ -86,7 +87,8 @@ final class NodeHunger {
     }
 
     private static boolean isPullable(Entity entity) {
-        return entity.isAlive() && !(entity instanceof Player player && (player.isCreative() || player.isSpectator()));
+        return !entity.isRemoved()
+                && !(entity instanceof Player player && (player.isCreative() || player.isSpectator()));
     }
 
     void tick(ServerLevel level, BlockPos pos, int counter) {
@@ -111,8 +113,12 @@ final class NodeHunger {
             Vec3 toCentre = centre.subtract(entity.position());
             double distance = toCentre.length();
             double reach = entity instanceof ItemEntity ? itemReach : GLOBAL_PULL_RANGE;
-            if (distance > MINIMUM_PULL_DISTANCE && distance < reach) {
-                drag(entity, toCentre, distance, reach);
+            double closeness = 1.0 - distance / reach;
+            if (closeness <= 0.0) {
+                continue;
+            }
+            if (distance > MINIMUM_PULL_DISTANCE) {
+                drag(entity, toCentre, distance, closeness);
             }
             if (shouldSwallow(distance)) {
                 swallow(level, entity);
@@ -129,15 +135,14 @@ final class NodeHunger {
         pulled.addAll(level.getEntitiesOfClass(Entity.class, new AABB(pos).inflate(reach), NodeHunger::isPullable));
     }
 
-    private static void drag(Entity entity, Vec3 toCentre, double distance, double reach) {
-        double closeness = 1.0 - distance / reach;
+    private static void drag(Entity entity, Vec3 toCentre, double distance, double closeness) {
         double strength = closeness * closeness / distance;
-        entity.push(
+        entity.addDeltaMovement(new Vec3(
                 toCentre.x * SIDEWAYS_DRAG * strength,
                 toCentre.y * UPRIGHT_DRAG * strength,
-                toCentre.z * SIDEWAYS_DRAG * strength);
-        if (entity instanceof ServerPlayer player) {
-            player.connection.send(new ClientboundSetEntityMotionPacket(player));
+                toCentre.z * SIDEWAYS_DRAG * strength));
+        if (entity instanceof Player) {
+            entity.hurtMarked = true;
         }
     }
 
@@ -154,7 +159,7 @@ final class NodeHunger {
         if (entity instanceof ItemEntity item) {
             return AspectIndexAccess.of(item.getItem().copyWithCount(1));
         }
-        if (entity instanceof LivingEntity && !(entity instanceof Player)) {
+        if (entity instanceof LivingEntity) {
             return EntityAspects.of(entity);
         }
         return AspectList.EMPTY;
@@ -219,22 +224,20 @@ final class NodeHunger {
         if (target == null) {
             return;
         }
-        Vec3 centre = Vec3.atCenterOf(pos);
-        BoreDebrisParticleOptions shard = new BoreDebrisParticleOptions(
-                level.getBlockState(target), centre.x, centre.y, centre.z, kick(random), kick(random), kick(random));
+        ParticleOptions shard = new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(target));
+        Vec3 push = Vec3.atCenterOf(pos)
+                .subtract(Vec3.atCenterOf(target))
+                .normalize()
+                .scale(FRAGMENT_SPEED);
         for (int fragment = 0; fragment < FRAGMENTS_PER_GLIMPSE; fragment++) {
             level.addParticle(
                     shard,
                     target.getX() + random.nextDouble(),
                     target.getY() + random.nextDouble(),
                     target.getZ() + random.nextDouble(),
-                    0.0,
-                    0.0,
-                    0.0);
+                    push.x,
+                    push.y + FRAGMENT_LIFT,
+                    push.z);
         }
-    }
-
-    private static double kick(RandomSource random) {
-        return (random.nextDouble() * 2.0 - 1.0) * FRAGMENT_KICK;
     }
 }
