@@ -75,6 +75,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     };
 
     private static final IDrawable BACKGROUND = new AlphaDrawable(TEXTURE, 413, 154, 86, 86, 40, 44, 30, 30);
+    private static final IDrawable PLATE = new AlphaDrawable(TEXTURE, 40, 6, 32, 32);
     private final IDrawable icon;
     private final RecipeType<RecipeHolder<R>> recipeType;
     private final Component title;
@@ -172,7 +173,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
         Font font = Minecraft.getInstance().font;
         Component header = Component.translatable("gui.thaumaturge.recipe_type.infusion");
         BACKGROUND.draw(guiGraphics);
-        guiGraphics.blit(TEXTURE, 57, 0, 40, 6, 32, 32, 512, 512);
+        PLATE.draw(guiGraphics, 57, 0);
         int level = Math.min(INSTABILITY_LEVEL_CAP, recipe.value().instability() / 2);
         Component levelName = Component.translatable("gui.thaumaturge.infusion.instability." + level)
                 .withStyle(INSTABILITY_COLORS[level]);
