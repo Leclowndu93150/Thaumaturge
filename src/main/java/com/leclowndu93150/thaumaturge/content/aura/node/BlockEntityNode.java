@@ -69,9 +69,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private static final int LOCK_BASIC_REGEN_FACTOR = 2;
     private static final int LOCK_ADVANCED_REGEN_FACTOR = 20;
     private static final int UNSTABLE_CURE_ROLL = 10000;
-    private static final int UNSTABLE_CURE_MAGIC = 42;
     private static final int FADING_CURE_ROLL = 12500;
-    private static final int FADING_CURE_MAGIC = 69;
     private static final int MAX_DECOMPOSE_DEPTH = 8;
 
     private final NodeHunger hunger = new NodeHunger(this);
@@ -298,6 +296,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void setEnergized(boolean energized) {
+        if (energized == this.energized) {
+            return;
+        }
+        centivis.clear();
         if (energized && !this.energized) {
             aspectsBaseOriginal = aspectsBase;
             aspectsBase = decomposeToPrimals(aspectsBase);
@@ -516,11 +518,11 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                 && random.nextInt(FLUX_TAINT_CHANCE) == 0) {
             setNodeType(NodeType.TAINTED);
             nodeChange();
-            return;
         }
         boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT
                 && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION
-                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST);
+                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST)
+                && nodeModifier != NodeModifier.BRIGHT;
         if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;
@@ -643,7 +645,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (nodeModifier == NodeModifier.PALE && random.nextBoolean()) {
             return change;
         }
-        BlockPos otherPos = NodeScatter.around(pos, DISCHARGE_RANGE, random);
+        BlockPos otherPos = NodeScatter.triangular(pos, DISCHARGE_RANGE, random);
         if (otherPos.equals(pos)) {
             return change;
         }
@@ -713,24 +715,24 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             return change;
         }
         RandomSource random = serverLevel.getRandom();
-        if (nodeType == NodeType.UNSTABLE && random.nextBoolean()) {
+        if (nodeType == NodeType.UNSTABLE) {
             if (lock == 0) {
-                Holder<IAspect> primal = randomStoredPrimal(random);
-                if (primal != null && drain(primal, 1)) {
-                    ResourceKey<IAspect> key = primal.unwrapKey().orElseThrow();
-                    serverLevel.addFreshEntity(new EntityAspectOrb(
-                            serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
-                    return true;
+                if (random.nextBoolean()) {
+                    Holder<IAspect> primal = randomStoredPrimal(random);
+                    if (primal != null && drain(primal, 1)) {
+                        ResourceKey<IAspect> key = primal.unwrapKey().orElseThrow();
+                        serverLevel.addFreshEntity(new EntityAspectOrb(
+                                serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
+                        return true;
+                    }
                 }
-            } else if (random.nextInt(UNSTABLE_CURE_ROLL / lock) == UNSTABLE_CURE_MAGIC) {
+            } else if (random.nextBoolean() && random.nextInt(UNSTABLE_CURE_ROLL / lock) == 0) {
                 setNodeType(NodeType.NORMAL);
                 nodeChange();
                 return true;
             }
         }
-        if (nodeModifier == NodeModifier.FADING
-                && lock > 0
-                && random.nextInt(FADING_CURE_ROLL / lock) == FADING_CURE_MAGIC) {
+        if (nodeModifier == NodeModifier.FADING && lock > 0 && random.nextInt(FADING_CURE_ROLL / lock) == 0) {
             nodeModifier = NodeModifier.PALE;
             nodeChange();
             return true;

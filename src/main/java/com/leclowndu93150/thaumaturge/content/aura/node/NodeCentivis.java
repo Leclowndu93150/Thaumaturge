@@ -22,6 +22,11 @@ final class NodeCentivis {
         this.node = node;
     }
 
+    void clear() {
+        allowance.clear();
+        credit.clear();
+    }
+
     void accrue() {
         for (AspectInstance entry : node.aspectsBase.entries()) {
             int rate = entry.amount();

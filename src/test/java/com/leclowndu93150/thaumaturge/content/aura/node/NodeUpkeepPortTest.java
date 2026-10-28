@@ -75,11 +75,25 @@ class NodeUpkeepPortTest {
         return field.getInt(node);
     }
 
+    private static void stubEastDischargeTarget(RandomSource random, boolean returnOneForNonUnitBounds) {
+        int[] calls = {0};
+        int[] offsets = {1, 0, 0, 0, 0, 0};
+        when(random.nextInt(anyInt())).thenAnswer(invocation -> {
+            int call = calls[0]++;
+            if (call < offsets.length) {
+                return offsets[call];
+            }
+            int bound = invocation.getArgument(0);
+            return bound == 1 || !returnOneForNonUnitBounds ? 0 : 1;
+        });
+    }
+
     @Test
     void advancedLockedReceiverCanDischargeAndDonorShrinkClipsHeldVisAndRefreshesWait() throws Exception {
         RandomSource random = mock(RandomSource.class);
         when(random.nextFloat()).thenReturn(0.5F, 0.0F, 0.0F);
         when(random.nextBoolean()).thenReturn(true);
+        stubEastDischargeTarget(random, false);
         ServerLevel level = generatedLevel(random);
         BlockEntityNode receiver = node();
         BlockEntityNode donor = node();
@@ -191,7 +205,7 @@ class NodeUpkeepPortTest {
         RandomSource random = mock(RandomSource.class);
         when(random.nextFloat()).thenReturn(0.5F, 0.0F, 0.0F);
         when(random.nextBoolean()).thenReturn(true);
-        when(random.nextInt(anyInt())).thenAnswer(invocation -> invocation.<Integer>getArgument(0) == 1 ? 0 : 1);
+        stubEastDischargeTarget(random, true);
         ServerLevel level = generatedLevel(random);
         BlockEntityNode receiver = node();
         BlockEntityNode donor = node();
@@ -224,6 +238,7 @@ class NodeUpkeepPortTest {
         RandomSource random = mock(RandomSource.class);
         when(random.nextFloat()).thenReturn(0.5F, 0.0F, 0.0F);
         when(random.nextBoolean()).thenReturn(true);
+        stubEastDischargeTarget(random, false);
         ServerLevel level = generatedLevel(random);
         BlockPos donorPos = new BlockPos(1, 0, 0);
         BlockEntityNode receiver = node();

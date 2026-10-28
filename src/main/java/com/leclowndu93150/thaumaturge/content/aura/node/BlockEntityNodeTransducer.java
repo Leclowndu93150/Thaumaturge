@@ -90,10 +90,10 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
             setChanged();
             return;
         }
-        if (status != STATUS_IDLE && level.hasNeighborSignal(pos)) {
+        if (status != STATUS_IDLE && level.hasNeighborSignal(pos) && below instanceof BlockEntityNode node) {
             if (count < CHARGE_TARGET && hasStabilizer(level, pos)) {
                 count++;
-                if (status == STATUS_NODE && below instanceof BlockEntityNode node) {
+                if (status == STATUS_NODE) {
                     AspectList stored = node.getAspects();
                     if (!stored.isEmpty()) {
                         List<AspectInstance> entries = stored.entries();
@@ -180,15 +180,17 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     }
 
     private static void catastrophicFailure(ServerLevel level, BlockPos nodePos) {
-        if (level.getBlockEntity(nodePos) instanceof BlockEntityNode node) {
-            node.removeDepleted(level, nodePos);
-        }
+        AuraHelper.polluteAura(level, nodePos, 32.0F, true);
+        level.removeBlock(nodePos, false);
         Vec3 centre = Vec3.atCenterOf(nodePos);
         level.explode(null, centre.x, centre.y, centre.z, 3.0F, Level.ExplosionInteraction.NONE);
         RandomSource random = level.getRandom();
         for (int attempt = 0; attempt < 50; attempt++) {
-            BlockPos target = NodeScatter.around(nodePos, 7, random);
-            if (!level.hasChunkAt(target) || !level.isEmptyBlock(target)) {
+            BlockPos target = nodePos.offset(
+                    random.nextInt(8) - random.nextInt(8),
+                    random.nextInt(8) - random.nextInt(8),
+                    random.nextInt(8) - random.nextInt(8));
+            if (!level.hasChunkAt(target)) {
                 continue;
             }
             if (target.getY() < nodePos.getY()) {
@@ -197,7 +199,6 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
                 PhysicalFlux.placeGas(level, target, PhysicalFlux.MAX_QUANTA);
             }
         }
-        AuraHelper.addFlux(level, nodePos, 32.0F);
     }
 
     private static boolean hasStabilizer(Level level, BlockPos pos) {

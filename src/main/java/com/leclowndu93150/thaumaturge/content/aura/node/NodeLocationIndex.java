@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -66,7 +67,8 @@ public final class NodeLocationIndex extends SavedData {
     public Optional<BlockPos> findNearest(BlockPos origin, NodeType type) {
         return nodes.get(type).stream()
                 .filter(pos -> BlockPos.of(pos).distSqr(origin) > REACHED_DISTANCE_SQ)
-                .min(Comparator.comparingDouble(pos -> BlockPos.of(pos).distSqr(origin)))
+                .min(Comparator.comparingDouble((Long pos) -> BlockPos.of(pos).distSqr(origin))
+                        .thenComparingLong(Long::longValue))
                 .map(BlockPos::of);
     }
 
@@ -87,11 +89,29 @@ public final class NodeLocationIndex extends SavedData {
             // Rewrite legacy index data without the retired migration marker.
             index.setDirty();
         }
-        ListTag nodeList = tag.getList("Nodes", Tag.TAG_COMPOUND);
-        for (Tag value : nodeList) {
-            CompoundTag node = (CompoundTag) value;
-            parseType(node.getString("Type"))
-                    .ifPresent(type -> index.nodes.get(type).add(node.getLong("Pos")));
+        if (tag.contains("nodes", Tag.TAG_LIST)) {
+            ListTag nodeList = tag.getList("nodes", Tag.TAG_COMPOUND);
+            for (Tag value : nodeList) {
+                CompoundTag node = (CompoundTag) value;
+                BlockPos.CODEC
+                        .parse(NbtOps.INSTANCE, node.get("pos"))
+                        .result()
+                        .ifPresent(pos -> NodeType.CODEC
+                                .parse(NbtOps.INSTANCE, node.get("type"))
+                                .result()
+                                .ifPresent(type -> index.nodes.get(type).add(pos.asLong())));
+            }
+        } else {
+            // Migrate the original packed-position format used before the main-branch codec.
+            ListTag nodeList = tag.getList("Nodes", Tag.TAG_COMPOUND);
+            for (Tag value : nodeList) {
+                CompoundTag node = (CompoundTag) value;
+                parseType(node.getString("Type"))
+                        .ifPresent(type -> index.nodes.get(type).add(node.getLong("Pos")));
+            }
+            if (!nodeList.isEmpty()) {
+                index.setDirty();
+            }
         }
         return index;
     }
@@ -101,11 +121,15 @@ public final class NodeLocationIndex extends SavedData {
         ListTag nodeList = new ListTag();
         nodes.forEach((type, positions) -> positions.forEach(pos -> {
             CompoundTag node = new CompoundTag();
-            node.putString("Type", type.getSerializedName());
-            node.putLong("Pos", pos);
+            node.put(
+                    "pos",
+                    BlockPos.CODEC
+                            .encodeStart(NbtOps.INSTANCE, BlockPos.of(pos))
+                            .getOrThrow());
+            node.put("type", NodeType.CODEC.encodeStart(NbtOps.INSTANCE, type).getOrThrow());
             nodeList.add(node);
         }));
-        tag.put("Nodes", nodeList);
+        tag.put("nodes", nodeList);
 
         return tag;
     }

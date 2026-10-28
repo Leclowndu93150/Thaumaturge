@@ -85,6 +85,8 @@ class NodeHungerPortTest {
     }
 
     private static void setCenter(Entity entity, Vec3 center) {
+        when(entity.position()).thenReturn(center);
+        when(entity.blockPosition()).thenReturn(BlockPos.containing(center));
         when(entity.getBoundingBox())
                 .thenReturn(new AABB(
                         center.x - 0.25,
@@ -116,7 +118,7 @@ class NodeHungerPortTest {
         Entity entity = mock(Entity.class);
         when(entity.isAlive()).thenReturn(true);
         when(entity.level()).thenReturn(level);
-        setCenter(entity, new Vec3(1.95, 0.5, 0.5));
+        setCenter(entity, new Vec3(1.85, 0.5, 0.5));
         when(level.getEntitiesOfClass(eq(Entity.class), any(AABB.class), any())).thenReturn(List.of(entity));
 
         hunger.tick(level, BlockPos.ZERO, 10);
@@ -290,8 +292,7 @@ class NodeHungerPortTest {
     void blockTargetSamplingDoesNotInspectOrLoadAnUnloadedChunk() {
         Level level = mock(Level.class);
         RandomSource random = mock(RandomSource.class);
-        when(random.nextFloat()).thenReturn(0.5F);
-        when(random.nextBoolean()).thenReturn(true);
+        when(random.nextInt(anyInt())).thenReturn(1, 0, 0, 0, 0, 0);
         when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
 
         assertNull(NodeHunger.findTarget(level, BlockPos.ZERO, null, random));

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,9 +27,8 @@ class HungryNodeWardTest {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = new BlockPos(1, 0, 0);
-        when(random.nextFloat()).thenReturn(0.25F, 0.0F, 0.0F, 0.25F, 0.0F, 0.0F, 0.25F, 0.0F, 0.0F, 0.25F, 0.0F, 0.0F);
-        when(random.nextBoolean())
-                .thenReturn(true, false, false, true, false, false, true, false, false, true, false, false);
+        AtomicInteger offset = new AtomicInteger();
+        when(random.nextInt(anyInt())).thenAnswer(invocation -> offset.getAndIncrement() % 6 == 0 ? 1 : 0);
         when(level.hasChunkAt(target)).thenReturn(true);
         when(level.getHeight(eq(Heightmap.Types.WORLD_SURFACE), anyInt(), anyInt()))
                 .thenReturn(10);

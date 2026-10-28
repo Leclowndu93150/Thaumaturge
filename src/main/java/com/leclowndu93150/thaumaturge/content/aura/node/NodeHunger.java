@@ -44,7 +44,7 @@ final class NodeHunger {
     private static final int RANGE_AVERAGE_NUMERATOR = 2;
     private static final double SIDEWAYS_DRAG = 0.15;
     private static final double UPRIGHT_DRAG = 0.25;
-    private static final double MAW_RADIUS = 1.5;
+    private static final double MAW_RADIUS = 1.4;
     private static final float GROWTH_CAPACITY_WEIGHT = 2.0F;
     private static final int FRAGMENTS_PER_GLIMPSE = 3;
     private static final double FRAGMENT_KICK = 0.03;
@@ -97,7 +97,7 @@ final class NodeHunger {
         Vec3 centre = Vec3.atCenterOf(pos);
         double itemReach = eatRange(node.getNodeModifier()) + ITEM_RANGE_PADDING;
         if (counter % PULL_REFRESH_INTERVAL == 0) {
-            gather(level, centre, Math.max(itemReach, GLOBAL_PULL_RANGE));
+            gather(level, pos, Math.max(itemReach, GLOBAL_PULL_RANGE));
         }
         if (pulled.isEmpty()) {
             return;
@@ -108,7 +108,7 @@ final class NodeHunger {
                     || !level.isPositionEntityTicking(entity.blockPosition())) {
                 continue;
             }
-            Vec3 toCentre = centre.subtract(entity.getBoundingBox().getCenter());
+            Vec3 toCentre = centre.subtract(entity.position());
             double distance = toCentre.length();
             double reach = entity instanceof ItemEntity ? itemReach : GLOBAL_PULL_RANGE;
             if (distance > MINIMUM_PULL_DISTANCE && distance < reach) {
@@ -121,18 +121,12 @@ final class NodeHunger {
     }
 
     static boolean shouldSwallow(double distance) {
-        return distance <= MAW_RADIUS;
+        return distance < MAW_RADIUS;
     }
 
-    private void gather(ServerLevel level, Vec3 centre, double reach) {
+    private void gather(ServerLevel level, BlockPos pos, double reach) {
         pulled.clear();
-        AABB area = AABB.ofSize(centre, reach * 2.0, reach * 2.0, reach * 2.0);
-        double reachSquared = reach * reach;
-        for (Entity entity : level.getEntitiesOfClass(Entity.class, area, NodeHunger::isPullable)) {
-            if (entity.getBoundingBox().getCenter().distanceToSqr(centre) <= reachSquared) {
-                pulled.add(entity);
-            }
-        }
+        pulled.addAll(level.getEntitiesOfClass(Entity.class, new AABB(pos).inflate(reach), NodeHunger::isPullable));
     }
 
     private static void drag(Entity entity, Vec3 toCentre, double distance, double reach) {
@@ -192,7 +186,7 @@ final class NodeHunger {
     static @Nullable BlockPos findTarget(
             Level level, BlockPos pos, @Nullable NodeModifier modifier, RandomSource random) {
         int reach = eatRange(modifier);
-        BlockPos aim = NodeScatter.around(pos, reach, random);
+        BlockPos aim = NodeScatter.triangular(pos, reach - 1, random);
         if (aim.equals(pos)
                 || !level.hasChunkAt(aim)
                 || aim.getY() >= level.getHeight(Heightmap.Types.WORLD_SURFACE, aim.getX(), aim.getZ())) {

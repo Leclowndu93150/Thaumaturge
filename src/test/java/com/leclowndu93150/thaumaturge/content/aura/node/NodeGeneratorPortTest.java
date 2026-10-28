@@ -43,7 +43,7 @@ class NodeGeneratorPortTest {
     }
 
     @Test
-    void biomeAspectSeedChoosesOneAspectAndWeightsItWithTwoPoints() {
+    void biomeAspectSeedKeepsEveryAspectAndAddsOneWeightedPick() {
         Holder<IAspect> first = Holder.direct(mock(IAspect.class));
         Holder<IAspect> selected = Holder.direct(mock(IAspect.class));
         RandomSource random = mock(RandomSource.class);
@@ -52,7 +52,7 @@ class NodeGeneratorPortTest {
         Map<Holder<IAspect>, Integer> seeded =
                 NodeGenerator.seedAspects(List.of(first, selected), List.of(), List.of(), random);
 
-        assertEquals(Map.of(selected, 2), seeded);
+        assertEquals(Map.of(first, 1, selected, 2), seeded);
     }
 
     @Test
@@ -70,18 +70,18 @@ class NodeGeneratorPortTest {
     }
 
     @Test
-    void terrainSurveyCountsIndependentTraitsButOnlyOneExclusiveCategory() {
+    void terrainSurveyUsesTheFirstMatchingCategory() {
         List<NodeGenerator.TerrainRule> rules = List.of(
-                new NodeGenerator.TerrainRule(state -> true, 1, List.of(), true),
-                new NodeGenerator.TerrainRule(state -> true, 1, List.of(), true),
-                new NodeGenerator.TerrainRule(state -> true, 1, List.of(), false));
+                new NodeGenerator.TerrainRule(state -> true, 1, List.of()),
+                new NodeGenerator.TerrainRule(state -> true, 1, List.of()),
+                new NodeGenerator.TerrainRule(state -> true, 1, List.of()));
         int[] counts = new int[rules.size()];
 
         NodeGenerator.classify(Blocks.WATER.defaultBlockState(), counts, rules);
 
         assertEquals(1, counts[0]);
         assertEquals(0, counts[1]);
-        assertEquals(1, counts[2]);
+        assertEquals(0, counts[2]);
     }
 
     @Test
@@ -104,22 +104,17 @@ class NodeGeneratorPortTest {
     }
 
     @Test
-    void taintedNodeStrengthRoundsBeforeApplyingTheSecondMultiplier() {
-        assertEquals(152, NodeGenerator.boostTaintedStrength(101));
-        assertEquals(228, NodeGenerator.boostTaintedStrength(NodeGenerator.boostTaintedStrength(101)));
+    void biomeAuraStrengthRetainsPrecisionUntilAfterTaintedMultipliers() {
+        assertEquals(75.75F, NodeGenerator.scaleBiomeStrength(101, 0.75F), 0.0F);
+        assertEquals(151.5F, NodeGenerator.scaleBiomeStrength(101, 1.5F), 0.0F);
     }
 
     @Test
-    void biomeAuraStrengthTruncatesBeforeApplyingTaintedMultipliers() {
-        assertEquals(75, NodeGenerator.scaleBiomeStrength(101, 0.75F));
-    }
-
-    @Test
-    void oddStrengthBudgetStopsOneBelowItsInput() {
+    void oddStrengthBudgetCanReachOneBelowItsInput() {
         RandomSource random = mock(RandomSource.class);
-        when(random.nextInt(50)).thenReturn(49);
+        when(random.nextInt(51)).thenReturn(50);
 
-        assertEquals(99, NodeGenerator.chooseStrengthBudget(101, random));
+        assertEquals(100, NodeGenerator.chooseStrengthBudget(101, random));
     }
 
     @Test
@@ -140,11 +135,11 @@ class NodeGeneratorPortTest {
         allocate.setAccessible(true);
         allocate.invoke(null, tally, 17, random);
 
-        assertEquals(Map.of(first, 10, second, 5, third, 5), tally);
+        assertEquals(Map.of(first, 7, second, 5, third, 5), tally);
     }
 
     @Test
-    void smallBudgetRetainsSeedsAndAddsOnlyWholeWeightedShares() throws Exception {
+    void budgetBelowSeedStrengthDoesNotAddMorePoints() throws Exception {
         Holder<IAspect> first = Holder.direct(mock(IAspect.class));
         Holder<IAspect> second = Holder.direct(mock(IAspect.class));
         Map<Holder<IAspect>, Integer> tally = new LinkedHashMap<>();
@@ -157,8 +152,8 @@ class NodeGeneratorPortTest {
         allocate.setAccessible(true);
         allocate.invoke(null, tally, 2, random);
 
-        assertEquals(4, tally.values().stream().mapToInt(Integer::intValue).sum());
-        assertEquals(3, tally.get(first));
+        assertEquals(3, tally.values().stream().mapToInt(Integer::intValue).sum());
+        assertEquals(2, tally.get(first));
         assertEquals(1, tally.get(second));
     }
 
@@ -217,7 +212,7 @@ class NodeGeneratorPortTest {
                 BlockPos.class,
                 RandomSource.class,
                 Holder.class,
-                int.class,
+                float.class,
                 poolsType,
                 boolean.class,
                 boolean.class,
