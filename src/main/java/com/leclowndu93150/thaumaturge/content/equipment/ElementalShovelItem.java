@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +27,7 @@ import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class ElementalShovelItem extends Item implements AreaPreviewer {
+public final class ElementalShovelItem extends ShovelItem implements AreaPreviewer {
     private static final int MODE_PARALLEL = 0;
     private static final int MODE_VERTICAL = 1;
     private static final int MODE_COUNT = 3;
@@ -40,7 +41,7 @@ public final class ElementalShovelItem extends Item implements AreaPreviewer {
     private static final double FALLBACK_REACH = 4.5;
 
     public ElementalShovelItem(Item.Properties properties) {
-        super(properties);
+        super(TTMaterials.TOOL_ELEMENTAL, properties);
     }
 
     public static int getOrientation(ItemStack stack) {
