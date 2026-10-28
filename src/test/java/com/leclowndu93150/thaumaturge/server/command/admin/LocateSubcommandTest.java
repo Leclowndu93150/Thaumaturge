@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 
 class LocateSubcommandTest {
     @Test
-    void clickableCoordinatesCopyTeleportCommand() {
+    void clickableCoordinatesSuggestTeleportCommand() {
         ClickEvent click = LocateSubcommand.coordinates(new BlockPos(12, 64, -8))
                 .getStyle()
                 .getClickEvent();
 
         assertNotNull(click);
-        assertEquals(ClickEvent.Action.COPY_TO_CLIPBOARD, click.getAction());
-        assertEquals("/tp 12 64 -8", click.getValue());
+        assertEquals(ClickEvent.Action.SUGGEST_COMMAND, click.getAction());
+        assertEquals("/tp @s 12 64 -8", click.getValue());
     }
 }

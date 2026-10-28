@@ -20,6 +20,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -81,17 +82,16 @@ final class LocateSubcommand implements AdminSubcommand {
     }
 
     static Component coordinates(BlockPos pos) {
-        return Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ())
+        return ComponentUtils.wrapInSquareBrackets(
+                        Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ()))
                 .withStyle(style -> style.withColor(ChatFormatting.GREEN)
-                        .withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, teleportCommand(pos)))
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, teleportCommand(pos)))
                         .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                Component.translatable("commands.thaumaturge.locate.node.copy"))));
+                                HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"))));
     }
 
     static String teleportCommand(BlockPos pos) {
-        return "/tp " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
+        return "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
     }
 
     private static Component nodeTypeName(NodeType type) {
