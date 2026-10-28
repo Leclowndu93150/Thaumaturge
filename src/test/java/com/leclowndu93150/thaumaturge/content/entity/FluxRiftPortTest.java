@@ -112,7 +112,7 @@ class FluxRiftPortTest {
     }
 
     @Test
-    void sweepUsesOutlineShapeEvenWhenBlockHasNoCollisionShape() {
+    void sweepUsesCollisionShapeSoBlocksWithoutCollisionAreSkipped() {
         EntityFluxRift rift = rift();
         rift.resize(6);
         ServerLevel level = mock(ServerLevel.class);
@@ -123,7 +123,7 @@ class FluxRiftPortTest {
         assertTrue(shortGrass.getCollisionShape(level, BlockPos.ZERO).isEmpty());
         when(level.clip(any(ClipContext.class))).thenAnswer(invocation -> {
             ClipContext context = invocation.getArgument(0);
-            assertFalse(context.getBlockShape(shortGrass, level, BlockPos.ZERO).isEmpty());
+            assertTrue(context.getBlockShape(shortGrass, level, BlockPos.ZERO).isEmpty());
             BlockHitResult miss = mock(BlockHitResult.class);
             when(miss.getType()).thenReturn(HitResult.Type.MISS);
             return miss;

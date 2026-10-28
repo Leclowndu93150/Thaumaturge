@@ -111,6 +111,7 @@ class FluxGooVerticalFlowPortTest {
         when(waterFluidState.getType()).thenReturn(water);
         when(waterFluidState.getFluidType()).thenReturn(water.getFluidType());
         when(waterState.isAir()).thenReturn(false);
+        when(waterState.getBlock()).thenReturn(Blocks.WATER);
         when(waterState.getFluidState()).thenReturn(waterFluidState);
         WorldFixture world = new WorldFixture(4, waterState);
 

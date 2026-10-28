@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -72,7 +73,7 @@ class BlockFluxGasSpreadTest {
 
         verify(level, times(2)).getBlockState(target);
         verify(level).setBlock(BlockPos.ZERO, BlockFluxGas.gasBlockState(4), Block.UPDATE_ALL);
-        verify(level).destroyBlock(target, false);
+        verify(level, never()).destroyBlock(any(BlockPos.class), anyBoolean());
         verify(level).setBlock(target, BlockFluxGas.gasBlockState(4), Block.UPDATE_ALL);
         verify(random, never()).nextInt(anyInt());
     }

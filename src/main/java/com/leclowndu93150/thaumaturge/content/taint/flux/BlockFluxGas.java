@@ -266,9 +266,6 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         if (old.is(this) && old.getValue(AMOUNT) == clamped) {
             return;
         }
-        if (!old.isAir() && !old.is(this)) {
-            level.destroyBlock(pos, false);
-        }
         level.setBlock(pos, gasBlockState(clamped), Block.UPDATE_ALL);
         level.scheduleTick(pos, this, TICK_DELAY);
     }
@@ -281,20 +278,25 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
                 || serverLevel.getRandom().nextInt(CONTACT_EFFECT_CHANCE) != 0) {
             return;
         }
-        int thickness = state.getValue(AMOUNT) - 1;
+        int amount = state.getValue(AMOUNT);
+        int thickness = amount - 1;
         if (serverLevel.getRandom().nextBoolean()) {
             living.addEffect(new MobEffectInstance(
                     TTMobEffects.VIS_EXHAUST,
                     VIS_EXHAUST_DURATION,
                     thickness / LEVELS_PER_AMPLIFIER,
-                    true,
+                    false,
                     true,
                     false));
         } else {
             living.addEffect(new MobEffectInstance(
                     MobEffects.CONFUSION, NAUSEA_BASE_DURATION + thickness * NAUSEA_DURATION_PER_LEVEL));
         }
-        PhysicalFlux.reduce(serverLevel, pos, 1);
+        serverLevel.setBlock(
+                pos, amount > 1 ? gasBlockState(amount - 1) : Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+        if (amount > 1) {
+            scheduleFluxTick(serverLevel, pos);
+        }
     }
 
     private static boolean resists(LivingEntity living) {

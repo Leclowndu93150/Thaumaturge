@@ -80,7 +80,7 @@ class FluxGooContactPortTest {
     }
 
     @Test
-    void eligibleServerSlimeFeedWritesAndSchedulesPositiveRemainder() {
+    void eligibleServerSlimeFeedWritesPositiveRemainderWithoutScheduling() {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         ThaumicSlime slime = mock(ThaumicSlime.class);
@@ -97,8 +97,7 @@ class FluxGooContactPortTest {
 
         verify(slime).setSize(2, true);
         verify(level).setBlock(pos, FluxGooFluid.gooBlockState(3), Block.UPDATE_CLIENTS);
-        Fluid fluid = amountThree.getType();
-        verify(level).scheduleTick(eq(pos), eq(fluid), eq(fluid.getTickDelay(level)));
+        verify(level, never()).scheduleTick(eq(pos), any(Fluid.class), anyInt());
     }
 
     @Test

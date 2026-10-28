@@ -180,7 +180,7 @@ class ReservoirCompatibilityTest {
                 var flux = mockStatic(PhysicalFlux.class)) {
             flux.when(() -> PhysicalFlux.placeGas(any(), any(), anyInt())).thenReturn(true);
             reservoir.releaseContents(BlockPos.ZERO);
-            aura.verifyNoInteractions();
+            aura.verify(() -> AuraHelper.polluteAura(level, BlockPos.ZERO, 64.0F, true));
             flux.verify(() -> PhysicalFlux.placeGas(level, BlockPos.ZERO, PhysicalFlux.MAX_QUANTA), times(17));
             verify(level).explode(null, 0.5, 0.5, 0.5, 1.0F, Level.ExplosionInteraction.NONE);
         }
@@ -255,14 +255,14 @@ class ReservoirCompatibilityTest {
     @Test
     void pocketScatterCountsSuccessfulPlacementsAndUsesGooBelowItsOrigin() {
         RandomSource random = level.getRandom();
-        when(random.triangle(0.0, 4.0)).thenReturn(0.0, -1.0, 0.0);
+        when(random.nextInt(5)).thenReturn(0, 0, 1, 0, 0, 0);
         try (var flux = mockStatic(PhysicalFlux.class)) {
             flux.when(() -> PhysicalFlux.placeGoo(level, BlockPos.ZERO.below(), PhysicalFlux.MAX_QUANTA))
                     .thenReturn(true);
             assertEquals(1, FluxPocketScatter.scatter(level, BlockPos.ZERO, 1));
             flux.verify(() -> PhysicalFlux.placeGoo(level, BlockPos.ZERO.below(), PhysicalFlux.MAX_QUANTA));
             flux.verify(() -> PhysicalFlux.placeGas(any(), any(), anyInt()), never());
-            verify(random, times(3)).triangle(0.0, 4.0);
+            verify(random, times(6)).nextInt(5);
         }
     }
 

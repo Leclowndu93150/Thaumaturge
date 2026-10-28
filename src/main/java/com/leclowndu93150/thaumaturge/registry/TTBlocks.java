@@ -405,7 +405,8 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .lightLevel(state -> 7)
                     .sound(TTSoundTypes.GORE)
-                    .noLootTable());
+                    .noLootTable()
+                    .randomTicks());
 
     public static final DeferredBlock<BlockPurifyingFluid> PURIFYING_FLUID = BLOCKS.registerBlock(
             "purifying_fluid",

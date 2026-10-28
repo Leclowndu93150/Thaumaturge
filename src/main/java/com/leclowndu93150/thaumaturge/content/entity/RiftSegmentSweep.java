@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -18,6 +17,9 @@ import net.minecraft.world.phys.Vec3;
 final class RiftSegmentSweep {
     private static final double EAT_CUBE_HALF = 0.5;
     private static final float EAT_DAMAGE = 2.0F;
+    private static final int UNSET_CURSOR = -1;
+
+    private int cursor = UNSET_CURSOR;
 
     void tick(ServerLevel level, EntityFluxRift rift) {
         List<Vec3> outline = rift.outline;
@@ -25,7 +27,11 @@ final class RiftSegmentSweep {
         if (segments < 1) {
             return;
         }
-        int index = rift.getRandom().nextInt(segments);
+        if (this.cursor == UNSET_CURSOR) {
+            this.cursor = rift.getRandom().nextInt(segments);
+        }
+        int index = this.cursor % segments;
+        this.cursor = index + 1;
         Vec3 origin = rift.position();
         Vec3 start = origin.add(outline.get(index));
         Vec3 end = origin.add(outline.get(index + 1));
@@ -39,7 +45,7 @@ final class RiftSegmentSweep {
 
     private void eraseBlockAlong(ServerLevel level, EntityFluxRift rift, Vec3 start, Vec3 end) {
         BlockHitResult hit =
-                level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, rift));
+                level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, rift));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -55,7 +61,7 @@ final class RiftSegmentSweep {
         AABB cube = new AABB(center, center).inflate(EAT_CUBE_HALF);
         DamageSource source = level.damageSources().fellOutOfWorld();
         for (Entity victim : level.getEntities(rift, cube)) {
-            if (victim.isRemoved() || victim instanceof LivingEntity living && living.isDeadOrDying()) {
+            if (victim.isRemoved()) {
                 continue;
             }
             if (victim instanceof Player player && player.isCreative()) {

@@ -213,8 +213,8 @@ class FluxScrubberConduitCutoffTest {
             assertEquals(0, machine.charges());
             assertEquals(Math.min(capacity, yield), machine.storedEssentia());
             verify(level, times(1)).hasChunkAt(any());
-            verify(sparkle).color(0.62F, 0.3F, 0.88F);
-            verify(sparkle).scale(0.7F);
+            verify(sparkle).color(0xDD / 255.0F, 0.0F, 1.0F);
+            verify(sparkle).scale(0.8F);
             verify(sparkle).send();
             verify(level).sendBlockUpdated(BlockPos.ZERO, machine.getBlockState(), machine.getBlockState(), 2);
         }

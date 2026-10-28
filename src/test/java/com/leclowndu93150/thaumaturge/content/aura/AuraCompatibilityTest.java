@@ -294,7 +294,7 @@ class AuraCompatibilityTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"-2,3,226", "3,-2,264", "-7,-9,257", "7,9,257"})
+    @CsvSource({"-2,3,241", "3,-2,279", "-7,-9,233", "7,9,250"})
     void initializationUsesStableSeedFormulaAndSamplesFiveBiomes(int chunkX, int chunkZ, int expectedBase) {
         ChunkPos pos = new ChunkPos(chunkX, chunkZ);
         AuraData data = new AuraData();
@@ -307,7 +307,7 @@ class AuraCompatibilityTest {
         ArgumentCaptor<Integer> probeCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(level, times(5)).getNoiseBiome(probeCaptor.capture(), probeCaptor.capture(), probeCaptor.capture());
         int centreX = QuartPos.fromBlock(pos.getMiddleBlockX());
-        int centreY = QuartPos.fromBlock(64);
+        int centreY = QuartPos.fromBlock(50);
         int centreZ = QuartPos.fromBlock(pos.getMiddleBlockZ());
         assertEquals(
                 List.of(

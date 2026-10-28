@@ -7,7 +7,7 @@ import net.minecraft.util.RandomSource;
 
 final class FluxPocketScatter {
     private static final int SPOT_ATTEMPTS = 50;
-    private static final double REACH = 4.0;
+    private static final int SPREAD_BOUND = 5;
 
     private FluxPocketScatter() {}
 
@@ -16,7 +16,10 @@ final class FluxPocketScatter {
         BlockPos.MutableBlockPos spot = new BlockPos.MutableBlockPos();
         int placed = 0;
         for (int attempt = 0; attempt < SPOT_ATTEMPTS && placed < pockets; attempt++) {
-            spot.setWithOffset(origin, clusteredOffset(random), clusteredOffset(random), clusteredOffset(random));
+            int dz = offset(random);
+            int dy = offset(random);
+            int dx = offset(random);
+            spot.setWithOffset(origin, dx, dy, dz);
             if (!level.hasChunkAt(spot) || !level.getBlockState(spot).isAir()) {
                 continue;
             }
@@ -31,7 +34,9 @@ final class FluxPocketScatter {
         return placed;
     }
 
-    private static int clusteredOffset(RandomSource random) {
-        return (int) Math.round(random.triangle(0.0, REACH));
+    private static int offset(RandomSource random) {
+        int back = random.nextInt(SPREAD_BOUND);
+        int forward = random.nextInt(SPREAD_BOUND);
+        return forward - back;
     }
 }

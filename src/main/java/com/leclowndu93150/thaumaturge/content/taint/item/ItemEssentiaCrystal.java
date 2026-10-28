@@ -23,17 +23,6 @@ public final class ItemEssentiaCrystal extends Item {
         return Component.translatable("item.thaumaturge.essentia_crystal", AspectComponents.name(aspect));
     }
 
-    /*    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        Holder<IAspect> aspect = aspectOf(stack);
-        if (aspect != null) {
-            int color = aspect.value().color();
-            Component line = Component.translatable("aspect.thaumaturge." + aspect.value().tag() + ".desc")
-                    .withStyle(style -> style.withColor(color));
-            tooltip.add(line);
-        }
-    }*/
-
     public static Holder<IAspect> aspectOf(ItemStack stack) {
         AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         return instance == null ? null : instance.aspect();

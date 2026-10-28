@@ -44,10 +44,10 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private static final int SCAN_RADIUS_SQUARED = SCAN_RADIUS * SCAN_RADIUS;
     private static final int CELL_BUDGET = 16;
     private static final int REMOVAL_AMOUNT = 1;
-    private static final float SPARKLE_RED = 0.62F;
-    private static final float SPARKLE_GREEN = 0.3F;
-    private static final float SPARKLE_BLUE = 0.88F;
-    private static final float SPARKLE_SCALE = 0.7F;
+    private static final float SPARKLE_RED = 0xDD / 255.0F;
+    private static final float SPARKLE_GREEN = 0.0F;
+    private static final float SPARKLE_BLUE = 1.0F;
+    private static final float SPARKLE_SCALE = 0.8F;
 
     private int essentia;
     private int charges;
@@ -198,8 +198,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private void work(ServerLevel level, BlockPos pos) {
         if (power < WORK_POWER) {
             refill(level, pos);
-        }
-        if (power >= WORK_POWER) {
+        } else {
             scan(level, pos);
         }
     }

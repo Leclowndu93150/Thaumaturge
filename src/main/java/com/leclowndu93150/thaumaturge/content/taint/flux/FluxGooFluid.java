@@ -35,17 +35,26 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 public abstract class FluxGooFluid extends BaseFlowingFluid {
-    private static final int QUANTA_PER_BLOCK = 8;
     private static final double MAX_DRAG = 0.5;
     private static final int GOO_DENSITY = 8;
     private static final int SLIME_SPAWN_CHANCE = 50;
     private static final int DECAY_ROLL_CHANCE = 4;
     private static final int SMALL_SLIME_META_MIN = 2;
     private static final int SMALL_SLIME_META_MAX = 6;
+    private static final int SMALL_SLIME_SIZE = 1;
+    private static final int LARGE_SLIME_SIZE = 2;
+    private static final float SLIME_SOUND_VOLUME = 1.0F;
+    private static final float SLIME_SOUND_PITCH = 1.0F;
+    private static final float FULL_TURN_DEGREES = 360.0F;
+    private static final double CELL_CENTRE = 0.5;
     private static final int FESTER_CHANCE = 50;
     private static final float FESTER_PRESSURE = 0.16F;
     private static final int VIS_EXHAUST_DURATION = 600;
+    private static final int LEVELS_PER_AMPLIFIER = 3;
     private static final float POLLUTE_AMOUNT = 1.0F;
+    private static final int GAS_AMOUNT = 1;
+    private static final int REMOVE_WHEN_AT_MOST = 2;
+    private static final int FLOWING_DEFAULT_LEVEL = 7;
     private static final int MAX_PARTIES = 5;
 
     protected FluxGooFluid(Properties properties) {
@@ -73,7 +82,9 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
 
     @Override
     protected void randomTick(Level world, BlockPos pos, FluidState state, RandomSource random) {
-        if (!(world instanceof ServerLevel level)) return;
+        if (!(world instanceof ServerLevel level)) {
+            return;
+        }
         PhysicalFluxAuraFloor.observe(level, pos);
         lifecycleTick(level, pos, state, random);
     }
@@ -88,12 +99,12 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                 && meta < SMALL_SLIME_META_MAX
                 && airAbove
                 && rand.nextInt(SLIME_SPAWN_CHANCE) == 0
-                && spawnSlime(level, pos, 1)) {
+                && spawnSlime(level, pos, SMALL_SLIME_SIZE, rand)) {
             return;
         } else if (meta >= SMALL_SLIME_META_MAX
                 && airAbove
                 && rand.nextInt(SLIME_SPAWN_CHANCE) == 0
-                && spawnSlime(level, pos, 2)) {
+                && spawnSlime(level, pos, LARGE_SLIME_SIZE, rand)) {
             return;
         } else if (meta >= SMALL_SLIME_META_MAX && airAbove && tryFester(level, pos, rand)) {
             return;
@@ -110,7 +121,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                     AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
                 }
                 if (airAbove && rand.nextBoolean()) {
-                    PhysicalFlux.placeGas(level, pos.above(), 1);
+                    PhysicalFlux.placeGas(level, pos.above(), GAS_AMOUNT);
                 }
             }
         } else {
@@ -144,7 +155,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         }
         if (quantaRemaining != prevRemaining) {
             setGoo(level, pos, quantaRemaining, Block.UPDATE_CLIENTS);
-            scheduleGooTick(level, pos);
+            scheduleFluidTick(level, pos);
             return;
         } else if (quantaRemaining == 1) {
             return;
@@ -158,10 +169,6 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             BlockPos neighbour = pos.relative(direction);
             if (!level.hasChunkAt(neighbour)) {
                 continue;
-            }
-            BlockState neighbourState = level.getBlockState(neighbour);
-            if (!neighbourState.isAir() && displaceIfPossible(level, neighbour)) {
-                level.setBlock(neighbour, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
             int quanta = getQuantaValueBelow(level, neighbour, lowerThan);
             if (quanta >= 0) {
@@ -190,7 +197,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                 } else {
                     int flags = currentState.is(TTBlocks.FLUX_GOO.get()) ? Block.UPDATE_CLIENTS : Block.UPDATE_ALL;
                     setGoo(level, party, wanted, flags);
-                    scheduleGooTick(level, party);
+                    scheduleFluidTick(level, party);
                 }
             }
         }
@@ -206,54 +213,51 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         if (!level.hasChunkAt(other)) {
             return amtToInput;
         }
-        int amt = getQuantaValueBelow(level, other, QUANTA_PER_BLOCK);
+        int amt = getQuantaValueBelow(level, other, PhysicalFlux.MAX_QUANTA);
         if (amt >= 0) {
             amt += amtToInput;
-            if (amt > QUANTA_PER_BLOCK) {
+            if (amt > PhysicalFlux.MAX_QUANTA) {
                 int flags = level.getBlockState(other).is(TTBlocks.FLUX_GOO.get())
                         ? Block.UPDATE_CLIENTS
                         : Block.UPDATE_ALL;
-                setGoo(level, other, QUANTA_PER_BLOCK, flags);
-                scheduleGooTick(level, other);
-                return amt - QUANTA_PER_BLOCK;
+                setGoo(level, other, PhysicalFlux.MAX_QUANTA, flags);
+                scheduleFluidTick(level, other);
+                return amt - PhysicalFlux.MAX_QUANTA;
             }
             if (amt > 0) {
                 int flags = level.getBlockState(other).is(TTBlocks.FLUX_GOO.get())
                         ? Block.UPDATE_CLIENTS
                         : Block.UPDATE_ALL;
                 setGoo(level, other, amt, flags);
-                scheduleGooTick(level, other);
+                scheduleFluidTick(level, other);
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                 return 0;
             }
             return amtToInput;
         }
 
-        int densityOther = getDensity(level, other);
-        if (densityOther == Integer.MAX_VALUE) {
-            if (displaceIfPossible(level, other)) {
-                level.setBlock(other, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                setGoo(level, other, amtToInput, Block.UPDATE_ALL);
-                scheduleGooTick(level, other);
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                return 0;
-            }
+        BlockState target = level.getBlockState(other);
+        if (target.is(TTBlocks.FLUX_GOO.get())) {
             return amtToInput;
         }
-
-        if (densityOther < GOO_DENSITY || isDisplaceableVanillaFluid(level.getFluidState(other))) {
-            BlockState displaced = level.getBlockState(other);
+        if (target.getBlock() instanceof LiquidBlock) {
+            if (!isLighterFluid(target.getFluidState())) {
+                return amtToInput;
+            }
             setGoo(level, other, amtToInput, Block.UPDATE_ALL);
-            level.setBlock(pos, displaced, Block.UPDATE_ALL);
-            scheduleGooTick(level, other);
-            FluidState displacedFluid = displaced.getFluidState();
-            if (!displacedFluid.isEmpty()) {
-                level.scheduleTick(
-                        pos, displacedFluid.getType(), displacedFluid.getType().getTickDelay(level));
-            }
+            level.setBlock(pos, target, Block.UPDATE_ALL);
+            scheduleFluidTick(level, other);
+            scheduleFluidTick(level, pos);
             return 0;
         }
-        return amtToInput;
+        if (!isLooseBlock(level, other, target)) {
+            return amtToInput;
+        }
+        Block.dropResources(target, level, other);
+        setGoo(level, other, amtToInput, Block.UPDATE_ALL);
+        scheduleFluidTick(level, other);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        return 0;
     }
 
     private int getQuantaValue(ServerLevel level, BlockPos pos) {
@@ -273,49 +277,19 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         return quanta >= belowThis ? -1 : quanta;
     }
 
-    private static int getDensity(ServerLevel level, BlockPos pos) {
-        FluidState fluidState = level.getFluidState(pos);
-        if (fluidState.isEmpty()) {
-            return Integer.MAX_VALUE;
-        }
-        return fluidState.getFluidType().getDensity();
-    }
-
-    private boolean canDisplace(ServerLevel level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        if (state.isAir()) {
-            return true;
-        }
-        FluidState fluidState = state.getFluidState();
-        if (!fluidState.isEmpty()) {
-            if (fluidState.getType().isSame(this)) {
-                return false;
-            }
-            return isDisplaceableVanillaFluid(fluidState)
-                    || GOO_DENSITY > fluidState.getFluidType().getDensity();
-        }
+    private static boolean isLooseBlock(ServerLevel level, BlockPos pos, BlockState state) {
         if (state.is(TTBlocks.TAINT_FIBRE.get())) {
             return true;
         }
-        if (state.blocksMotion()) {
-            return false;
-        }
-        return state.canBeReplaced() && state.getCollisionShape(level, pos).isEmpty();
+        return state.canBeReplaced()
+                && state.getFluidState().isEmpty()
+                && state.getCollisionShape(level, pos).isEmpty();
     }
 
-    private boolean displaceIfPossible(ServerLevel level, BlockPos pos) {
-        boolean canDisplace = canDisplace(level, pos);
-        if (canDisplace) {
-            BlockState state = level.getBlockState(pos);
-            if (!state.isAir() && state.getFluidState().isEmpty()) {
-                Block.dropResources(state, level, pos);
-            }
-        }
-        return canDisplace;
-    }
-
-    private static boolean isDisplaceableVanillaFluid(FluidState state) {
-        return state.is(FluidTags.WATER) || state.is(FluidTags.LAVA);
+    private static boolean isLighterFluid(FluidState state) {
+        return state.is(FluidTags.WATER)
+                || state.is(FluidTags.LAVA)
+                || state.getFluidType().getDensity() < GOO_DENSITY;
     }
 
     private void setGoo(Level level, BlockPos pos, int quanta, int flags) {
@@ -323,14 +297,13 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
     }
 
     public static BlockState gooBlockState(int quanta) {
-        int clamped = Math.max(1, Math.min(quanta, QUANTA_PER_BLOCK));
         return TTBlocks.FLUX_GOO
                 .get()
                 .defaultBlockState()
-                .setValue(LiquidBlock.LEVEL, clamped >= QUANTA_PER_BLOCK ? 0 : QUANTA_PER_BLOCK - clamped);
+                .setValue(LiquidBlock.LEVEL, PhysicalFlux.MAX_QUANTA - Math.clamp(quanta, 1, PhysicalFlux.MAX_QUANTA));
     }
 
-    private static void scheduleGooTick(ServerLevel level, BlockPos pos) {
+    private static void scheduleFluidTick(ServerLevel level, BlockPos pos) {
         FluidState fluidState = level.getFluidState(pos);
         if (!fluidState.isEmpty()) {
             Fluid fluid = fluidState.getType();
@@ -350,42 +323,44 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                     && slime.getSize() < meta
                     && serverLevel.getRandom().nextBoolean()) {
                 slime.setSize(slime.getSize() + 1, true);
-                if (meta > 1) {
-                    level.setBlock(pos, gooBlockState(meta), Block.UPDATE_CLIENTS);
-                    scheduleGooTick(serverLevel, pos);
-                } else {
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                }
+                BlockState remaining =
+                        amount <= REMOVE_WHEN_AT_MOST ? Blocks.AIR.defaultBlockState() : gooBlockState(meta);
+                level.setBlock(pos, remaining, Block.UPDATE_CLIENTS);
             }
             return;
         }
         if (pos.equals(entity.blockPosition())) {
-            float quanta = amount / (float) QUANTA_PER_BLOCK;
+            float quanta = amount / (float) PhysicalFlux.MAX_QUANTA;
             Vec3 motion = entity.getDeltaMovement();
             double damp = 1.0 - quanta * MAX_DRAG;
             entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
         }
         if (!level.isClientSide() && entity instanceof LivingEntity living) {
-            int amp = meta / 3;
+            int amp = meta / LEVELS_PER_AMPLIFIER;
             living.addEffect(
                     new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
         }
     }
 
-    private static boolean spawnSlime(ServerLevel level, BlockPos pos, int size) {
+    private static boolean spawnSlime(ServerLevel level, BlockPos pos, int size, RandomSource random) {
         ThaumicSlime slime = TTEntities.THAUMIC_SLIME.get().create(level);
-        return spawnSlime(level, pos, size, slime);
+        return spawnSlime(level, pos, size, slime, random);
     }
 
-    static boolean spawnSlime(ServerLevel level, BlockPos pos, int size, ThaumicSlime slime) {
+    static boolean spawnSlime(ServerLevel level, BlockPos pos, int size, ThaumicSlime slime, RandomSource random) {
         if (slime == null) {
             return false;
         }
         slime.setSize(size, true);
-        slime.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+        slime.moveTo(
+                pos.getX() + CELL_CENTRE,
+                pos.getY(),
+                pos.getZ() + CELL_CENTRE,
+                random.nextFloat() * FULL_TURN_DEGREES,
+                0.0F);
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         level.addFreshEntity(slime);
-        level.playSound(null, pos, TTSounds.GORE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, TTSounds.GORE.get(), SoundSource.BLOCKS, SLIME_SOUND_VOLUME, SLIME_SOUND_PITCH);
         return true;
     }
 
@@ -396,7 +371,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
 
         @Override
         public int getAmount(FluidState state) {
-            return 8;
+            return PhysicalFlux.MAX_QUANTA;
         }
 
         @Override
@@ -408,6 +383,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
     public static final class Flowing extends FluxGooFluid {
         public Flowing(Properties properties) {
             super(properties);
+            registerDefaultState(getStateDefinition().any().setValue(LEVEL, FLOWING_DEFAULT_LEVEL));
         }
 
         @Override

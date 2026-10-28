@@ -134,18 +134,18 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
         return kept;
     }
 
-    private void rupture(ServerLevel server, BlockPos pos, int total) {
-        if (total < ESSENTIA_PER_POCKET) {
-            releaseFlux(server, pos, total);
-            return;
+    private static void rupture(ServerLevel server, BlockPos pos, int total) {
+        releaseFlux(server, pos, total);
+        int pockets = total / ESSENTIA_PER_POCKET;
+        if (pockets > 0) {
+            burst(server, pos, pockets);
         }
-        burst(server, pos, total);
     }
 
-    private static void burst(ServerLevel server, BlockPos pos, int total) {
+    private static void burst(ServerLevel server, BlockPos pos, int pockets) {
         Vec3 center = Vec3.atCenterOf(pos);
         server.explode(null, center.x, center.y, center.z, RUPTURE_EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
-        FluxPocketScatter.scatter(server, pos, total / ESSENTIA_PER_POCKET + 1);
+        FluxPocketScatter.scatter(server, pos, pockets + 1);
     }
 
     private void store(Holder<IAspect> aspect, int amount) {

@@ -88,6 +88,7 @@ class PortAndResonatorCompatibilityTest {
         when(tube.releasesOn(Direction.EAST)).thenReturn(true);
         when(tube.heldAmount(Direction.EAST)).thenReturn(1);
         when(tube.heldAspect(Direction.EAST)).thenReturn(aspect);
+        when(tube.extract(aspect, 1, Direction.EAST, true)).thenReturn(1);
         when(tube.extract(aspect, 1, Direction.EAST, false)).thenReturn(1);
     }
 
@@ -98,7 +99,7 @@ class PortAndResonatorCompatibilityTest {
     }
 
     @Test
-    void inputWithdrawsExactlyOneBeforeRemoteInsertionOnFiveTickCadence() {
+    void inputSimulatesWithdrawalBeforeRemoteInsertionOnFiveTickCadence() {
         try (var intercepted = interceptSources()) {
             var port = port(true);
             var sources = intercepted.constructed().getFirst();
@@ -111,25 +112,25 @@ class PortAndResonatorCompatibilityTest {
             verifyNoInteractions(tube);
             tick(port, 1);
             var order = inOrder(tube, sources);
-            order.verify(tube).extract(aspect, 1, Direction.EAST, false);
+            order.verify(tube).extract(aspect, 1, Direction.EAST, true);
             order.verify(sources).insert(level, aspect, 10);
-            verify(tube, never()).extract(any(), anyInt(), any(), eq(true));
+            order.verify(tube).extract(aspect, 1, Direction.EAST, false);
         }
     }
 
     @Test
-    void failedInputSearchRefundsAndBacksOffFor200Ticks() {
+    void failedInputSearchLeavesTubeUntouchedAndBacksOffFor200Ticks() {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(true);
             var sources = intercepted.constructed().getFirst();
             offerInput();
-            when(tube.insert(aspect, 1, Direction.EAST, false)).thenReturn(1);
             tick(port, 5);
             var order = inOrder(tube, sources);
-            order.verify(tube).extract(aspect, 1, Direction.EAST, false);
+            order.verify(tube).extract(aspect, 1, Direction.EAST, true);
             order.verify(sources).insert(level, aspect, 10);
-            order.verify(tube).insert(aspect, 1, Direction.EAST, false);
+            verify(tube, never()).extract(aspect, 1, Direction.EAST, false);
+            verify(tube, never()).insert(any(), anyInt(), any(), anyBoolean());
             aura.verifyNoInteractions();
             clearInvocations(tube, sources, level);
             tick(port, 199);
@@ -141,18 +142,20 @@ class PortAndResonatorCompatibilityTest {
     }
 
     @Test
-    void failedInputRefundBecomesOneFluxAndRefusedExtractionDoesNothing() {
+    void refusedExtractionDoesNothingAndFailedInsertionNeverMakesFlux() {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(true);
             var sources = intercepted.constructed().getFirst();
             offerInput();
-            when(tube.extract(aspect, 1, Direction.EAST, false)).thenReturn(0);
+            when(tube.extract(aspect, 1, Direction.EAST, true)).thenReturn(0);
             tick(port, 5);
             verify(sources, never()).insert(any(), any(), anyInt());
-            when(tube.extract(aspect, 1, Direction.EAST, false)).thenReturn(1);
+            when(tube.extract(aspect, 1, Direction.EAST, true)).thenReturn(1);
             tick(port, 5);
-            aura.verify(() -> AuraHelper.addFlux(level, BlockPos.ZERO, 1.0F));
+            verify(sources).insert(level, aspect, 10);
+            verify(tube, never()).extract(aspect, 1, Direction.EAST, false);
+            aura.verifyNoInteractions();
         }
     }
 
@@ -184,7 +187,7 @@ class PortAndResonatorCompatibilityTest {
     }
 
     @Test
-    void outputFailedRefundPollutesOnceAndFailedSearchBacksOff() {
+    void outputFailedRefundDoesNotPolluteAndFailedSearchBacksOff() {
         try (var intercepted = interceptSources();
                 var aura = mockStatic(AuraHelper.class)) {
             var port = port(false);
@@ -192,7 +195,8 @@ class PortAndResonatorCompatibilityTest {
             requestOutput();
             when(sources.drain(level, aspect, 10)).thenReturn(true);
             tick(port, 5);
-            aura.verify(() -> AuraHelper.addFlux(level, BlockPos.ZERO, 1.0F));
+            verify(sources).insert(level, aspect, 10);
+            aura.verifyNoInteractions();
             when(sources.drain(level, aspect, 10)).thenReturn(false);
             clearInvocations(tube, sources);
             tick(port, 5);

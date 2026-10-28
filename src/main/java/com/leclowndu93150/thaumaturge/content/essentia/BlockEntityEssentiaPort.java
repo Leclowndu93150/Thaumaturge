@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
@@ -60,7 +59,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
         if (port.input) {
             port.pushIntoSources(server, tube, tubeFace);
         } else {
-            port.pullFromSources(server, pos, tube, tubeFace);
+            port.pullFromSources(server, tube, tubeFace);
         }
         if (port.searchFailed) {
             port.resumeAt = server.getGameTime() + SEARCH_BACKOFF_TICKS;
@@ -76,20 +75,18 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
             return false;
         }
         Holder<IAspect> aspect = tube.heldAspect(tubeFace);
-        if (aspect == null || tube.extract(aspect, SINGLE_POINT, tubeFace, false) != SINGLE_POINT) {
+        if (aspect == null || tube.extract(aspect, SINGLE_POINT, tubeFace, true) != SINGLE_POINT) {
             return false;
         }
-        if (sources.insert(server, aspect, VISUAL_EXTENSION)) {
-            return true;
+        if (!sources.insert(server, aspect, VISUAL_EXTENSION)) {
+            searchFailed = true;
+            return false;
         }
-        searchFailed = true;
-        if (tube.insert(aspect, SINGLE_POINT, tubeFace, false) != SINGLE_POINT) {
-            AuraHelper.addFlux(server, worldPosition, SINGLE_POINT);
-        }
-        return false;
+        tube.extract(aspect, SINGLE_POINT, tubeFace, false);
+        return true;
     }
 
-    private boolean pullFromSources(ServerLevel server, BlockPos pos, IEssentiaConduit tube, Direction tubeFace) {
+    private boolean pullFromSources(ServerLevel server, IEssentiaConduit tube, Direction tubeFace) {
         EssentiaPull tubePull = tube.pull(tubeFace);
         Holder<IAspect> wanted = tubePull.aspect();
         if (wanted == null
@@ -105,9 +102,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
         if (tube.insert(wanted, SINGLE_POINT, tubeFace, false) == SINGLE_POINT) {
             return true;
         }
-        if (!sources.insert(server, wanted, VISUAL_EXTENSION)) {
-            AuraHelper.addFlux(server, pos, SINGLE_POINT);
-        }
+        sources.insert(server, wanted, VISUAL_EXTENSION);
         return false;
     }
 
