@@ -85,6 +85,9 @@ public final class GogglesWorldOverlay {
 
         boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
         Direction dir = spaceAbove ? Direction.UP : mc.player.getDirection().getOpposite();
+        if (!spaceAbove && (be instanceof AbstractBlockEntityJar || be instanceof BlockEntityEssentiaReservoir)) {
+            dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
+        }
         double y = pos.getY() + (spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
         if (be instanceof AbstractBlockEntityJar && dir == Direction.UP) {
             y += JAR_READOUT_LIFT - scale * 2.0F;
@@ -107,6 +110,9 @@ public final class GogglesWorldOverlay {
     static AspectReadout readAspects(Level level, @Nullable BlockEntity blockEntity, BlockPos pos, Direction side) {
         if (blockEntity instanceof BlockEntityEssentiaReservoir reservoir) {
             return new AspectReadout(reservoir.contents(), true);
+        }
+        if (blockEntity instanceof AbstractBlockEntityJar jar) {
+            return new AspectReadout(jar.getAspects(), true);
         }
         if (blockEntity instanceof BlockEntityInfusionMatrix matrix) {
             return new AspectReadout(matrix.remainingEssentia(), true);

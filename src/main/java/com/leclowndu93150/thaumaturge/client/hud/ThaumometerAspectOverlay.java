@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
@@ -116,6 +117,9 @@ public final class ThaumometerAspectOverlay {
             Direction dir = mc.level.getBlockState(pos.above()).isAir() && mc.player.getEyeY() > pos.getY() + 1.0
                     ? Direction.UP
                     : hit.getDirection();
+            if (dir != Direction.UP) {
+                dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
+            }
             drawTags(
                     event.getPoseStack(),
                     mc,
@@ -143,6 +147,9 @@ public final class ThaumometerAspectOverlay {
         boolean topFree = mc.level.getBlockState(pos.above()).isAir();
         boolean topVisible = mc.player.getEyeY() > pos.getY() + 1.0;
         Direction dir = topFree && topVisible ? Direction.UP : hit.getDirection();
+        if (dir != Direction.UP && mc.level.getBlockEntity(pos) instanceof AbstractBlockEntityJar) {
+            dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
+        }
         drawTags(
                 event.getPoseStack(),
                 mc,
