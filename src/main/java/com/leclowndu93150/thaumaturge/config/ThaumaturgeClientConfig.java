@@ -32,7 +32,7 @@ public final class ThaumaturgeClientConfig {
 
         BOOK_RETURN_BUTTON = builder.comment(
                         "When true, the Thaumonomicon uses a visible return button instead of right-click navigation. The button closes an open insert first, then returns to the research map.")
-                .define("book.use_return_button", false);
+                .define("book.use_return_button", true);
 
         DONATOR_CAPE = builder.comment(
                         "Donators only: shows your Thaumaturge cape. While it is on, every player on the server sees it.")
