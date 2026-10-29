@@ -36,7 +36,7 @@ public final class JarRenderer implements BlockEntityRenderer<AbstractBlockEntit
     public static final float FLUID_MIN = 4.0F / 16.0F;
     public static final float FLUID_MAX = 12.0F / 16.0F;
     public static final float FLUID_BASE_Y = 1.0F / 16.0F;
-    public static final float FLUID_MAX_HEIGHT = 10.5F / 16.0F;
+    public static final float FLUID_MAX_HEIGHT = 10.0F / 16.0F;
 
     private static final float BRACE_MIN_XZ = 4.9F / 16.0F;
     private static final float BRACE_MAX_XZ = 11.1F / 16.0F;
