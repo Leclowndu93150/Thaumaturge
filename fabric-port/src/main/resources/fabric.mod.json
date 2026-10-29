@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "thaumaturge",
+  "version": "${version}",
+  "name": "Thaumaturge (Fabric port bootstrap)",
+  "description": "Early Fabric 26.3 port workspace. This bootstrap does not yet include the original Thaumaturge gameplay systems.",
+  "authors": [
+    "herosh1sh",
+    "Original Thaumaturge contributors"
+  ],
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.leclowndu93150.thaumaturge.fabric.ThaumaturgeFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
