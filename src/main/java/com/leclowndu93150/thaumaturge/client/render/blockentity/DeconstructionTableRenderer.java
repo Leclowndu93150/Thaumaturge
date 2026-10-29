@@ -33,7 +33,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
     private static final ResourceLocation TABLE_TEXTURE = TTIds.rl("textures/entity/decontable.png");
 
     private static final float TABLE_Y = 1.0F;
-    private static final float BOOK_Y = TABLE_Y + 0.002F;
+    private static final float BOOK_Y = TABLE_Y + 0.068F;
     private static final float BOOK_SCALE = 0.85F;
     private static final float BOOK_YAW = 20.0F;
     private static final float INPUT_Y = 1.42F;
@@ -80,7 +80,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
         poseStack.pushPose();
         poseStack.translate(0.5F, BOOK_Y, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(BOOK_YAW));
-        poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
         poseStack.scale(BOOK_SCALE, BOOK_SCALE, BOOK_SCALE);
         ItemRenderHelper.render(book, ItemDisplayContext.FIXED, poseStack, buffers, light, overlay, 0);
         poseStack.popPose();
