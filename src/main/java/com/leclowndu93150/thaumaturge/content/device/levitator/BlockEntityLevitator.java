@@ -30,7 +30,7 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     private static final float CHARGE_PER_VIS = 1200.0F;
     private static final double THRUST = 0.1;
     private static final double SPEED_LIMIT = 0.35;
-    private static final double HOVER_DAMPING = 0.7;
+    private static final double HOVER_DAMPING = 0.9;
     private static final double GRAVITY_LIFT = 1.0;
     private static final int RIDER_SYNC_INTERVAL = 20;
     private static final float IDLE_MIST_CHANCE = 0.1F;

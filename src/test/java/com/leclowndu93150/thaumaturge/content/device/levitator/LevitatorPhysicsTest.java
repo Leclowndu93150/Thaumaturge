@@ -38,7 +38,7 @@ class LevitatorPhysicsTest {
         ArgumentCaptor<Double> z = ArgumentCaptor.forClass(Double.class);
         verify(rider).setDeltaMovement(x.capture(), y.capture(), z.capture());
         assertEquals(0.2, x.getValue(), 1.0E-9);
-        assertEquals(-0.14, y.getValue(), 1.0E-9);
+        assertEquals(-0.18, y.getValue(), 1.0E-9);
         assertEquals(-0.1, z.getValue(), 1.0E-9);
     }
 }
