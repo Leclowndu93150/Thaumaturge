@@ -749,7 +749,7 @@ public final class TTBlocks {
                         .mapColor(MapColor.NONE)
                         .strength(0.25F)
                         .sound(TTSoundTypes.CRYSTAL)
-                        .lightLevel(state -> 2)
+                        .lightLevel(state -> 1)
                         .noOcclusion()
                         .randomTicks()
                         .pushReaction(PushReaction.DESTROY));
