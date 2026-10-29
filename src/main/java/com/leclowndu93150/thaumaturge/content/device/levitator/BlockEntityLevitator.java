@@ -24,14 +24,14 @@ import net.minecraft.world.phys.Vec3;
 public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     private static final String REACH_KEY = "reach";
     private static final String CHARGE_KEY = "charge";
-    private static final int REFUEL_BELOW = 10;
+    private static final int REFUEL_THRESHOLD = 10;
     private static final int CLEARANCE_INTERVAL = 10;
     private static final float VIS_DRAW = 1.0F;
-    private static final float CHARGE_PER_VIS = 1200.0F;
+    private static final int CHARGE_PER_VIS = 1200;
     private static final double THRUST = 0.1;
-    private static final double SPEED_LIMIT = 0.35;
+    private static final double SPEED_CAP = 0.35;
     private static final double HOVER_DAMPING = 0.9;
-    private static final double GRAVITY_LIFT = 1.0;
+    private static final double LIFT = 0.08;
     private static final int RIDER_SYNC_INTERVAL = 20;
     private static final float IDLE_MIST_CHANCE = 0.1F;
     private static final float WORKING_MIST_CHANCE = 0.6F;
@@ -51,49 +51,45 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     }
 
     public void cycleReach(Player player) {
+        reach = reach.next();
         clearance = 0;
         clearanceStale = true;
-        if (level == null || level.isClientSide()) {
-            return;
+        if (level != null && !level.isClientSide()) {
+            setChangedAndSync();
+            player.sendSystemMessage(
+                    Component.translatable("gui.thaumaturge.levitator", reach.blocks(), reach.visCost()));
         }
-        reach = reach.next();
-        setChangedAndSync();
-        player.sendSystemMessage(Component.translatable("gui.thaumaturge.levitator", reach.blocks(), reach.visCost()));
     }
 
     private void refuel(Level level, BlockPos pos) {
-        if (charge >= Math.max(REFUEL_BELOW, reach.visCost())) {
+        if (charge >= REFUEL_THRESHOLD) {
             return;
         }
-        float received = AuraHelper.drainVis(level, pos, VIS_DRAW, false);
-        int gained = Math.round(received * CHARGE_PER_VIS);
+        int gained = (int) (AuraHelper.drainVis(level, pos, VIS_DRAW, false) * CHARGE_PER_VIS);
         if (gained > 0) {
             charge += gained;
-            setChanged();
+            setChangedAndSync();
         }
     }
 
     private int carry(Level level, BlockPos pos, Direction facing) {
-        AABB beam = new AABB(pos.relative(facing))
+        AABB beam = new AABB(pos)
                 .expandTowards(
-                        facing.getStepX() * (clearance - 1.0),
-                        facing.getStepY() * (clearance - 1.0),
-                        facing.getStepZ() * (clearance - 1.0));
-        List<Entity> riders = level.getEntities((Entity) null, beam, BlockEntityLevitator::isCarried);
-        int cost = reach.visCost();
+                        facing.getStepX() * (double) clearance,
+                        facing.getStepY() * (double) clearance,
+                        facing.getStepZ() * (double) clearance);
+        List<Entity> riders = level.getEntitiesOfClass(Entity.class, beam, BlockEntityLevitator::isCarried);
         int carried = 0;
         for (Entity rider : riders) {
-            if (charge < cost) {
+            if (charge <= 0) {
                 break;
             }
-            charge -= cost;
+            push(rider, facing);
+            charge -= reach.visCost();
             carried++;
-            rider.resetFallDistance();
-            if (rider.isControlledByLocalInstance()) {
-                push(rider, facing);
-            }
             if (level.isClientSide()) {
                 LevitatorMist.cling(level, rider);
+                LevitatorMist.stream(level, pos, facing, WORKING_MIST_CHANCE);
             }
         }
         if (carried > 0 && !level.isClientSide()) {
@@ -114,33 +110,21 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
 
     static void push(Entity rider, Direction facing) {
         Vec3 motion = rider.getDeltaMovement();
-        if (facing == Direction.UP && rider instanceof Player && rider.isShiftKeyDown()) {
-            if (motion.y < 0.0) {
-                rider.setDeltaMovement(motion.x, motion.y * HOVER_DAMPING, motion.z);
+        double x = motion.x;
+        double y = motion.y;
+        double z = motion.z;
+        if (facing == Direction.UP && rider.isShiftKeyDown()) {
+            y = y < 0.0 ? y * HOVER_DAMPING : y;
+        } else {
+            x = Math.clamp(x + facing.getStepX() * THRUST, -SPEED_CAP, SPEED_CAP);
+            y = Math.clamp(y + facing.getStepY() * THRUST, -SPEED_CAP, SPEED_CAP);
+            z = Math.clamp(z + facing.getStepZ() * THRUST, -SPEED_CAP, SPEED_CAP);
+            if (facing.getAxis() != Direction.Axis.Y && !rider.onGround()) {
+                y = (y < 0.0 ? y * HOVER_DAMPING : y) + LIFT;
             }
-            return;
-        }
-        double x = accelerate(motion.x, facing.getStepX());
-        double y = accelerate(motion.y, facing.getStepY());
-        double z = accelerate(motion.z, facing.getStepZ());
-        if (facing.getAxis() != Direction.Axis.Y && !rider.onGround()) {
-            if (y < 0.0) {
-                y *= HOVER_DAMPING;
-            }
-            y += rider.getGravity() * GRAVITY_LIFT;
         }
         rider.setDeltaMovement(x, y, z);
-    }
-
-    private static double accelerate(double speed, int step) {
-        if (step == 0) {
-            return speed;
-        }
-        double along = speed * step;
-        if (along < SPEED_LIMIT) {
-            along = Math.min(SPEED_LIMIT, along + THRUST);
-        }
-        return along * step;
+        rider.resetFallDistance();
     }
 
     @Override
@@ -177,7 +161,7 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         }
         int carried = carry(level, pos, facing);
         if (level.isClientSide()) {
-            LevitatorMist.stream(level, pos, facing, carried > 0 ? WORKING_MIST_CHANCE : IDLE_MIST_CHANCE);
+            LevitatorMist.stream(level, pos, facing, IDLE_MIST_CHANCE);
         } else if (carried > 0 && level.getGameTime() % RIDER_SYNC_INTERVAL == 0) {
             setChangedAndSync();
         }

@@ -7,15 +7,15 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
 public final class LevitatorMistParticle extends TTParticle {
-    private static final float RED = 0.85F;
-    private static final float GREEN = 0.76F;
-    private static final float BLUE = 0.45F;
+    private static final float RED = 0.5F;
+    private static final float GREEN = 0.5F;
+    private static final float BLUE = 0.2F;
     private static final int LIFETIME_BASE = 200;
-    private static final int LIFETIME_RANGE = 101;
-    private static final float START_ALPHA = 0.15F;
-    private static final float START_SIZE = 0.08F;
+    private static final int LIFETIME_RANGE = 100;
+    private static final float START_SIZE = 0.2F;
     private static final float END_SIZE = 0.5F;
-    private static final float SPIN_SPEED = 0.15F;
+    private static final float ALPHA_SCALE = 0.3F;
+    private static final float SPIN_SPEED = 1.0F;
 
     private LevitatorMistParticle(
             ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
@@ -29,7 +29,7 @@ public final class LevitatorMistParticle extends TTParticle {
     @Override
     protected void update() {
         float t = progress();
-        this.alpha = START_ALPHA * (1.0F - t);
+        this.alpha = ALPHA_SCALE * (1.0F - t);
         this.quadSize = Keyframes.sample(t, START_SIZE, END_SIZE);
     }
 
