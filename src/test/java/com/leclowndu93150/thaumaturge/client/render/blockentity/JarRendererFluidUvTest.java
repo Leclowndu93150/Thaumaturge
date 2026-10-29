@@ -9,7 +9,7 @@ class JarRendererFluidUvTest {
     void fluidIsInsetFromTheJarWalls() {
         assertEquals(4.0F / 16.0F, JarRenderer.FLUID_MIN);
         assertEquals(12.0F / 16.0F, JarRenderer.FLUID_MAX);
-        assertEquals(10.5F / 16.0F, JarRenderer.FLUID_MAX_HEIGHT);
+        assertEquals(10.0F / 16.0F, JarRenderer.FLUID_MAX_HEIGHT);
     }
 
     @Test
