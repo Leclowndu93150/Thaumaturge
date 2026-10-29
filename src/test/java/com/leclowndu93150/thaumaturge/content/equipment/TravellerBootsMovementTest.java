@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -71,7 +70,7 @@ class TravellerBootsMovementTest {
     }
 
     @Test
-    void jumpBoostDoesNotRequireThePlayerToBeStandingOrWalking() {
+    void sneakingSuppressesBootsJumpAndStepEffects() {
         ItemStack stack = new ItemStack(Items.LEATHER_BOOTS);
         Player player = mock(Player.class);
         when(player.getAbilities()).thenReturn(new Abilities());
@@ -81,7 +80,7 @@ class TravellerBootsMovementTest {
         try (MockedStatic<RechargeAccess> rechargeAccess = mockStatic(RechargeAccess.class)) {
             rechargeAccess.when(() -> RechargeAccess.storedVis(stack)).thenReturn(1);
 
-            assertTrue(TravellerBootsItem.isActive(player, stack));
+            assertFalse(TravellerBootsItem.isActive(player, stack));
             assertFalse(TravellerBootsItem.isStepActive(player, stack));
         }
     }
