@@ -227,13 +227,20 @@ public final class FocalManipulatorScreen extends AbstractContainerScreen<MenuFo
         ItemStack focus = menu.getSlot(BlockEntityFocalManipulator.SLOT_FOCUS).getItem();
         if (!ItemStack.isSameItemSameComponents(focus, lastFocus)) {
             lastFocus = focus.copy();
+            lastSent = null;
             refresh();
         }
         if (dirty && ++quietTicks >= SYNC_DELAY) {
             flush();
         } else if (!dirty) {
             clientTable().ifPresent(table -> {
-                if (!table.draft().equals(lastSeen) && !table.draft().equals(lastSent)) {
+                if (lastSent != null) {
+                    if (!table.draft().equals(lastSent)) {
+                        return;
+                    }
+                    lastSent = null;
+                }
+                if (!table.draft().equals(lastSeen)) {
                     draft = table.draft();
                     name = table.name();
                     lastSeen = draft;
