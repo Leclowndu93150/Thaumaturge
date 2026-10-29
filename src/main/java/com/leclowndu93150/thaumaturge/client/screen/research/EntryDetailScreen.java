@@ -30,6 +30,9 @@ import com.leclowndu93150.thaumaturge.client.screen.AbstractTTScreen;
 import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -300,6 +303,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private int currentPage;
     private int sw;
     private int sh;
+    private @Nullable TTButton returnControl;
     private List<PageParser.Page> parsedPages = List.of();
     private boolean showingAspects;
     private boolean showingKnowledge;
@@ -349,6 +353,8 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         super.init();
         sw = (width - PANE_W) / 2;
         sh = (height - PANE_H) / 2;
+        returnControl =
+                ThaumaturgeClientConfig.useBookReturnButton() ? addRenderableWidget(createReturnControl()) : null;
         currentPage = clampPage(currentPage);
         for (IResearchStage stage : entry.value().stages()) {
             for (ResourceLocation recipeId : stage.recipes()) {
@@ -366,6 +372,25 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                     entryId, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
             flagsCleared = true;
         }
+    }
+
+    private TTButton createReturnControl() {
+        TTButton control = new TTImageButton(
+                width / 2 - BACK_W / 2,
+                Math.max(4, sh - 46),
+                BACK_W,
+                21,
+                TTScreenTextures.RESEARCH_BOOK,
+                BACK_U,
+                BACK_V,
+                BACK_W,
+                BACK_H,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                Component.translatable("gui.thaumaturge.thaumonomicon.return_control"),
+                this::returnToBrowser);
+        control.setDescription(Component.translatable("gui.thaumaturge.thaumonomicon.return_control.description"));
+        return control;
     }
 
     private void rebuildPages() {
@@ -2150,7 +2175,10 @@ public final class EntryDetailScreen extends AbstractTTScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 1) {
+        if (returnControl != null && super.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && !ThaumaturgeClientConfig.useBookReturnButton()) {
             returnToBrowser();
             return true;
         }

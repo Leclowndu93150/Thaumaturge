@@ -124,6 +124,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.recipe.instability.5", "§4Dangerous§0");
         add("gui.thaumaturge.thaumonomicon.back", "Back");
         add("gui.thaumaturge.thaumonomicon.return_to_map", "Back to Research Map");
+        add("gui.thaumaturge.thaumonomicon.return_control", "Return");
+        add("gui.thaumaturge.thaumonomicon.return_control.description", "Close the insert or return to the map.");
         add("gui.thaumaturge.recipe.unknown", "You cannot craft this yet");
         add("gui.thaumaturge.recipe_type.workbench", "Workbench");
         add("gui.thaumaturge.recipe_type.workbench_shapeless", "Workbench (Shapeless)");

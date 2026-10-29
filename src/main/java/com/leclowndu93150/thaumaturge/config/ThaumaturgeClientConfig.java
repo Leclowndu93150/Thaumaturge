@@ -10,6 +10,7 @@ public final class ThaumaturgeClientConfig {
     private static final ModConfigSpec.BooleanValue SHOW_ASPECTS_BY_DEFAULT;
     private static final ModConfigSpec.BooleanValue LARGE_TAG_TEXT;
     private static final ModConfigSpec.BooleanValue DIAL_BOTTOM;
+    private static final ModConfigSpec.BooleanValue BOOK_RETURN_BUTTON;
     // private static final ModConfigSpec.BooleanValue HIDE_RECIPES_IF_MISSING_RESEARCH;
 
     private static final ModConfigSpec.BooleanValue DONATOR_CAPE;
@@ -28,6 +29,10 @@ public final class ThaumaturgeClientConfig {
         DIAL_BOTTOM = builder.comment(
                         "When true, the caster vis dial renders at the bottom left of the screen instead of the top left.")
                 .define("hud.dial_bottom", false);
+
+        BOOK_RETURN_BUTTON = builder.comment(
+                        "When true, the Thaumonomicon uses a visible return button instead of right-click navigation. The button closes an open insert first, then returns to the research map.")
+                .define("book.use_return_button", false);
 
         DONATOR_CAPE = builder.comment(
                         "Donators only: shows your Thaumaturge cape. While it is on, every player on the server sees it.")
@@ -52,6 +57,10 @@ public final class ThaumaturgeClientConfig {
 
     public static boolean dialBottom() {
         return DIAL_BOTTOM.get();
+    }
+
+    public static boolean useBookReturnButton() {
+        return BOOK_RETURN_BUTTON.get();
     }
 
     /*public static boolean hideRecipesIfMissingResearch(){

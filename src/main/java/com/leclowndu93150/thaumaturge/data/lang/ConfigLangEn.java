@@ -26,6 +26,8 @@ final class ConfigLangEn {
             Map.entry("graphics.large_tag_text", "Large Aspect Numbers"),
             Map.entry("hud", "HUD"),
             Map.entry("hud.dial_bottom", "Vis Dial at Bottom"),
+            Map.entry("book", "Thaumonomicon"),
+            Map.entry("book.use_return_button", "Use Return Button"),
             Map.entry(ThaumaturgeClientConfig.DONATOR_CAPE_KEY, "Donator Cape"),
             Map.entry("world", "World"),
             Map.entry("world.wussMode", "Wuss Mode"),
