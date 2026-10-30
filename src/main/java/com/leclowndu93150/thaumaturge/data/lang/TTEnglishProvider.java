@@ -127,6 +127,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.recipe_type.arcane", "Arcane Workbench");
         add("gui.thaumaturge.recipe_type.arcane_shapeless", "Arcane Workbench (Shapeless)");
         add("gui.thaumaturge.recipe_type.crucible", "Crucible");
+        add("gui.thaumaturge.recipe_type.smithing", "Smithing Table");
         add("gui.thaumaturge.recipe_type.infusion", "Arcane Infusion");
         add("gui.thaumaturge.recipe_type.infusion_enchantment", "Infusion Enchantment");
         add("tooltip.thaumaturge.charge", "Vis: %s / %s");
