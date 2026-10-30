@@ -1,5 +1,8 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
+import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -14,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 
 final class ShowcaseBuilder {
@@ -23,6 +27,8 @@ final class ShowcaseBuilder {
     private static final int SIDE_MARGIN = 2;
     private static final int FRONT_MARGIN = 2;
     private static final int WALL_GAP = 3;
+    private static final int POD_LOG_HEIGHT = 3;
+    private static final int POD_COLUMN_SPACING = 2;
     private static final int WALL_BORDER = 1;
     private static final int MIN_CLEAR_HEIGHT = 6;
     private static final int LIGHT_SPACING = 6;
@@ -38,6 +44,7 @@ final class ShowcaseBuilder {
     private final List<Item> items;
     private final List<BlockState> supports;
     private final int width;
+    private final int podRow;
     private final int wallRow;
     private final int frameColumns;
     private final int frameRows;
@@ -54,7 +61,8 @@ final class ShowcaseBuilder {
                 TTBlocks.LOG_GREATWOOD.get().defaultBlockState());
         int blockRows = Mth.positiveCeilDiv(blocks.size(), BLOCK_COLUMNS);
         this.width = SIDE_MARGIN * 2 + (BLOCK_COLUMNS - 1) * BLOCK_SPACING + 1;
-        this.wallRow = FRONT_MARGIN + Math.max(0, blockRows - 1) * BLOCK_SPACING + WALL_GAP + 1;
+        this.podRow = FRONT_MARGIN + blockRows * BLOCK_SPACING;
+        this.wallRow = podRow + WALL_GAP + 1;
         this.frameColumns = width - WALL_BORDER * 2;
         this.frameRows = Mth.positiveCeilDiv(items.size(), frameColumns);
         this.clearHeight = Math.max(MIN_CLEAR_HEIGHT, frameRows + WALL_BORDER * 2);
@@ -86,6 +94,7 @@ final class ShowcaseBuilder {
         clearArea();
         placeLights();
         placeBlocks();
+        placeManaPodStages();
         buildWall();
         hangFrames();
     }
@@ -166,6 +175,21 @@ final class ShowcaseBuilder {
             frame.setItem(new ItemStack(items.get(i)), false);
             frame.setInvulnerable(true);
             level.addFreshEntity(frame);
+        }
+    }
+
+    private void placeManaPodStages() {
+        BlockState log = TTBlocks.LOG_GREATWOOD.get().defaultBlockState().setValue(BlockStateProperties.AXIS, right.getAxis());
+        int firstColumn = width / 2 - BlockEntityManaPod.MAX_AGE;
+        for (int age = 0; age <= BlockEntityManaPod.MAX_AGE; age++) {
+            BlockPos logPos = at(firstColumn + age * POD_COLUMN_SPACING, podRow, POD_LOG_HEIGHT);
+            set(logPos, log);
+            BlockPos podPos = logPos.below();
+            set(podPos, TTBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age));
+            if (level.getBlockEntity(podPos) instanceof BlockEntityManaPod pod) {
+                pod.setShowcase();
+                pod.setAspect(TTAspects.IGNIS);
+            }
         }
     }
 
