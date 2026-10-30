@@ -40,6 +40,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     private static final Codec<ResourceKey<IAspect>> ASPECT_KEY_CODEC = LegacyIds.ASPECT_KEY_CODEC;
 
     private @Nullable ResourceKey<IAspect> aspect;
+    private boolean showcase;
 
     public BlockEntityManaPod(BlockPos pos, BlockState state) {
         super(TTBlockEntities.MANA_POD.get(), pos, state);
@@ -62,6 +63,15 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
         if (getLevel() != null && !getLevel().isClientSide()) {
             getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
         }
+    }
+
+    public boolean isShowcase() {
+        return showcase;
+    }
+
+    public void setShowcase() {
+        showcase = true;
+        setChanged();
     }
 
     public void checkGrowth() {
@@ -187,12 +197,16 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
         if (aspect != null) {
             TTNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
         }
+        if (showcase) {
+            output.putBoolean("Showcase", true);
+        }
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         aspect = TTNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null);
+        showcase = input.getBoolean("Showcase");
     }
 
     @Override

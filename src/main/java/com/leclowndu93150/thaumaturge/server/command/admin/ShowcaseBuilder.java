@@ -1,9 +1,12 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
+import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
+import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.MultiblockMatcher;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.RotatedBlueprint;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -60,6 +63,7 @@ final class ShowcaseBuilder {
     private final int wallRow;
     private final int entityColumns;
     private final int entityStartRow;
+    private final int beanShowcaseRow;
     private final int frameColumns;
     private final int frameRows;
     private final int clearHeight;
@@ -87,7 +91,8 @@ final class ShowcaseBuilder {
                 TTBlocks.SMELTER_BASIC.get().defaultBlockState());
         int blockRows = Mth.positiveCeilDiv(blocks.size(), BLOCK_COLUMNS);
         this.width = SIDE_MARGIN * 2 + (BLOCK_COLUMNS - 1) * BLOCK_SPACING + 1;
-        this.entityStartRow = FRONT_MARGIN + Math.max(0, blockRows - 1) * BLOCK_SPACING + ENTITY_SPACING;
+        this.beanShowcaseRow = FRONT_MARGIN + Math.max(0, blockRows - 1) * BLOCK_SPACING + 2;
+        this.entityStartRow = beanShowcaseRow + ENTITY_SPACING;
         this.entityColumns = (width - SIDE_MARGIN * 2 - 1) / ENTITY_SPACING + 1;
         int entityRows = Mth.positiveCeilDiv(entities.size(), entityColumns);
         this.wallRow = entityStartRow + Math.max(0, entityRows - 1) * ENTITY_SPACING + WALL_GAP + 1;
@@ -136,6 +141,7 @@ final class ShowcaseBuilder {
         }
         placeLights();
         placeBlocks();
+        placeManaPodStages();
         placeEntities();
         buildWall();
         hangFrames();
@@ -223,6 +229,28 @@ final class ShowcaseBuilder {
                     set(pos, placed.setValue(BlockStateProperties.PERSISTENT, true));
                 }
             }
+        }
+    }
+
+    private void placeManaPodStages() {
+        int center = width / 2;
+        for (int age = 0; age <= BlockEntityManaPod.MAX_AGE; age++) {
+            BlockPos logPos = at(center + age * 2 - BlockEntityManaPod.MAX_AGE, beanShowcaseRow, 3);
+            set(
+                    logPos,
+                    TTBlocks.LOG_GREATWOOD
+                            .get()
+                            .defaultBlockState()
+                            .setValue(BlockStateProperties.AXIS, right.getAxis()));
+
+            BlockPos podPos = logPos.below();
+            BlockState podState = TTBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age);
+            set(podPos, podState);
+            if (!(level.getBlockEntity(podPos) instanceof BlockEntityManaPod pod)) {
+                throw new IllegalStateException("Cannot create Mana Pod showcase block entity");
+            }
+            pod.setShowcase();
+            pod.setAspect(TTAspects.IGNIS);
         }
     }
 

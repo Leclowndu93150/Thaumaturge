@@ -113,6 +113,9 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod && pod.isShowcase()) {
+            return level.getBlockState(pos.above()).is(BlockTags.LOGS);
+        }
         return canGrowAt(level, pos);
     }
 
@@ -143,7 +146,9 @@ public final class BlockManaPod extends BaseEntityBlock {
             level.destroyBlock(pos, true);
             return;
         }
-        if (random.nextInt(GROWTH_CHANCE) == 0 && level.getBlockEntity(pos) instanceof BlockEntityManaPod pod) {
+        if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod
+                && !pod.isShowcase()
+                && random.nextInt(GROWTH_CHANCE) == 0) {
             pod.checkGrowth();
         }
     }
