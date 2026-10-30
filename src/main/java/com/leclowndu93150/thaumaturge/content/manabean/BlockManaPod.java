@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.fml.ModList;
 import org.jspecify.annotations.Nullable;
@@ -41,15 +43,22 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     private static final int GROWTH_CHANCE = 30;
     private static final int MAX_HARDNESS_STEPS = 8;
+    public static final List<Integer> DYNAMIC_TREE_LIFT_PIXELS = List.of(0, 4, 5, 6, 8);
+    private static final VoxelShape SMALL_CROSS = Shapes.or(box(5, 10, 7.5, 11, 16, 8.5), box(7.5, 10, 5, 8.5, 16, 11));
+    private static final VoxelShape MATURE_CROSS =
+            Shapes.or(box(0, 10, 7.5, 16, 16, 8.5), box(7.5, 10, 0, 8.5, 16, 16));
+    private static final VoxelShape MATURE_POD = Shapes.or(
+            Shapes.or(MATURE_CROSS, box(4, 3.2, 4, 12, 11.2, 12)),
+            Shapes.or(box(5, 2.2, 5, 11, 4.2, 11), box(5, 10.2, 5, 11, 12.2, 11)));
     private static final VoxelShape[] SHAPES = {
-        box(4.0, 12.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 10.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 8.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 6.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 5.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 4.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 3.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 2.0, 4.0, 12.0, 16.0, 12.0)
+        Shapes.or(SMALL_CROSS, box(7, 12, 7, 9, 14, 9)),
+        Shapes.or(SMALL_CROSS, box(6, 6, 6, 10, 10, 10)),
+        MATURE_POD,
+        MATURE_POD,
+        MATURE_POD,
+        MATURE_POD,
+        MATURE_POD,
+        MATURE_POD
     };
 
     public BlockManaPod(Properties properties) {
@@ -69,7 +78,8 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES[state.getValue(AGE)];
+        return SHAPES[state.getValue(AGE)].move(
+                0, DYNAMIC_TREE_LIFT_PIXELS.get(state.getValue(DYNAMIC_TREE_LIFT)) / 16.0, 0);
     }
 
     @Override

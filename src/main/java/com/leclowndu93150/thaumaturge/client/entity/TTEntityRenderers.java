@@ -18,7 +18,6 @@ import com.leclowndu93150.thaumaturge.client.model.entity.FireBatModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.FocusMineModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.JarBrineModel;
-import com.leclowndu93150.thaumaturge.client.model.entity.ManaPodModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.MatrixCubeModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.PechModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
@@ -87,7 +86,6 @@ public final class TTEntityRenderers {
         event.registerLayerDefinition(TTModelLayers.ELDRITCH_GUARDIAN, EldritchGuardianModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.RESEARCH_TABLE, ResearchTableModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.DECONSTRUCTION_TABLE, DeconTableModel::createLayer);
-        event.registerLayerDefinition(TTModelLayers.MANA_POD, ManaPodModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.PRAETOR_ARMOR_HEAD, PraetorArmorModel::createHead);
         event.registerLayerDefinition(TTModelLayers.PRAETOR_ARMOR_CHEST, PraetorArmorModel::createChest);
         event.registerLayerDefinition(TTModelLayers.PRAETOR_ARMOR_LEGS, PraetorArmorModel::createLegs);

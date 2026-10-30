@@ -66,7 +66,6 @@ public final class TTModelLayers {
     public static final ModelLayerLocation RESEARCH_TABLE = new ModelLayerLocation(TTIds.rl("research_table"), "main");
     public static final ModelLayerLocation DECONSTRUCTION_TABLE =
             new ModelLayerLocation(TTIds.rl("deconstruction_table"), "main");
-    public static final ModelLayerLocation MANA_POD = new ModelLayerLocation(TTIds.rl("mana_pod"), "main");
 
     public static final ModelLayerLocation GOLEM = new ModelLayerLocation(TTIds.rl("golem"), "main");
 

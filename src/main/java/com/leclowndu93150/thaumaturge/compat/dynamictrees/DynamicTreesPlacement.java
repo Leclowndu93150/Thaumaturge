@@ -54,11 +54,7 @@ public final class DynamicTreesPlacement {
 
         WorldGenLevel level = context.level();
         BlockPos root = context.origin().below();
-        if (!species.isAcceptableSoilForWorldgen(level, root, level.getBlockState(root))) return false;
-        BlockPos.MutableBlockPos stem = context.origin().mutable();
-        for (int height = 0; height < species.getSignalEnergy(); height++, stem.move(Direction.UP)) {
-            if (level.isOutsideBuildHeight(stem) || !DynamicTreeFeature.validTreePos(level, stem)) return false;
-        }
+        if (!hasClearFootprint(level, species, root)) return false;
         int radius = greatwood ? 8 : 6;
         JoCode template = JoCodeRegistry.getRandomCode(species.getRegistryName(), radius, context.random());
         if (template == null) return false;
@@ -87,6 +83,27 @@ public final class DynamicTreesPlacement {
                     spot -> level.setBlock(spot, flower.defaultBlockState(), 2));
         }
         return placed;
+    }
+
+    private static boolean hasClearFootprint(WorldGenLevel level, Species species, BlockPos root) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                pos.setWithOffset(root, dx, 0, dz);
+                if (!species.isAcceptableSoilForWorldgen(level, pos, level.getBlockState(pos))) {
+                    return false;
+                }
+                for (int dy = 1; dy <= species.getSignalEnergy(); dy++) {
+                    pos.setWithOffset(root, dx, dy, dz);
+                    if (level.isOutsideBuildHeight(pos)
+                            || !level.getFluidState(pos).isEmpty()
+                            || !DynamicTreeFeature.validTreePos(level, pos)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /** Dynamic branch support is paired with a raised mana-pod model to close the visual gap. */
