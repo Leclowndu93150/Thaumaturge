@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
+import java.util.Arrays;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,22 +45,18 @@ public final class BlockManaPod extends BaseEntityBlock {
     private static final int GROWTH_CHANCE = 30;
     private static final int MAX_HARDNESS_STEPS = 8;
     public static final List<Integer> DYNAMIC_TREE_LIFT_PIXELS = List.of(0, 4, 5, 6, 8);
-    private static final VoxelShape SMALL_CROSS = Shapes.or(box(5, 10, 7.5, 11, 16, 8.5), box(7.5, 10, 5, 8.5, 16, 11));
-    private static final VoxelShape MATURE_CROSS =
-            Shapes.or(box(0, 10, 7.5, 16, 16, 8.5), box(7.5, 10, 0, 8.5, 16, 16));
-    private static final VoxelShape MATURE_POD = Shapes.or(
-            Shapes.or(MATURE_CROSS, box(4, 3.2, 4, 12, 11.2, 12)),
-            Shapes.or(box(5, 2.2, 5, 11, 4.2, 11), box(5, 10.2, 5, 11, 12.2, 11)));
-    private static final VoxelShape[] SHAPES = {
-        Shapes.or(SMALL_CROSS, box(7, 12, 7, 9, 14, 9)),
-        Shapes.or(SMALL_CROSS, box(6, 6, 6, 10, 10, 10)),
-        MATURE_POD,
-        MATURE_POD,
-        MATURE_POD,
-        MATURE_POD,
-        MATURE_POD,
-        MATURE_POD
-    };
+    private static final double PIXELS_PER_BLOCK = 16.0;
+    private static final VoxelShape SMALL_STEM = Shapes.or(box(5, 10, 7.5, 11, 16, 8.5), box(7.5, 10, 5, 8.5, 16, 11));
+    private static final VoxelShape MATURE_STEM = Shapes.or(box(0, 10, 7.5, 16, 16, 8.5), box(7.5, 10, 0, 8.5, 16, 16));
+    private static final VoxelShape SEED = box(7, 12, 7, 9, 14, 9);
+    private static final VoxelShape BUD = box(6, 6, 6, 10, 10, 10);
+    private static final VoxelShape POD =
+            Shapes.or(box(4, 3.2, 4, 12, 11.2, 12), box(5, 2.2, 5, 11, 4.2, 11), box(5, 10.2, 5, 11, 12.2, 11));
+    private static final VoxelShape MATURE = Shapes.or(MATURE_STEM, POD);
+    private static final VoxelShape[][] BODIES = lifted(new VoxelShape[] {SEED, BUD, POD, POD, POD, POD, POD, POD});
+    private static final VoxelShape[][] SHAPES = lifted(new VoxelShape[] {
+        Shapes.or(SMALL_STEM, SEED), Shapes.or(SMALL_STEM, BUD), MATURE, MATURE, MATURE, MATURE, MATURE, MATURE
+    });
 
     public BlockManaPod(Properties properties) {
         super(properties);
@@ -78,8 +75,24 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES[state.getValue(AGE)].move(
-                0, DYNAMIC_TREE_LIFT_PIXELS.get(state.getValue(DYNAMIC_TREE_LIFT)) / 16.0, 0);
+        return SHAPES[state.getValue(DYNAMIC_TREE_LIFT)][state.getValue(AGE)];
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(
+            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return BODIES[state.getValue(DYNAMIC_TREE_LIFT)][state.getValue(AGE)];
+    }
+
+    private static VoxelShape[][] lifted(VoxelShape[] shapes) {
+        VoxelShape[][] lifted = new VoxelShape[DYNAMIC_TREE_LIFT_PIXELS.size()][];
+        for (int lift = 0; lift < lifted.length; lift++) {
+            double offset = DYNAMIC_TREE_LIFT_PIXELS.get(lift) / PIXELS_PER_BLOCK;
+            lifted[lift] = Arrays.stream(shapes)
+                    .map(shape -> shape.move(0.0, offset, 0.0))
+                    .toArray(VoxelShape[]::new);
+        }
+        return lifted;
     }
 
     @Override

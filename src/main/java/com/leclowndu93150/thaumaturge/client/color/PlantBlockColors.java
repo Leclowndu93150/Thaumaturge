@@ -22,6 +22,8 @@ public final class PlantBlockColors {
     private static final float MANA_POD_HERBA_R = 0.14509805F;
     private static final float MANA_POD_HERBA_G = 0.6156863F;
     private static final float MANA_POD_HERBA_B = 0.45882353F;
+    private static final int MANA_POD_TINT_START_AGE = 2;
+    private static final float MANA_POD_TINT_SPAN = BlockEntityManaPod.MAX_AGE - MANA_POD_TINT_START_AGE;
 
     private PlantBlockColors() {}
 
@@ -51,7 +53,7 @@ public final class PlantBlockColors {
                     }
                     int color = aspect.value().color();
                     float progress = Mth.clamp(
-                            (state.getValue(BlockManaPod.AGE) - 2) / (float) (BlockEntityManaPod.MAX_AGE - 2),
+                            (state.getValue(BlockManaPod.AGE) - MANA_POD_TINT_START_AGE) / MANA_POD_TINT_SPAN,
                             0.0F,
                             1.0F);
                     return ARGB32.colorFromFloat(
