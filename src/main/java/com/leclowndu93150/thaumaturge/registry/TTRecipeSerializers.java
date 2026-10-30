@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockR
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.pearl.PrimordialPearlRepairRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapelessCraftingRecipe;
 import net.minecraft.core.registries.Registries;
@@ -62,6 +63,10 @@ public final class TTRecipeSerializers {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LabelFilterRecipe>> LABEL_FILTER =
             RECIPE_SERIALIZERS.register("label_filter", () -> LabelFilterRecipe.SERIALIZER);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PrimordialPearlRepairRecipe>>
+            PRIMORDIAL_PEARL_REPAIR = RECIPE_SERIALIZERS.register(
+                    "primordial_pearl_repair", () -> PrimordialPearlRepairRecipe.SERIALIZER);
 
     private TTRecipeSerializers() {}
 

@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockR
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.pearl.PrimordialPearlRepairRecipe;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.CrucibleRecipeBuilder;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.InfusionEnchantmentRecipeBuilder;
@@ -112,6 +113,8 @@ public final class TTRecipeProvider extends RecipeProvider {
         this.registries = provider;
         this.items = provider.lookupOrThrow(Registries.ITEM);
         buildDustTriggerRecipes();
+        SpecialRecipeBuilder.special(category -> PrimordialPearlRepairRecipe.INSTANCE)
+                .save(recipeOutput, "thaumaturge:primordial_pearl_repair");
         buildSalisMundusRecipe();
         buildArcaneWorkbenchRecipes();
         buildBannerRecipes();

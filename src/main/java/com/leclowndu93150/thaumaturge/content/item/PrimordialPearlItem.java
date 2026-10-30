@@ -33,6 +33,11 @@ public final class PrimordialPearlItem extends Item {
     }
 
     @Override
+    public boolean isRepairable(ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public Component getName(ItemStack stack) {
         int damage = stack.getDamageValue();
         String suffix;
