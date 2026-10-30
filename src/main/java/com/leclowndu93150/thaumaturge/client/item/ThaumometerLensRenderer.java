@@ -70,6 +70,12 @@ public final class ThaumometerLensRenderer {
     private static final float AMOUNT_GAP = 1.0F;
     private static final float TAG_ALPHA = 1.0F;
 
+    private static ClientLevel cachedLevel;
+    private static AbstractClientPlayer cachedPlayer;
+    private static long cachedGameTime = Long.MIN_VALUE;
+    private static @Nullable ScanTarget cachedTarget;
+    private static @Nullable Readout cachedReadout;
+
     private ThaumometerLensRenderer() {}
 
     public static void submitReadout(
@@ -95,13 +101,32 @@ public final class ThaumometerLensRenderer {
     }
 
     private static Readout readoutOf(ClientLevel level, AbstractClientPlayer player, ScanTarget target) {
+        long gameTime = level.getGameTime();
+        Readout cached = cachedReadout;
+        if (cachedLevel == level
+                && cachedPlayer == player
+                && cachedGameTime == gameTime
+                && target.equals(cachedTarget)
+                && cached != null) {
+            return cached;
+        }
+
+        Readout readout;
         if (target instanceof ScannedBlock(BlockPos pos)) {
-            return blockReadout(level, player, target, pos);
+            readout = blockReadout(level, player, target, pos);
+        } else if (target instanceof ScannedEntity(Entity entity)) {
+            readout = entityReadout(player, entity);
+        } else {
+            readout = Readout.plain(Component.literal(FALLBACK_NAME), AspectList.EMPTY);
         }
-        if (target instanceof ScannedEntity(Entity entity)) {
-            return entityReadout(player, entity);
-        }
-        return Readout.plain(Component.literal(FALLBACK_NAME), AspectList.EMPTY);
+
+        // RenderHand runs every frame; readout data only needs refreshing once per client tick.
+        cachedLevel = level;
+        cachedPlayer = player;
+        cachedGameTime = gameTime;
+        cachedTarget = target;
+        cachedReadout = readout;
+        return readout;
     }
 
     private static AspectList knownOrEmpty(
