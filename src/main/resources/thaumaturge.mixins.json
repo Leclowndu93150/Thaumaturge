@@ -29,6 +29,7 @@
     "client.renderer.rendertype.RenderSetupMixin",
     "client.renderer.entity.LivingEntityRenderStateMixin",
     "client.renderer.entity.LivingEntityRendererMixin",
+    "client.renderer.entity.layers.EquipmentLayerRendererMixin",
     "client.renderer.entity.layers.HumanoidArmorLayerAccessor",
     "client.renderer.item.ItemStackRenderStateAccessor",
     "iris.pathways.HandRendererMixin",

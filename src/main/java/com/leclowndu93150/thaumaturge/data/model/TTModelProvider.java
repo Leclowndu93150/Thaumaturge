@@ -396,12 +396,17 @@ public final class TTModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new FocusColorTint()));
     }
 
-    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name) {
+    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name, Identifier slotTrimPrefix) {
         Identifier itemModelId = TTIds.rl("item/" + name);
         Material baseTex = new Material(TTIds.rl("item/" + name));
         Material overTex = new Material(TTIds.rl("item/" + name + "_over"));
         ModelTemplates.TWO_LAYERED_ITEM.create(itemModelId, TextureMapping.layered(baseTex, overTex), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
+        itemModels.generateDynamicTrimmableItem(item, itemModelId, slotTrimPrefix, ROBES_UNDYED_ARGB);
+    }
+
+    private static void registerTrimmableArmor(ItemModelGenerators itemModels, Item item, Identifier slotTrimPrefix) {
+        Identifier itemModelId = ModelTemplates.FLAT_ITEM.create(item, TextureMapping.layer0(item), itemModels.modelOutput);
+        itemModels.generateDynamicTrimmableItem(item, itemModelId, slotTrimPrefix);
     }
 
     private static void registerMirrorItem(ItemModelGenerators itemModels, Item item, String frameTexture) {
@@ -884,17 +889,19 @@ public final class TTModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TTItems.PRIMAL_CRUSHER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(TTItems.TRAVELLER_BOOTS.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.THAUMOSTATIC_HARNESS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_BOOTS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_BOOTS.get(), ModelTemplates.FLAT_ITEM);
-        registerRobeItem(itemModels, TTItems.CLOTH_CHEST.get(), "cloth_chest");
-        registerRobeItem(itemModels, TTItems.CLOTH_LEGS.get(), "cloth_legs");
-        registerRobeItem(itemModels, TTItems.CLOTH_BOOTS.get(), "cloth_boots");
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_HELM.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_CHEST.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_LEGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        registerTrimmableArmor(itemModels, TTItems.VOID_HELM.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
+        registerTrimmableArmor(itemModels, TTItems.VOID_CHEST.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerTrimmableArmor(itemModels, TTItems.VOID_LEGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerTrimmableArmor(itemModels, TTItems.VOID_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        registerRobeItem(itemModels, TTItems.CLOTH_CHEST.get(), "cloth_chest", ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerRobeItem(itemModels, TTItems.CLOTH_LEGS.get(), "cloth_legs", ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerRobeItem(itemModels, TTItems.CLOTH_BOOTS.get(), "cloth_boots", ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        itemModels.generateFlatItem(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
         registerSpa(blockModels, itemModels);
         registerCasters(itemModels);
         registerGolemancy(blockModels, itemModels);

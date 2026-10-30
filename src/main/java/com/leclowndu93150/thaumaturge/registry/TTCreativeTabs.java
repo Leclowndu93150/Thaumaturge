@@ -516,6 +516,8 @@ public final class TTCreativeTabs {
                 output.accept(TTItems.LOOT_BAG_COMMON.get());
                 output.accept(TTItems.LOOT_BAG_UNCOMMON.get());
                 output.accept(TTItems.LOOT_BAG_RARE.get());
+                output.accept(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get());
+                output.accept(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get());
                 output.accept(TTItems.LOOT_URN_COMMON.get());
                 output.accept(TTItems.LOOT_URN_UNCOMMON.get());
                 output.accept(TTItems.LOOT_URN_RARE.get());

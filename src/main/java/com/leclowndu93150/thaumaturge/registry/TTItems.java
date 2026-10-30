@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimMaterials;
+import net.minecraft.world.item.SmithingTemplateItem;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItem;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -425,6 +426,11 @@ public final class TTItems {
     public static final DeferredItem<LootBagItem> LOOT_BAG_UNCOMMON = ITEMS.registerItem("loot_bag_uncommon",
             props -> new LootBagItem(TTLootTables.LOOT_BAG_UNCOMMON, props.stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<LootBagItem> LOOT_BAG_RARE = ITEMS.registerItem("loot_bag_rare", props -> new LootBagItem(TTLootTables.LOOT_BAG_RARE, props.stacksTo(16).rarity(Rarity.RARE)));
+
+    public static final DeferredItem<SmithingTemplateItem> ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.registerItem("arcane_armor_trim_smithing_template",
+            SmithingTemplateItem::createArmorTrimTemplate, props -> props.rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<SmithingTemplateItem> OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.registerItem("occult_armor_trim_smithing_template",
+            SmithingTemplateItem::createArmorTrimTemplate, props -> props.rarity(Rarity.RARE));
 
     public static final DeferredItem<BlockItem> LOOT_URN_COMMON = ITEMS.registerSimpleBlockItem(TTBlocks.LOOT_URN_COMMON);
     public static final DeferredItem<BlockItem> LOOT_URN_UNCOMMON = ITEMS.registerSimpleBlockItem(TTBlocks.LOOT_URN_UNCOMMON);

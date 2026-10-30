@@ -32,6 +32,9 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockFamilies;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
+import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
+import net.minecraft.world.item.equipment.trim.TrimPattern;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.util.List;
@@ -194,6 +197,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         buildElementalToolRecipes();
         buildEssentiaReservoirRecipe();
         buildTravellerBootsRecipe();
+        buildArmorTrimRecipes();
         buildThaumostaticHarnessRecipe();
         buildRechargePedestalRecipe();
         buildFocalManipulatorRecipe();
@@ -571,6 +575,18 @@ public final class TTRecipeProvider extends RecipeProvider {
         commit(rows(priced(arcaneShaped(new ItemStackTemplate(TTItems.RECHARGE_PEDESTAL), 100), cost(TTAspects.AER, 1), cost(TTAspects.ORDO, 1)), " R ", "DID", "SSS")
                 .define('R', TTItems.VIS_RESONATOR).define('D', Tags.Items.GEMS_DIAMOND).define('I', Tags.Items.INGOTS_GOLD).define('S', Tags.Items.STONES).gate(gate("recharge_pedestal"))
                 .unlockedBy("has", has(TTItems.VIS_RESONATOR)));
+    }
+
+    private void buildArmorTrimRecipes() {
+        armorTrim(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.ARCANE, TTBlocks.STONE_ARCANE.get());
+        armorTrim(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.OCCULT, TTBlocks.STONE_ANCIENT.get());
+    }
+
+    private void armorTrim(Item template, ResourceKey<TrimPattern> pattern, ItemLike duplicationBase) {
+        Holder.Reference<TrimPattern> trimPattern = registries.lookupOrThrow(Registries.TRIM_PATTERN).getOrThrow(pattern);
+        SmithingTrimRecipeBuilder.smithingTrim(Ingredient.of(template), tag(TTItemTags.TRIMMABLE_ARMOR), tag(ItemTags.TRIM_MATERIALS), trimPattern, RecipeCategory.MISC)
+                .unlocks("has_smithing_trim_template", has(template)).save(output, recipeId("smithing/" + pattern.identifier().getPath() + "_armor_trim"));
+        copySmithingTemplate(template, duplicationBase);
     }
 
     private void buildTravellerBootsRecipe() {

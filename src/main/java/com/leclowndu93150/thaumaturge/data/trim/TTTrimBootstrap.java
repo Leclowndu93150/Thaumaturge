@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.trim;
 
 import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimMaterials;
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -8,6 +9,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.equipment.trim.MaterialAssetGroup;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
+import net.minecraft.world.item.equipment.trim.TrimPattern;
+import net.minecraft.world.item.equipment.trim.TrimPatterns;
 
 public final class TTTrimBootstrap {
     private static final String MATERIAL_ASSET_PREFIX = "thaumaturge_";
@@ -21,6 +24,11 @@ public final class TTTrimBootstrap {
         material(context, TTTrimMaterials.BRASS, BRASS_COLOR);
         material(context, TTTrimMaterials.THAUMIUM, THAUMIUM_COLOR);
         material(context, TTTrimMaterials.VOID_METAL, VOID_METAL_COLOR);
+    }
+
+    public static void patterns(BootstrapContext<TrimPattern> context) {
+        TrimPatterns.register(context, TTTrimPatterns.ARCANE);
+        TrimPatterns.register(context, TTTrimPatterns.OCCULT);
     }
 
     private static void material(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> key, int color) {

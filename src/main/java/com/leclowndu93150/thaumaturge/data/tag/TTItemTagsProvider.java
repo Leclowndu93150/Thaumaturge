@@ -79,6 +79,15 @@ public final class TTItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(TTItemTags.RESEARCH_NOTES).add(TTItems.RESEARCH_NOTE.get(), TTItems.CELESTIAL_NOTES.get());
         tag(ItemTags.BOOKSHELF_BOOKS).add(TTItems.THAUMONOMICON.get(), TTItems.THAUMONOMICON_CHEAT.get(), TTItems.THAUMONOMICON_SHARING.get(), TTItems.THAUMONOMICON_LINKING.get(), TTItems.CURIO_RITES.get());
         tag(ItemTags.TRIM_MATERIALS).add(TTItems.INGOT_BRASS.get(), TTItems.INGOT_THAUMIUM.get(), TTItems.INGOT_VOID.get());
+        tag(ItemTags.TRIMMABLE_ARMOR).add(TTItems.THAUMIUM_HELM.get(), TTItems.THAUMIUM_CHEST.get(), TTItems.THAUMIUM_LEGS.get(), TTItems.THAUMIUM_BOOTS.get(), TTItems.VOID_HELM.get(),
+                TTItems.VOID_CHEST.get(), TTItems.VOID_LEGS.get(), TTItems.VOID_BOOTS.get(), TTItems.CLOTH_CHEST.get(), TTItems.CLOTH_LEGS.get(), TTItems.CLOTH_BOOTS.get(),
+                TTItems.GOGGLES_REVEALING.get(), TTItems.TRAVELLER_BOOTS.get());
+        tag(TTItemTags.MODELLED_TRIMMABLE_ARMOR).add(TTItems.CRIMSON_PLATE_HELM.get(), TTItems.CRIMSON_PLATE_CHEST.get(), TTItems.CRIMSON_PLATE_LEGS.get(), TTItems.CRIMSON_RANGER_HELM.get(),
+                TTItems.CRIMSON_RANGER_CHEST.get(), TTItems.CRIMSON_RANGER_LEGS.get(), TTItems.CRIMSON_CAPTAIN_HELM.get(), TTItems.CRIMSON_CAPTAIN_CHEST.get(), TTItems.CRIMSON_ROBE_HELM.get(),
+                TTItems.CRIMSON_ROBE_CHEST.get(), TTItems.CRIMSON_ROBE_LEGS.get(), TTItems.CRIMSON_BOOTS.get(), TTItems.CRIMSON_PRAETOR_HELM.get(), TTItems.CRIMSON_PRAETOR_CHEST.get(),
+                TTItems.CRIMSON_PRAETOR_LEGS.get(), TTItems.VOID_ROBE_HELM.get(), TTItems.VOID_ROBE_CHEST.get(), TTItems.VOID_ROBE_LEGS.get(), TTItems.FORTRESS_HELM.get(),
+                TTItems.FORTRESS_CHEST.get(), TTItems.FORTRESS_LEGS.get(), TTItems.THAUMOSTATIC_HARNESS.get());
+        tag(TTItemTags.TRIMMABLE_ARMOR).addTag(ItemTags.TRIMMABLE_ARMOR).addTag(TTItemTags.MODELLED_TRIMMABLE_ARMOR);
         tag(TTItemTags.LOOT_CONTAINERS).add(TTItems.LOOT_BAG_COMMON.get(), TTItems.LOOT_BAG_UNCOMMON.get(), TTItems.LOOT_BAG_RARE.get(), TTItems.LOOT_URN_COMMON.get(), TTItems.LOOT_URN_UNCOMMON.get(),
                 TTItems.LOOT_URN_RARE.get(), TTItems.LOOT_CRATE_COMMON.get(), TTItems.LOOT_CRATE_UNCOMMON.get(), TTItems.LOOT_CRATE_RARE.get());
 
