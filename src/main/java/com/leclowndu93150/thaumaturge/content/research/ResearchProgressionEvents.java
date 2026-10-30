@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -27,12 +28,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.biome.Biome;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jspecify.annotations.Nullable;
 
@@ -99,20 +103,36 @@ public final class ResearchProgressionEvents {
         ItemStack stack = event.getOriginalStack();
         recordCrafted(player, stack);
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
-        if (stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && !knowledge.knows(GOT_CRYSTALS)) {
-            knowledge.learn(GOT_CRYSTALS);
-            knowledge.markComplete(GOT_CRYSTALS);
-            knowledge.queueSync(player);
-            player.sendSystemMessage(Component.translatable("message.thaumaturge.discovery.crystals")
-                    .withStyle(ChatFormatting.DARK_PURPLE));
-            if (ThaumaturgeCommonConfig.NO_SLEEP.get() && !knowledge.knows(GOT_DREAM)) {
-                giveDreamJournal(player, knowledge);
-            }
+        if (stack.is(TTItems.ESSENTIA_CRYSTAL.get())) {
+            grantCrystalDiscovery(player, knowledge);
         }
         if (stack.is(TTItems.THAUMONOMICON.get()) && !knowledge.knows(GOT_THAUMONOMICON)) {
             knowledge.learn(GOT_THAUMONOMICON);
             knowledge.markComplete(GOT_THAUMONOMICON);
             knowledge.queueSync(player);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCrystalBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.isCanceled()
+                || !(event.getPlayer() instanceof ServerPlayer player)
+                || player instanceof FakePlayer
+                || !(event.getState().getBlock() instanceof BlockCrystal)) {
+            return;
+        }
+        grantCrystalDiscovery(player, (PlayerKnowledge) PlayerResearchAccess.of(player));
+    }
+
+    private static void grantCrystalDiscovery(ServerPlayer player, PlayerKnowledge knowledge) {
+        if (knowledge.knows(GOT_CRYSTALS)) return;
+        knowledge.learn(GOT_CRYSTALS);
+        knowledge.markComplete(GOT_CRYSTALS);
+        knowledge.queueSync(player);
+        player.sendSystemMessage(
+                Component.translatable("message.thaumaturge.discovery.crystals").withStyle(ChatFormatting.DARK_PURPLE));
+        if (ThaumaturgeCommonConfig.NO_SLEEP.get() && !knowledge.knows(GOT_DREAM)) {
+            giveDreamJournal(player, knowledge);
         }
     }
 
