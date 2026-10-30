@@ -72,6 +72,8 @@ public final class ThaumometerLensRenderer {
     private static final float AMOUNT_GAP = 1.0F;
     private static final float TAG_ALPHA = 1.0F;
 
+    private static @Nullable CachedReadout cached;
+
     private ThaumometerLensRenderer() {}
 
     public static void submitReadout(Minecraft minecraft, AbstractClientPlayer player, PoseStack poseStack, SubmitNodeCollector collector) {
@@ -96,6 +98,17 @@ public final class ThaumometerLensRenderer {
     }
 
     private static Readout readoutOf(ClientLevel level, AbstractClientPlayer player, ScanTarget target) {
+        long gameTime = level.getGameTime();
+        CachedReadout last = cached;
+        if (last != null && last.matches(level, player, target, gameTime)) {
+            return last.readout();
+        }
+        Readout readout = freshReadout(level, player, target);
+        cached = new CachedReadout(level, player, target, gameTime, readout);
+        return readout;
+    }
+
+    private static Readout freshReadout(ClientLevel level, AbstractClientPlayer player, ScanTarget target) {
         if (target instanceof ScannedBlock(BlockPos pos)) {
             return blockReadout(level, player, target, pos);
         }
@@ -224,6 +237,12 @@ public final class ThaumometerLensRenderer {
         poseStack.scale(scale, scale, scale);
         drawText(collector, poseStack, text, x, y, shadow, color);
         poseStack.popPose();
+    }
+
+    private record CachedReadout(ClientLevel level, AbstractClientPlayer player, ScanTarget target, long gameTime, Readout readout) {
+        boolean matches(ClientLevel currentLevel, AbstractClientPlayer currentPlayer, ScanTarget currentTarget, long currentGameTime) {
+            return level == currentLevel && player == currentPlayer && gameTime == currentGameTime && target.equals(currentTarget);
+        }
     }
 
     private record Readout(Component name, @Nullable Component nodeLine, AspectList aspects) {
