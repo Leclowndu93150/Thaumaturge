@@ -308,7 +308,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
                 } else {
                     fociHover.put(key, false);
                 }
-            } else {
+            } else if (CasterKeyHandler.radialLock) {
                 fociHover.put(key, false);
             }
             key = foci.higherKey(key);
