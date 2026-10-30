@@ -1,10 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
+import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,6 +20,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +28,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 public final class DustTriggerTagRecipe implements DustTrigger {
     public static final MapCodec<DustTriggerTagRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -85,6 +91,12 @@ public final class DustTriggerTagRecipe implements DustTrigger {
             Direction useFace) {
         if (!(input.level() instanceof ServerLevel serverLevel)) {
             return;
+        }
+        if (this.targetTag.equals(Tags.Blocks.BOOKSHELVES)
+                && this.result.is(TTItems.THAUMONOMICON.get())
+                && player instanceof ServerPlayer serverPlayer
+                && !(player instanceof FakePlayer)) {
+            ResearchManager.complete(serverPlayer, TTIds.rl("gotthaumonomicon"));
         }
         DustTriggerSwapQueue.enqueueDrop(serverLevel, input.pos(), input.clicked(), this.result.copy(), 50);
     }
