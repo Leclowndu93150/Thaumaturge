@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.core.Position;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
@@ -29,6 +30,11 @@ public final class SableLevelSpaces implements LevelSpaceProvider {
     @Override
     public SpaceFrame trackedFrame(Entity entity) {
         return frame(SableCompanion.INSTANCE.getTrackingSubLevel(entity));
+    }
+
+    @Override
+    public boolean isPlotChunk(Level level, ChunkPos pos) {
+        return SableCompanion.INSTANCE.isInPlotGrid(level, pos);
     }
 
     @Override

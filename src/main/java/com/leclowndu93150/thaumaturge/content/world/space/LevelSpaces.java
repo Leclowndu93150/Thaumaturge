@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.world.space;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -36,6 +37,10 @@ public final class LevelSpaces {
         return provider.framesTouching(level, worldBox);
     }
 
+    public static boolean isPlotChunk(Level level, ChunkPos pos) {
+        return provider.isPlotChunk(level, pos);
+    }
+
     public static boolean isDetached(Level level, BlockPos pos) {
         return !frameOf(level, pos).isWorld();
     }
@@ -46,6 +51,11 @@ public final class LevelSpaces {
 
     public static Vec3 worldCenter(Level level, BlockPos pos) {
         return frameOf(level, pos).toWorld(Vec3.atCenterOf(pos));
+    }
+
+    public static BlockPos worldBlock(Level level, BlockPos pos) {
+        SpaceFrame frame = frameOf(level, pos);
+        return frame.isWorld() ? pos : BlockPos.containing(frame.toWorld(Vec3.atCenterOf(pos)));
     }
 
     public static double distanceSqr(Level level, Vec3 a, Vec3 b) {

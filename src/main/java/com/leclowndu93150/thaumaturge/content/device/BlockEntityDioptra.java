@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.IAuraChunk;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -53,7 +54,7 @@ public final class BlockEntityDioptra extends AbstractSyncedBlockEntity {
     }
 
     private void sample(ServerLevel level, boolean showVis) {
-        ChunkPos home = new ChunkPos(worldPosition);
+        ChunkPos home = new ChunkPos(LevelSpaces.worldBlock(level, worldPosition));
         int centerBefore = steps[CENTER_INDEX];
         boolean changed = false;
         for (int row = 0; row < GRID_SIZE; row++) {

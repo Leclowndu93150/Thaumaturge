@@ -17,6 +17,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -523,7 +524,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT
                 && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION
-                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST);
+                && serverLevel
+                        .getBiome(LevelSpaces.worldBlock(serverLevel, pos))
+                        .is(TTBiomes.MAGICAL_FOREST);
         if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0 && nodeModifier != NodeModifier.BRIGHT) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;

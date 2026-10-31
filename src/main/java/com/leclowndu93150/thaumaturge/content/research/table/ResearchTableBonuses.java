@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
@@ -67,8 +68,9 @@ final class ResearchTableBonuses {
         if (light < DARKNESS_LIGHT_LIMIT && !level.canSeeSky(above) && roll(DARKNESS_ODDS)) {
             add(resolve(TTAspects.PERDITIO));
         }
+        int altitude = LevelSpaces.worldBlock(level, tablePos).getY();
         for (float factor : ALTITUDE_FACTORS) {
-            if (tablePos.getY() > level.getHeight() * factor && roll(ALTITUDE_ODDS)) {
+            if (altitude > level.getHeight() * factor && roll(ALTITUDE_ODDS)) {
                 add(resolve(TTAspects.AER));
             }
         }

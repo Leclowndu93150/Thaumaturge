@@ -4,6 +4,7 @@ import java.util.List;
 import net.minecraft.core.Position;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -25,6 +26,11 @@ enum WorldOnlySpaces implements LevelSpaceProvider {
     @Override
     public SpaceFrame trackedFrame(Entity entity) {
         return WorldFrame.INSTANCE;
+    }
+
+    @Override
+    public boolean isPlotChunk(Level level, ChunkPos pos) {
+        return false;
     }
 
     @Override
