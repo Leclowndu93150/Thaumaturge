@@ -14,6 +14,9 @@
       ],
       "palette_key": "trims/color_palettes/trim_palette",
       "permutations": {
+        "thaumaturge_brass": "thaumaturge:trims/color_palettes/thaumaturge_brass",
+        "thaumaturge_thaumium": "thaumaturge:trims/color_palettes/thaumaturge_thaumium",
+        "thaumaturge_void_metal": "thaumaturge:trims/color_palettes/thaumaturge_void_metal",
         "thaumaturge_essentia_crystal": "thaumaturge:trims/color_palettes/thaumaturge_essentia_crystal"
       }
     }

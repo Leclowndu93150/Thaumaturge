@@ -28,6 +28,7 @@ import com.leclowndu93150.thaumaturge.data.datamap.InfusionModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.SmelterStatsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.StrippingProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.TaintedProfileProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.TrimMaterialBonusProvider;
 import com.leclowndu93150.thaumaturge.data.infusion.InstabilityOutcomeBootstrap;
 import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthDefinitionBootstrap;
 import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthEncounterBootstrap;
@@ -132,6 +133,7 @@ public final class TTDataGenerators {
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
         event.createProvider(FocusTierProvider::new);
+        event.createProvider(TrimMaterialBonusProvider::new);
         event.createProvider(CrystalTrimMaterialProvider::new);
         event.createProvider(SmelterStatsProvider::new);
         event.createProvider(InfusionModifierProvider::new);

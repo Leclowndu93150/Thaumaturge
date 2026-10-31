@@ -9,10 +9,14 @@ import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 
 /**
- * Public addon API for essentia crystal armor trims. Every aspect can have its own trim material; an essentia
- * crystal of that aspect is the smithing ingredient.
+ * Public addon API for the armor trim materials Thaumaturge registers.
  *
- * <p>The link from aspect to material is the {@link #CRYSTAL_MATERIAL} data map on the aspect registry. An addon
+ * <p>The metal materials are {@link ResourceKey}s into the datapack trim material registry. Each one takes the
+ * matching ingot as its ingredient, and its palette is named {@code thaumaturge_<path>}. Gameplay bonuses for a
+ * material live in the {@code thaumaturge:trim_bonus} data map, see {@link TrimMaterialBonus}.
+ *
+ * <p>Every aspect can also have its own crystal trim material; an essentia crystal of that aspect is the smithing
+ * ingredient. The link from aspect to material is the {@link #CRYSTAL_MATERIAL} data map on the aspect registry. An addon
  * aspect gets a crystal trim by adding a trim material, with the essentia crystal as its ingredient, and a data map
  * entry for it.
  *
@@ -22,6 +26,10 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  * @since 1.1.0
  */
 public final class TTTrimMaterials {
+    public static final ResourceKey<TrimMaterial> BRASS = key("brass");
+    public static final ResourceKey<TrimMaterial> THAUMIUM = key("thaumium");
+    public static final ResourceKey<TrimMaterial> VOID_METAL = key("void_metal");
+
     /**
      * Asset name shared by every crystal trim material. Materials using it are tinted with their description color.
      */
@@ -45,5 +53,9 @@ public final class TTTrimMaterials {
      */
     public static ResourceKey<TrimMaterial> essentiaCrystal(ResourceKey<IAspect> aspect) {
         return ResourceKey.create(Registries.TRIM_MATERIAL, aspect.location().withPrefix("essentia_crystal/"));
+    }
+
+    private static ResourceKey<TrimMaterial> key(String path) {
+        return ResourceKey.create(Registries.TRIM_MATERIAL, TTIds.rl(path));
     }
 }
