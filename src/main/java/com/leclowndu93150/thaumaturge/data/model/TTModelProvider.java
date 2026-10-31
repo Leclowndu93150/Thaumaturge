@@ -30,6 +30,7 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalBlockstateGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalItemModelGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.EssentiaCrystalModelGenerator;
+import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -45,12 +46,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.BlockModelGenerators;
+import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.data.models.blockstates.Condition;
 import net.minecraft.data.models.blockstates.MultiPartGenerator;
@@ -65,6 +68,7 @@ import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -111,6 +115,9 @@ public final class TTModelProvider implements DataProvider {
     private static final ResourceLocation PROPERTY_CELESTIAL_BODY = TTIds.rl("celestial_body");
     private static final ResourceLocation PROPERTY_WAND_IS_STAFF = TTIds.rl("wand_is_staff");
     private static final ResourceLocation PROPERTY_DAMAGE = ResourceLocation.withDefaultNamespace("damage");
+    private static final List<ItemModelGenerators.TrimModelData> TRIM_MODELS = Stream.concat(
+                    TTTrimBootstrap.MATERIAL_MODELS.stream(), ItemModelGenerators.GENERATED_TRIM_MODELS.stream())
+            .toList();
 
     private final PackOutput.PathProvider blockStatePath;
     private final PackOutput.PathProvider modelPath;
@@ -448,17 +455,19 @@ public final class TTModelProvider implements DataProvider {
         handheldItem(TTItems.PRIMAL_CRUSHER.get());
         flatItem(TTItems.THAUMOSTATIC_HARNESS.get());
         flatItem(TTItems.TRAVELLER_BOOTS.get());
-        flatItem(TTItems.THAUMIUM_HELM.get());
-        flatItem(TTItems.THAUMIUM_CHEST.get());
-        flatItem(TTItems.THAUMIUM_LEGS.get());
-        flatItem(TTItems.THAUMIUM_BOOTS.get());
-        flatItem(TTItems.VOID_HELM.get());
-        flatItem(TTItems.VOID_CHEST.get());
-        flatItem(TTItems.VOID_LEGS.get());
-        flatItem(TTItems.VOID_BOOTS.get());
-        registerRobeItem(TTItems.CLOTH_CHEST.get(), "cloth_chest");
-        registerRobeItem(TTItems.CLOTH_LEGS.get(), "cloth_legs");
-        registerRobeItem(TTItems.CLOTH_BOOTS.get(), "cloth_boots");
+        registerTrimmableArmor(TTItems.THAUMIUM_HELM.get(), ArmorItem.Type.HELMET);
+        registerTrimmableArmor(TTItems.THAUMIUM_CHEST.get(), ArmorItem.Type.CHESTPLATE);
+        registerTrimmableArmor(TTItems.THAUMIUM_LEGS.get(), ArmorItem.Type.LEGGINGS);
+        registerTrimmableArmor(TTItems.THAUMIUM_BOOTS.get(), ArmorItem.Type.BOOTS);
+        registerTrimmableArmor(TTItems.VOID_HELM.get(), ArmorItem.Type.HELMET);
+        registerTrimmableArmor(TTItems.VOID_CHEST.get(), ArmorItem.Type.CHESTPLATE);
+        registerTrimmableArmor(TTItems.VOID_LEGS.get(), ArmorItem.Type.LEGGINGS);
+        registerTrimmableArmor(TTItems.VOID_BOOTS.get(), ArmorItem.Type.BOOTS);
+        registerRobeItem(TTItems.CLOTH_CHEST.get(), "cloth_chest", ArmorItem.Type.CHESTPLATE);
+        registerRobeItem(TTItems.CLOTH_LEGS.get(), "cloth_legs", ArmorItem.Type.LEGGINGS);
+        registerRobeItem(TTItems.CLOTH_BOOTS.get(), "cloth_boots", ArmorItem.Type.BOOTS);
+        flatItem(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get());
+        flatItem(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get());
         registerSpa();
         registerCasters();
         registerGolemancy();
@@ -1496,11 +1505,35 @@ public final class TTModelProvider implements DataProvider {
         flatItem(TTItems.FOCUS_3.get());
     }
 
-    private void registerRobeItem(Item item, String name) {
-        ModelTemplates.TWO_LAYERED_ITEM.create(
-                TTIds.rl("item/" + name),
-                TextureMapping.layered(TTIds.rl("item/" + name), TTIds.rl("item/" + name + "_over")),
-                modelOutput);
+    private void registerRobeItem(Item item, String name, ArmorItem.Type type) {
+        trimmableItem(item, List.of(TTIds.rl("item/" + name), TTIds.rl("item/" + name + "_over")), type);
+    }
+
+    private void registerTrimmableArmor(Item item, ArmorItem.Type type) {
+        trimmableItem(item, List.of(TextureMapping.getItemTexture(item)), type);
+    }
+
+    private void trimmableItem(Item item, List<ResourceLocation> textures, ArmorItem.Type type) {
+        ResourceLocation modelId = ModelLocationUtils.getModelLocation(item);
+        List<ItemOverride> overrides = new ArrayList<>();
+        for (ItemModelGenerators.TrimModelData trim : TRIM_MODELS) {
+            ResourceLocation trimModel = modelId.withSuffix("_" + trim.name() + "_trim");
+            List<ResourceLocation> trimTextures = new ArrayList<>(textures);
+            trimTextures.add(
+                    ResourceLocation.withDefaultNamespace("trims/items/" + type.getName() + "_trim_" + trim.name()));
+            modelOutput.accept(trimModel, new OverridesModel(Optional.empty(), layers(trimTextures), List.of()));
+            overrides.add(
+                    new ItemOverride(ItemModelGenerators.TRIM_TYPE_PREDICATE_ID, trim.itemModelIndex(), trimModel));
+        }
+        generatedOverridesItem(item, layers(textures), overrides);
+    }
+
+    private static Map<String, ResourceLocation> layers(List<ResourceLocation> textures) {
+        Map<String, ResourceLocation> layers = new LinkedHashMap<>();
+        for (int i = 0; i < textures.size(); i++) {
+            layers.put("layer" + i, textures.get(i));
+        }
+        return layers;
     }
 
     private void registerJarBrain() {

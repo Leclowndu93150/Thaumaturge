@@ -88,6 +88,8 @@ public final class TTItemTags {
     public static final TagKey<Item> SCRIBING_TOOLS = key("scribing_tools");
     public static final TagKey<Item> CURIOSITIES = key("curiosities");
     public static final TagKey<Item> TAINT_TOOLS = key("taint_tools");
+    public static final TagKey<Item> MODELLED_TRIMMABLE_ARMOR = key("modelled_trimmable_armor");
+    public static final TagKey<Item> TRIMMABLE_ARMOR = key("trimmable_armor");
     public static final TagKey<Item> DT_BRANCHES_THAT_BURN = dynamicTrees("branches_that_burn");
     public static final TagKey<Item> DT_SEEDS = dynamicTrees("seeds");
 

@@ -110,7 +110,8 @@ public final class TTDataGenerators {
                 .add(LabyrinthDefinition.REGISTRY_KEY, LabyrinthDefinitionBootstrap::bootstrap)
                 .add(ObeliskSite.REGISTRY_KEY, ObeliskSiteBootstrap::bootstrap)
                 .add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap)
-                .add(Registries.TRIM_MATERIAL, TTTrimBootstrap::materials);
+                .add(Registries.TRIM_MATERIAL, TTTrimBootstrap::materials)
+                .add(Registries.TRIM_PATTERN, TTTrimBootstrap::patterns);
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TTEnglishProvider::new);

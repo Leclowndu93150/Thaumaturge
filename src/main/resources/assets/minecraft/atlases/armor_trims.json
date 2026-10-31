@@ -46,6 +46,56 @@
         "thaumaturge_thaumium": "thaumaturge:trims/color_palettes/thaumaturge_thaumium",
         "thaumaturge_void_metal": "thaumaturge:trims/color_palettes/thaumaturge_void_metal"
       }
+    },
+    {
+      "type": "minecraft:paletted_permutations",
+      "textures": [
+        "thaumaturge:trims/models/armor/arcane",
+        "thaumaturge:trims/models/armor/arcane_leggings",
+        "thaumaturge:trims/models/armor/occult",
+        "thaumaturge:trims/models/armor/occult_leggings",
+        "thaumaturge:trims/entity/cultist_boots/arcane",
+        "thaumaturge:trims/entity/cultist_boots/occult",
+        "thaumaturge:trims/entity/cultist_captain/arcane",
+        "thaumaturge:trims/entity/cultist_captain/occult",
+        "thaumaturge:trims/entity/cultist_leader/arcane",
+        "thaumaturge:trims/entity/cultist_leader/occult",
+        "thaumaturge:trims/entity/cultist_plate/arcane",
+        "thaumaturge:trims/entity/cultist_plate/occult",
+        "thaumaturge:trims/entity/cultist_ranger/arcane",
+        "thaumaturge:trims/entity/cultist_ranger/occult",
+        "thaumaturge:trims/entity/cultist_robe/arcane",
+        "thaumaturge:trims/entity/cultist_robe/occult",
+        "thaumaturge:trims/entity/fortress/arcane",
+        "thaumaturge:trims/entity/fortress/occult",
+        "thaumaturge:trims/entity/goggles_revealing/arcane",
+        "thaumaturge:trims/entity/goggles_revealing/occult",
+        "thaumaturge:trims/entity/thaumostatic_harness/arcane",
+        "thaumaturge:trims/entity/thaumostatic_harness/occult",
+        "thaumaturge:trims/entity/traveller/arcane",
+        "thaumaturge:trims/entity/void_robe/arcane",
+        "thaumaturge:trims/entity/void_robe/occult"
+      ],
+      "palette_key": "trims/color_palettes/trim_palette",
+      "permutations": {
+        "quartz": "trims/color_palettes/quartz",
+        "iron": "trims/color_palettes/iron",
+        "gold": "trims/color_palettes/gold",
+        "diamond": "trims/color_palettes/diamond",
+        "netherite": "trims/color_palettes/netherite",
+        "redstone": "trims/color_palettes/redstone",
+        "copper": "trims/color_palettes/copper",
+        "emerald": "trims/color_palettes/emerald",
+        "lapis": "trims/color_palettes/lapis",
+        "amethyst": "trims/color_palettes/amethyst",
+        "iron_darker": "trims/color_palettes/iron_darker",
+        "gold_darker": "trims/color_palettes/gold_darker",
+        "diamond_darker": "trims/color_palettes/diamond_darker",
+        "netherite_darker": "trims/color_palettes/netherite_darker",
+        "thaumaturge_brass": "thaumaturge:trims/color_palettes/thaumaturge_brass",
+        "thaumaturge_thaumium": "thaumaturge:trims/color_palettes/thaumaturge_thaumium",
+        "thaumaturge_void_metal": "thaumaturge:trims/color_palettes/thaumaturge_void_metal"
+      }
     }
   ]
 }

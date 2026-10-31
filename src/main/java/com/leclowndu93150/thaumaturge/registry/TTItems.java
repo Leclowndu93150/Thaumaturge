@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
 import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
@@ -667,6 +668,13 @@ public final class TTItems {
             "loot_bag_rare",
             props -> new LootBagItem(
                     TTLootTables.LOOT_BAG_RARE, props.stacksTo(16).rarity(Rarity.RARE)));
+
+    public static final DeferredItem<SmithingTemplateItem> ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register(
+            "arcane_armor_trim_smithing_template",
+            () -> SmithingTemplateItem.createArmorTrimTemplate(TTTrimPatterns.ARCANE));
+    public static final DeferredItem<SmithingTemplateItem> OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE = ITEMS.register(
+            "occult_armor_trim_smithing_template",
+            () -> SmithingTemplateItem.createArmorTrimTemplate(TTTrimPatterns.OCCULT));
 
     public static final DeferredItem<BlockItem> LOOT_URN_COMMON =
             ITEMS.registerSimpleBlockItem(TTBlocks.LOOT_URN_COMMON);

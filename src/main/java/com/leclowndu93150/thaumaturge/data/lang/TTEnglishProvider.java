@@ -136,6 +136,10 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("trim_material.thaumaturge.brass", "Brass Material");
         add("trim_material.thaumaturge.thaumium", "Thaumium Material");
         add("trim_material.thaumaturge.void_metal", "Void Metal Material");
+        add("trim_pattern.thaumaturge.arcane", "Arcane Armor Trim");
+        add("trim_pattern.thaumaturge.occult", "Occult Armor Trim");
+        add("item.thaumaturge.arcane_armor_trim_smithing_template", "Arcane Armor Trim");
+        add("item.thaumaturge.occult_armor_trim_smithing_template", "Occult Armor Trim");
         add("gui.thaumaturge.recipe_type.infusion", "Arcane Infusion");
         add("gui.thaumaturge.recipe_type.infusion_enchantment", "Infusion Enchantment");
         add("tooltip.thaumaturge.charge", "Vis: %s / %s");

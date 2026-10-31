@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
@@ -54,6 +55,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +71,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.armortrim.TrimPattern;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -125,6 +128,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         buildRunicAugmentRecipe();
         buildElementalToolRecipes();
         buildTravellerBootsRecipe();
+        buildArmorTrimRecipes();
         buildRechargePedestalRecipe();
         buildFocalManipulatorRecipe();
         buildCrucibleRecipes();
@@ -1043,6 +1047,24 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .gate(gate("recharge_pedestal"))
                 .unlockedBy("has", has(TTItems.VIS_RESONATOR))
                 .save(output);
+    }
+
+    private void buildArmorTrimRecipes() {
+        armorTrim(
+                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.ARCANE, TTBlocks.STONE_ARCANE.get());
+        armorTrim(
+                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.OCCULT, TTBlocks.STONE_ANCIENT.get());
+    }
+
+    private void armorTrim(Item template, ResourceKey<TrimPattern> pattern, ItemLike duplicationBase) {
+        SmithingTrimRecipeBuilder.smithingTrim(
+                        Ingredient.of(template),
+                        Ingredient.of(TTItemTags.TRIMMABLE_ARMOR),
+                        Ingredient.of(ItemTags.TRIM_MATERIALS),
+                        RecipeCategory.MISC)
+                .unlocks("has_smithing_trim_template", has(template))
+                .save(output, TTIds.rl("smithing/" + pattern.location().getPath() + "_armor_trim"));
+        copySmithingTemplate(output, template, duplicationBase);
     }
 
     private void buildTravellerBootsRecipe() {

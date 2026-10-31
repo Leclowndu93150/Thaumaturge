@@ -27,6 +27,7 @@
     "client.particle.ParticleEngineMixin",
     "client.renderer.ItemInHandRendererInvoker",
     "client.renderer.entity.LivingEntityRendererMixin",
+    "client.renderer.entity.layers.HumanoidArmorLayerMixin",
     "client.iris.ExtendedShaderMixin",
     "client.iris.FallbackShaderMixin",
     "client.iris.HandRendererMixin",
