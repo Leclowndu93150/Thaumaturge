@@ -22,6 +22,7 @@ public final class StreamPathfinder {
     private static final double HEURISTIC_WEIGHT = 1.5;
     private static final double WALL_CLEARANCE = 0.4;
     private static final double MIN_PUSH_SQ = 1.0E-4;
+    private static final double SIGHT_LIMIT = 256.0;
 
     private StreamPathfinder() {}
 
@@ -193,6 +194,9 @@ public final class StreamPathfinder {
 
     public static boolean hasLineOfSight(BlockGetter level, Vec3 a, Vec3 b) {
         double distance = a.distanceTo(b);
+        if (distance > SIGHT_LIMIT) {
+            return false;
+        }
         int steps = Math.max(1, Mth.ceil(distance / LOS_STEP));
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 1; i < steps; i++) {

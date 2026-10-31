@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.equipment.RefiningResults;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.HashSet;
@@ -18,7 +19,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
@@ -28,8 +28,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jspecify.annotations.Nullable;
 
@@ -40,6 +38,7 @@ public final class ArcaneBoreCore {
     public static final float DIG_PITCH_STEP = 24.0F;
 
     private static final int RECHARGE_INTERVAL = 10;
+    private static final double SIGHT_LIMIT = 64.0;
     private static final float DIG_COST = 0.25F;
     private static final int DURABILITY_PER_BREAKS = 50;
     private static final long SOUND_DELAY_TICKS = 24;
@@ -335,23 +334,14 @@ public final class ArcaneBoreCore {
     }
 
     static boolean canSee(ArcaneBoreHost host, ServerLevel level, BlockPos target) {
-        Vec3 from = host.boreEye();
-        Vec3 to = Vec3.atCenterOf(target);
-        BlockPos bore = host.borePos();
-        CollisionContext context = host.boreCollisionContext();
-        Boolean clear = BlockGetter.traverseBlocks(
-                from,
-                to,
+        return BlockSightline.isClear(
                 level,
-                (getter, cell) -> {
-                    if (cell.equals(bore) || cell.equals(target)) {
-                        return null;
-                    }
-                    VoxelShape collision = getter.getBlockState(cell).getCollisionShape(getter, cell, context);
-                    return !collision.isEmpty() && collision.clip(from, to, cell) != null ? Boolean.FALSE : null;
-                },
-                getter -> Boolean.TRUE);
-        return Boolean.TRUE.equals(clear);
+                host.boreEye(),
+                Vec3.atCenterOf(target),
+                host.borePos(),
+                target,
+                SIGHT_LIMIT,
+                host.boreCollisionContext());
     }
 
     private BlockPos advanceSpiral(ArcaneBoreHost host, int digRadius) {

@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
@@ -22,6 +26,7 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
 
     public static final int PULSE_TICKS = 5;
     private static final int RELINK_INTERVAL = 40;
+    private static final double LINK_REACH = LINK_RANGE * Math.sqrt(3.0) + 1.0;
     private static final int PULSE_EVENT = 0;
     private static final long NO_PULSE = -1000L;
     private static final int WHITE = 0xFFFFFF;
@@ -128,10 +133,14 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
         if (parentPos == null || depth <= 0) {
             return false;
         }
+        if (LevelSpaces.distanceSqr(level, Vec3.atCenterOf(worldPosition), Vec3.atCenterOf(parentPos))
+                > LINK_REACH * LINK_REACH) {
+            return false;
+        }
         if (!level.isLoaded(parentPos)) {
             return true;
         }
-        if (!RelaySightline.isClear(level, worldPosition, parentPos)) {
+        if (!sightClear(level, parentPos)) {
             return false;
         }
         if (level.getBlockEntity(parentPos) instanceof BlockEntityVisRelay relay) {
@@ -160,14 +169,14 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
                                 && relay.depth < HOP_CAP
                                 && (relay.depth < bestRelayDepth
                                         || (relay.depth == bestRelayDepth && distance < bestRelayDistance))
-                                && RelaySightline.isClear(level, worldPosition, cursor)) {
+                                && sightClear(level, cursor)) {
                             bestRelayDepth = relay.depth;
                             bestRelayDistance = distance;
                             bestRelay = cursor.immutable();
                         }
                     } else if (usableSource(level, cursor) != null) {
                         double distance = cursor.distSqr(worldPosition);
-                        if (distance < bestSourceDistance && RelaySightline.isClear(level, worldPosition, cursor)) {
+                        if (distance < bestSourceDistance && sightClear(level, cursor)) {
                             bestSourceDistance = distance;
                             bestSource = cursor.immutable();
                         }
@@ -182,6 +191,17 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
             parentPos = bestRelay;
             depth = bestRelayDepth + 1;
         }
+    }
+
+    private boolean sightClear(Level level, BlockPos target) {
+        return BlockSightline.isClear(
+                level,
+                Vec3.atCenterOf(worldPosition),
+                Vec3.atCenterOf(target),
+                worldPosition,
+                target,
+                LINK_REACH,
+                CollisionContext.empty());
     }
 
     private static @Nullable IVisRelaySource usableSource(ServerLevel level, BlockPos pos) {
