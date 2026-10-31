@@ -50,7 +50,7 @@ public final class SealHandler {
     public static List<SealEntity> getSealsInRange(ServerLevel level, BlockPos source, int range) {
         List<SealEntity> out = new ArrayList<>();
         for (SealEntity seal : index(level).seals().values()) {
-            if (seal.pos().pos().distSqr(source) <= (double) range * range) {
+            if (LevelSpaces.distanceSqr(level, seal.pos().pos(), source) <= (double) range * range) {
                 out.add(seal);
             }
         }
@@ -62,8 +62,7 @@ public final class SealHandler {
     }
 
     public static boolean place(ServerLevel level, SealPos pos, ResourceLocation typeId, SealType type, Player player) {
-        return !LevelSpaces.isPlot(level, pos.pos())
-                && !index(level).seals().containsKey(pos)
+        return !index(level).seals().containsKey(pos)
                 && addSealEntity(level, SealEntity.place(pos, typeId, type, player.getUUID()));
     }
 
@@ -119,7 +118,7 @@ public final class SealHandler {
     public static void loadChunkSeals(ServerLevel level, LevelChunk chunk) {
         SealWorldIndex index = index(level);
         for (SealEntity seal : chunk.getData(TTAttachments.SEALS).seals()) {
-            index.seals().putIfAbsent(seal.pos(), seal);
+            index.seals().put(seal.pos(), seal);
         }
     }
 

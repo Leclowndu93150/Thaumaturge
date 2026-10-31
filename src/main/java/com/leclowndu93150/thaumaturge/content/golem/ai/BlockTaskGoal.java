@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.golem.ai;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.Comparator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,7 +57,7 @@ public final class BlockTaskGoal extends TaskGoal {
         super.tick();
         Task task = golem.getTask();
         if (task != null) {
-            Vec3 centre = Vec3.atCenterOf(task.pos());
+            Vec3 centre = LevelSpaces.worldCenter(golem.level(), task.pos());
             golem.getLookControl().setLookAt(centre.x, centre.y, centre.z, GAZE_TURN, golem.getMaxHeadXRot());
         }
     }
@@ -68,7 +69,8 @@ public final class BlockTaskGoal extends TaskGoal {
                         .getBlockState(side)
                         .getCollisionShape(golem.level(), side)
                         .isEmpty())
-                .min(Comparator.comparingDouble(side -> side.distToCenterSqr(golem.position())))
+                .min(Comparator.comparingDouble(
+                        side -> LevelSpaces.distanceSqr(golem.level(), Vec3.atCenterOf(side), golem.position())))
                 .orElse(null);
     }
 

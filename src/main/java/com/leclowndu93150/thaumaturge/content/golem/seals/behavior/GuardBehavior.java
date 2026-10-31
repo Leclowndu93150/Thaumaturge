@@ -5,8 +5,10 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
@@ -31,7 +33,8 @@ public final class GuardBehavior extends HuntBehavior {
         if (clock.advance() % SCAN_PERIOD != 0) {
             return;
         }
-        for (LivingEntity intruder : level.getEntitiesOfClass(LivingEntity.class, SealArea.bounds(seal))) {
+        for (LivingEntity intruder : LevelSpaces.entitiesIn(
+                level, LivingEntity.class, seal.pos().pos(), SealArea.bounds(seal), EntitySelector.NO_SPECTATORS)) {
             if (isQuarry(level, seal, intruder)) {
                 mark(level, seal, intruder);
             }

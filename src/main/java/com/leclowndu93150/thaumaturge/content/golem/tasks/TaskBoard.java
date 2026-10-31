@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.function.Predicate;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class TaskBoard {
@@ -84,7 +86,8 @@ public final class TaskBoard {
                         && (golemId == null || task.assignedGolem() == null || golemId.equals(task.assignedGolem())))
                 .filter(kind)
                 .sorted(Comparator.comparingDouble(
-                        task -> task.pos().distToCenterSqr(golem.position()) - task.priority() * PRIORITY_WEIGHT))
+                        task -> LevelSpaces.distanceSqr(golem.level(), Vec3.atCenterOf(task.pos()), golem.position())
+                                - task.priority() * PRIORITY_WEIGHT))
                 .toList();
     }
 

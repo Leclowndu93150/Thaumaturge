@@ -21,6 +21,7 @@ import com.leclowndu93150.thaumaturge.content.golem.accessory.GolemAccessoryStat
 import com.leclowndu93150.thaumaturge.content.golem.ai.BlockTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.EntityTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.ReturnHomeGoal;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntityDataSerializers;
@@ -369,7 +370,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         } else {
             int radius = (int) ((properties().hasTrait(TTGolemTraits.SCOUT.get()) ? HOME_RANGE_SCOUT : HOME_RANGE)
                     * accessoryRangeFactor());
-            restrictTo(hasRestriction() ? getRestrictCenter() : blockPosition(), radius);
+            restrictTo(hasRestriction() ? getRestrictCenter() : LevelSpaces.localBlock(this), radius);
         }
         rebuildBehaviours();
     }
@@ -508,7 +509,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             DifficultyInstance difficulty,
             MobSpawnType spawnReason,
             @Nullable SpawnGroupData spawnGroupData) {
-        restrictTo(blockPosition(), HOME_RANGE);
+        restrictTo(LevelSpaces.localBlock(this), HOME_RANGE);
         updateEntityAttributes();
         return spawnGroupData;
     }
@@ -548,7 +549,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         if (!level().isClientSide()) {
             if (firstRun) {
                 firstRun = false;
-                if (hasRestriction() && !blockPosition().equals(getRestrictCenter())) {
+                if (hasRestriction() && !LevelSpaces.localBlock(this).equals(getRestrictCenter())) {
                     goHome();
                 }
             }
@@ -625,11 +626,21 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         for (BlockPos spot = getRestrictCenter(); spot.getY() < level().getMaxBuildHeight(); spot = spot.above()) {
             Vec3 target = Vec3.atBottomCenterOf(spot);
             if (level().noCollision(this, getBoundingBox().move(target.subtract(origin)))) {
-                teleportTo(target.x, target.y, target.z);
+                Vec3 arrival = LevelSpaces.toWorld(level(), target);
+                teleportTo(arrival.x, arrival.y, arrival.z);
                 getNavigation().stop();
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean isWithinRestriction(BlockPos pos) {
+        if (!hasRestriction()) {
+            return true;
+        }
+        double radius = getRestrictRadius();
+        return LevelSpaces.distanceSqr(level(), getRestrictCenter(), pos) < radius * radius;
     }
 
     @Override
@@ -715,7 +726,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             sendActionBar(player, "message.thaumaturge.golem.stay");
             GolemEvent.STAY.broadcast(this);
             restrictTo(
-                    blockPosition(), properties().hasTrait(TTGolemTraits.SCOUT.get()) ? HOME_RANGE_SCOUT : HOME_RANGE);
+                    LevelSpaces.localBlock(this),
+                    properties().hasTrait(TTGolemTraits.SCOUT.get()) ? HOME_RANGE_SCOUT : HOME_RANGE);
         }
         updateEntityAttributes();
         player.swing(hand, true);

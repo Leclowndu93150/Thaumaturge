@@ -101,6 +101,9 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         golem.setRankXp(held.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0));
         EventHooks.finalizeMobSpawn(
                 golem, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
+        if (LevelSpaces.isDetached(serverLevel, pos)) {
+            golem.restrictTo(pos, (int) golem.getRestrictRadius());
+        }
         if (!serverLevel.addFreshEntity(golem)) {
             return InteractionResult.FAIL;
         }
