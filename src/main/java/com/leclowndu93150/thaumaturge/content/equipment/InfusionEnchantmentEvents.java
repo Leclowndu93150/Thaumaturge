@@ -55,6 +55,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
@@ -185,6 +186,18 @@ public final class InfusionEnchantmentEvents {
         tool.hurtAndBreak(TOOL_WEAR, player, EquipmentSlot.MAINHAND);
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onDroplessBreak(BreakBlockEvent event) {
+        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel level) || EnchantMining.isHarvestingFurthest()) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (!player.preventsBlockDrops()) {
+            return;
+        }
+        expand(level, player, player.getMainHandItem(), TARGETS.remove(player.getUUID()), event.getPos(), event.getState());
+    }
+
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getLevel().isClientSide()) {
@@ -247,7 +260,7 @@ public final class InfusionEnchantmentEvents {
         if (!sneaking && InfusionEnchantmentHelper.has(tool, InfusionEnchantment.LAMPLIGHT)) {
             placeGlimmer(level, event.getPos());
         }
-        expand(level, player, tool, target, event);
+        expand(level, player, tool, target, event.getPos(), event.getState());
     }
 
     private static int cappedLevel(ItemStack stack, InfusionEnchantment enchantment) {
@@ -350,11 +363,10 @@ public final class InfusionEnchantmentEvents {
         return Math.max(own, spill);
     }
 
-    private static void expand(ServerLevel level, Player player, ItemStack tool, @Nullable DestructiveTarget target, BlockDropsEvent event) {
-        if (EXPANDING.get() || player.isShiftKeyDown() || !InfusionEnchantmentHelper.has(tool, InfusionEnchantment.DESTRUCTIVE) || !tool.isCorrectToolForDrops(event.getState())) {
+    private static void expand(ServerLevel level, Player player, ItemStack tool, @Nullable DestructiveTarget target, BlockPos origin, BlockState state) {
+        if (EXPANDING.get() || player.isShiftKeyDown() || !InfusionEnchantmentHelper.has(tool, InfusionEnchantment.DESTRUCTIVE) || !tool.isCorrectToolForDrops(state)) {
             return;
         }
-        BlockPos origin = event.getPos();
         Direction.Axis axis = swingFace(level, origin, player, target).getAxis();
         EXPANDING.set(true);
         try {

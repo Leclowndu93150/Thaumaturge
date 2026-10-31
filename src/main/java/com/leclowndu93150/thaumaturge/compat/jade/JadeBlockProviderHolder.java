@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
+import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockEntityPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
@@ -59,6 +60,7 @@ final class JadeBlockProviderHolder {
             new JadeBlockHandler<>(BlockEntityVoidSiphon.class, JadeConfig.VOID_SIPHONS, JadeMachineDetails::siphon),
             new JadeBlockHandler<>(BlockEntityDeconstructionTable.class, JadeConfig.DECONSTRUCTION_TABLES, JadeMachineDetails::deconstruction),
             new JadeBlockHandler<>(BlockEntitySpa.class, JadeConfig.SPAS, JadeMachineDetails::spa),
+            new JadeBlockHandler<>(BlockEntityPotionSprayer.class, JadeConfig.POTION_SPRAYERS, JadeMachineDetails::potionSprayer),
             new JadeBlockHandler<>(BlockEntityEverfullUrn.class, JadeConfig.EVERFULL_URNS, (urn, data) -> data.hideFluid()),
             new JadeBlockHandler<>(BlockEntityInfernalFurnace.class, JadeConfig.INFERNAL_FURNACES, JadeMachineDetails::furnace),
             new JadeBlockHandler<>(BlockEntityFocalManipulator.class, JadeConfig.FOCAL_MANIPULATORS, JadeMachineDetails::focal));

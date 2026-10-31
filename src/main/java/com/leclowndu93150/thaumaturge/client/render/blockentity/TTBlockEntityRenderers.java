@@ -46,7 +46,6 @@ public final class TTBlockEntityRenderers {
         event.registerBlockEntityRenderer(TTBlockEntities.RESEARCH_TABLE.get(), ResearchTableRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.ARCANE_WORKBENCH.get(), WorkbenchWandRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.DECONSTRUCTION_TABLE.get(), DeconstructionTableRenderer::new);
-        event.registerBlockEntityRenderer(TTBlockEntities.MANA_POD.get(), ManaPodRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.ELDRITCH_CAP.get(),
                 context -> new EldritchCapRenderer<>(context, EldritchObeliskRenderer.CAP_MODEL, EldritchCapRenderer.CAP_TEXTURE, EldritchCapRenderer.CAP_TEXTURE_OUTER, cap -> 0));
         event.registerBlockEntityRenderer(TTBlockEntities.ELDRITCH_ALTAR.get(), context -> new EldritchCapRenderer<>(context, EldritchCapRenderer.ALTAR_MODEL, EldritchCapRenderer.ALTAR_TEXTURE,

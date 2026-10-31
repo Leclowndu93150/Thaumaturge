@@ -33,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -130,6 +131,10 @@ public final class ResearchProgressionEvents {
         picker.ifPresent(player -> recordCrafted(player, stack));
         picker.filter(player -> stack.is(TTItems.THAUMONOMICON)).ifPresent(player -> awardIfNew(player, knowledgeOf(player), BOOK));
         picker.filter(player -> stack.is(TTItems.ESSENTIA_CRYSTAL)).ifPresent(ResearchProgressionEvents::crystalPickup);
+    }
+
+    public static void bookOpened(Entity reader) {
+        serverPlayer(reader).filter(player -> !(player instanceof FakePlayer)).ifPresent(player -> awardIfNew(player, knowledgeOf(player), BOOK));
     }
 
     private static boolean dreamUnlocked(ServerPlayer player) {

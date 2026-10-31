@@ -20,6 +20,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,9 +62,9 @@ final class LocateSubcommand implements AdminSubcommand {
             return 0;
         }
         BlockPos pos = result.get();
-        String coordinatesText = pos.getX() + " " + pos.getY() + " " + pos.getZ();
-        Component coordinates = Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ()).withStyle(style -> style.withColor(ChatFormatting.GREEN).withUnderlined(true)
-                .withClickEvent(new ClickEvent.CopyToClipboard(coordinatesText)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("commands.thaumaturge.locate.node.copy"))));
+        String teleport = "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
+        Component coordinates = ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ())).withStyle(style -> style.withColor(ChatFormatting.GREEN)
+                .withClickEvent(new ClickEvent.SuggestCommand(teleport)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
         int distance = (int) Math.round(Math.sqrt(pos.distSqr(origin)));
         source.sendSuccess(() -> Component.translatable("commands.thaumaturge.locate.node.found", nodeTypeName(type), coordinates, distance), false);
         return Command.SINGLE_SUCCESS;

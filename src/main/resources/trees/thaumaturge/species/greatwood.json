@@ -9,6 +9,9 @@
   "preferred_climate": "temperate",
   "climate_tolerance": 0.5,
   "primitive_sapling": "thaumaturge:sapling_greatwood",
+  "features": [
+    "thaumaturge:tree_footprint"
+  ],
   "lang_overrides": {
     "seed": "Greatwood Seed"
   }

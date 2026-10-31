@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -158,7 +159,12 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     protected void loadAdditional(ValueInput input) {
         Optional<ResourceKey<IAspect>> stored = input.read(ASPECT_KEY, LegacyIds.ASPECT_KEY_CODEC);
         super.loadAdditional(input);
+        ResourceKey<IAspect> previous = aspectKey;
         aspectKey = stored.orElse(null);
+        Level current = level;
+        if (current != null && current.isClientSide() && !Objects.equals(previous, aspectKey)) {
+            current.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);
+        }
     }
 
     @Override

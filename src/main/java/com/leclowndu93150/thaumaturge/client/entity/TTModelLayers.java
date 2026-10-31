@@ -49,7 +49,6 @@ public final class TTModelLayers {
     public static final ModelLayerLocation ELDRITCH_GUARDIAN = new ModelLayerLocation(TTIds.rl("eldritch_guardian"), "main");
     public static final ModelLayerLocation RESEARCH_TABLE = new ModelLayerLocation(TTIds.rl("research_table"), "main");
     public static final ModelLayerLocation DECONSTRUCTION_TABLE = new ModelLayerLocation(TTIds.rl("deconstruction_table"), "main");
-    public static final ModelLayerLocation MANA_POD = new ModelLayerLocation(TTIds.rl("mana_pod"), "main");
 
     private TTModelLayers() {}
 }

@@ -37,13 +37,14 @@ final class JadeConfig {
     static final Identifier VOID_SIPHONS = option("void_siphons");
     static final Identifier DECONSTRUCTION_TABLES = option("deconstruction_tables");
     static final Identifier SPAS = option("spas");
+    static final Identifier POTION_SPRAYERS = option("potion_sprayers");
     static final Identifier EVERFULL_URNS = option("everfull_urns");
     static final Identifier INFERNAL_FURNACES = option("infernal_furnaces");
     static final Identifier FOCAL_MANIPULATORS = option("focal_manipulators");
 
     private static final List<Identifier> OPTIONS = List.of(NODES, GOLEMS, VIS_RELAYS, NODE_TRANSDUCERS, SMELTERS, ADVANCED_ALCHEMICAL_FURNACES, JARS, ALEMBICS, CRUCIBLES, TUBES, VALVES,
             RESTRICTED_TUBES, FILTER_TUBES, ONE_WAY_TUBES, BUFFERS, THAUMATORIUMS, CENTRIFUGES, CRYSTALIZERS, RESERVOIRS, BRAIN_JARS, FLUX_SCRUBBERS, GOLEM_BUILDERS, VOID_SIPHONS,
-            DECONSTRUCTION_TABLES, SPAS, EVERFULL_URNS, INFERNAL_FURNACES, FOCAL_MANIPULATORS);
+            DECONSTRUCTION_TABLES, SPAS, POTION_SPRAYERS, EVERFULL_URNS, INFERNAL_FURNACES, FOCAL_MANIPULATORS);
 
     private JadeConfig() {}
 

@@ -24,11 +24,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneWorkbench> {
     private static final Identifier WAND_SLOT_TEXTURE = TTIds.rl("textures/gui/workbench_wand_slot.png");
+    private static final float CRYSTAL_SPACING_DEGREES = 60.0F;
+    private static final float CRYSTAL_SPIN_TICKS_PER_RADIAN = 75.0F;
     private static final int WAND_SLOT_TEX_W = 38;
     private static final int WAND_SLOT_TEX_H = 34;
     private static final int WAND_SLOT_TEX_OFFSET_X = 10;
@@ -77,7 +80,7 @@ public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneW
                 int slotY = y + MenuArcaneWorkbench.CRYSTAL_Y[index];
                 graphics.pose().pushMatrix();
                 graphics.pose().translate(slotX + 7.5F, slotY + 8F);
-                graphics.pose().rotate(index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) % 360);
+                graphics.pose().rotate(index * CRYSTAL_SPACING_DEGREES * Mth.DEG_TO_RAD + minecraft.getCameraEntity().tickCount / CRYSTAL_SPIN_TICKS_PER_RADIAN);
                 graphics.pose().scale(0.5f);
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.ARCANE_WORKBENCH, -32, -32, 192, 0, 64, 64, 256, 256, ARGB.color(128, color));
                 graphics.pose().popMatrix();

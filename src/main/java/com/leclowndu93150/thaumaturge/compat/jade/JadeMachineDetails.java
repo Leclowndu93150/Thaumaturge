@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
@@ -7,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
+import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockEntityPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.SmelterGauge;
@@ -101,7 +103,23 @@ final class JadeMachineDetails {
     }
     static void spa(BlockEntitySpa machine, JadeDetailBuilder data) {
         data.detail("jade.thaumaturge.machine.fluid", machine.getTank().getAmountAsInt(0), BlockEntitySpa.TANK_CAPACITY);
+        if (!machine.getTank().getResource(0).isEmpty()) {
+            data.detail("jade.thaumaturge.spa.fluid", machine.getTank().getResource(0).getHoverName());
+        }
         data.summary(machine.getMix() ? "jade.thaumaturge.spa.mix" : "jade.thaumaturge.spa.water");
+    }
+    static void potionSprayer(BlockEntityPotionSprayer machine, JadeDetailBuilder data) {
+        data.summary("jade.thaumaturge.potion_sprayer.doses", machine.sprayShots(), BlockEntityPotionSprayer.MAX_CHARGES);
+        if (machine.getPotion().isEmpty()) {
+            return;
+        }
+        data.detail("jade.thaumaturge.potion_sprayer.potion", machine.getPotion().getHoverName());
+        if (machine.sprayShots() >= BlockEntityPotionSprayer.MAX_CHARGES) {
+            return;
+        }
+        for (AspectInstance entry : machine.essentiaNeeded().entries()) {
+            data.detail("jade.thaumaturge.essentia.fill", data.aspectName(entry.aspect()), machine.essentiaStored().amountOf(entry.aspect()), entry.amount());
+        }
     }
     static void furnace(BlockEntityInfernalFurnace machine, JadeDetailBuilder data) {
         data.title(Component.translatable("block.thaumaturge.infernal_furnace"));

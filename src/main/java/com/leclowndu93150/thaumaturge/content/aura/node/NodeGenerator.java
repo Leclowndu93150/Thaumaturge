@@ -131,7 +131,7 @@ public final class NodeGenerator {
 
     private static @Nullable BlockEntityNode placeNodeBlock(ServerLevelAccessor level, BlockPos pos) {
         BlockState current = level.getBlockState(pos);
-        boolean free = current.isAir() || current.canBeReplaced() || current.is(BlockTags.LEAVES);
+        boolean free = !current.getFluidState().is(FluidTags.WATER) && (current.isAir() || current.canBeReplaced() || current.is(BlockTags.LEAVES));
         if (!free || !level.setBlock(pos, TTBlocks.NODE.get().defaultBlockState(), Block.UPDATE_ALL)) {
             return null;
         }

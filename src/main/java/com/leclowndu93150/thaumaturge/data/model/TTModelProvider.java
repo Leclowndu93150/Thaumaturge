@@ -1586,18 +1586,112 @@ public final class TTModelProvider extends ModelProvider {
 
     private void registerManaPod(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Block pod = TTBlocks.MANA_POD.get();
-        MultiVariant[] stems = new MultiVariant[3];
-        for (int i = 0; i < 3; i++) {
-            Identifier model = ModelTemplates.CROSS.createWithSuffix(pod, "_stage" + i, TextureMapping.cross(TextureMapping.getBlockTexture(pod, "_stem_" + i)), blockModels.modelOutput);
-            stems[i] = new MultiVariant(WeightedList.of(new Variant(model)));
+        Identifier baseModel = ModelLocationUtils.getModelLocation(pod);
+        Identifier[][] models = new Identifier[3][BlockManaPod.DYNAMIC_TREE_LIFT_PIXELS.size()];
+        for (int stage = 0; stage < models.length; stage++) {
+            int modelStage = stage;
+            for (int lift = 0; lift < BlockManaPod.DYNAMIC_TREE_LIFT_PIXELS.size(); lift++) {
+                int pixels = BlockManaPod.DYNAMIC_TREE_LIFT_PIXELS.get(lift);
+                String suffix = "_stage" + stage + (lift == 0 ? "" : "_dynamic_tree_" + pixels);
+                models[stage][lift] = baseModel.withSuffix(suffix);
+                blockModels.modelOutput.accept(models[stage][lift], manaPodModel(modelStage, pixels));
+            }
         }
-        PropertyDispatch<MultiVariant> ages = PropertyDispatch.initial(BlockManaPod.AGE).select(0, stems[0]).select(1, stems[1]).select(2, stems[2]).select(3, stems[2]).select(4, stems[2])
-                .select(5, stems[2]).select(6, stems[2]).select(7, stems[2]);
+        PropertyDispatch.C2<MultiVariant, Integer, Integer> ages = PropertyDispatch.initial(BlockManaPod.AGE, BlockManaPod.DYNAMIC_TREE_LIFT);
+        for (int age = 0; age <= 7; age++) {
+            int stage = Math.min(age, 2);
+            for (int lift = 0; lift < BlockManaPod.DYNAMIC_TREE_LIFT_PIXELS.size(); lift++) {
+                ages.select(age, lift, new MultiVariant(WeightedList.of(new Variant(models[stage][lift]))));
+            }
+        }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(pod).with(ages));
 
         Identifier beanModel = ModelLocationUtils.getModelLocation(TTItems.MANA_BEAN.get());
         ModelTemplates.FLAT_ITEM.create(beanModel, TextureMapping.layer0(new Material(TTIds.rl("item/mana_bean"))), itemModels.modelOutput);
         itemModels.itemModelOutput.accept(TTItems.MANA_BEAN.get(), ItemModelUtils.tintedModel(beanModel, new CrystalAspectTint(0xFFFFFF)));
+    }
+
+    private static ModelInstance manaPodModel(int stage, int stemLift) {
+        return () -> {
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", BLOCK_PARENT.toString());
+            root.addProperty("render_type", "minecraft:cutout");
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", "thaumaturge:block/mana_pod_stem");
+            textures.addProperty("stem", "thaumaturge:block/mana_pod_stem");
+            textures.addProperty("bean", "thaumaturge:block/mana_pod_bean");
+            root.add("textures", textures);
+
+            JsonArray elements = new JsonArray();
+            if (stage < 2) {
+                elements.add(manaPodPlane(5, 10 + stemLift, 8, 11, 16 + stemLift, 8, "north", "south", 16, 16, 23, 23, stage == 0 ? 16 : 24, 16, stage == 0 ? 23 : 32, 23));
+                elements.add(manaPodPlane(8, 10 + stemLift, 5, 8, 16 + stemLift, 11, "west", "east", stage == 0 ? 16 : 24, 16, stage == 0 ? 23 : 31, 23, stage == 0 ? 16 : 24, 16, stage == 0 ? 23 : 32,
+                        23));
+            } else {
+                elements.add(manaPodPlane(0, 10 + stemLift, 8, 16, 16 + stemLift, 8, "north", "south", 0, 16, 16, 24, 0, 16, 16, 24));
+                elements.add(manaPodPlane(8, 10 + stemLift, 0, 8, 16 + stemLift, 16, "west", "east", 0, 16, 16, 24, 0, 16, 16, 24));
+            }
+            if (stage == 0) {
+                elements.add(manaPodBox(7, 12 + stemLift, 7, 9, 14 + stemLift, 9, 8, 4, 12, 8, 8, 0, 12, 4));
+            } else if (stage == 1) {
+                elements.add(manaPodBox(6, 6 + stemLift, 6, 10, 10 + stemLift, 10, 8, 4, 12, 8, 8, 0, 12, 4));
+            } else {
+                elements.add(manaPodBox(4, 3.2F + stemLift, 4, 12, 11.2F + stemLift, 12, 0, 8, 8, 16, 0, 0, 8, 8));
+                elements.add(manaPodBox(5, 2.2F + stemLift, 5, 11, 4.2F + stemLift, 11, 0, 14, 8, 16, 1, 1, 7, 7));
+                elements.add(manaPodBox(5, 10.2F + stemLift, 5, 11, 12.2F + stemLift, 11, 0, 8, 8, 10, 1, 1, 7, 7));
+            }
+            root.add("elements", elements);
+            return root;
+        };
+    }
+
+    private static JsonObject manaPodPlane(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, String faceA, String faceB, float au1, float av1, float au2, float av2, float bu1, float bv1, float bu2, float bv2) {
+        JsonObject plane = new JsonObject();
+        plane.add("from", manaPodCoords(fromX, fromY, fromZ));
+        plane.add("to", manaPodCoords(toX, toY, toZ));
+        plane.addProperty("shade", false);
+        JsonObject faces = new JsonObject();
+        faces.add(faceA, manaPodFace("#stem", au1, av1, au2, av2, false));
+        faces.add(faceB, manaPodFace("#stem", bu1, bv1, bu2, bv2, false));
+        plane.add("faces", faces);
+        return plane;
+    }
+
+    private static JsonObject manaPodBox(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, float sideU1, float sideV1, float sideU2, float sideV2, float capU1, float capV1, float capU2, float capV2) {
+        JsonObject box = new JsonObject();
+        box.add("from", manaPodCoords(fromX, fromY, fromZ));
+        box.add("to", manaPodCoords(toX, toY, toZ));
+        JsonObject faces = new JsonObject();
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            faces.add(direction.getSerializedName(), manaPodFace("#bean", sideU1, sideV1, sideU2, sideV2, true));
+        }
+        faces.add("up", manaPodFace("#bean", capU1, capV1, capU2, capV2, true));
+        faces.add("down", manaPodFace("#bean", capU1, capV1, capU2, capV2, true));
+        box.add("faces", faces);
+        return box;
+    }
+
+    private static JsonObject manaPodFace(String texture, float u1, float v1, float u2, float v2, boolean tint) {
+        JsonObject face = new JsonObject();
+        JsonArray uv = new JsonArray();
+        uv.add(u1 / 2);
+        uv.add(v1 / 2);
+        uv.add(u2 / 2);
+        uv.add(v2 / 2);
+        face.add("uv", uv);
+        face.addProperty("texture", texture);
+        if (tint) {
+            face.addProperty("tintindex", 0);
+        }
+        return face;
+    }
+
+    private static JsonArray manaPodCoords(float x, float y, float z) {
+        JsonArray coords = new JsonArray();
+        coords.add(x);
+        coords.add(y);
+        coords.add(z);
+        return coords;
     }
 
     private void pottedPlant(BlockModelGenerators blockModels, Block pot, Block plant) {

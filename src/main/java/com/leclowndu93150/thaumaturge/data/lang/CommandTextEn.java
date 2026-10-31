@@ -45,7 +45,6 @@ public final class CommandTextEn {
 
         add.accept("commands.thaumaturge.locate.node.invalid_type", "Unknown node type: %s");
         add.accept("commands.thaumaturge.locate.node.not_found", "No indexed %s node found beyond 10 blocks in this dimension. Nodes are indexed as chunks load.");
-        add.accept("commands.thaumaturge.locate.node.copy", "Click to copy coordinates");
         add.accept("commands.thaumaturge.locate.node.found", "Nearest indexed %s node is at %s (%s blocks away)");
 
         add.accept("commands.thaumaturge.build.infusion_altar.height", "The infusion altar does not fit inside the build height here");

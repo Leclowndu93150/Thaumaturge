@@ -1621,6 +1621,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         addJadeMode("void_siphons", "Void Siphons");
         addJadeMode("deconstruction_tables", "Deconstruction Tables");
         addJadeMode("spas", "Arcane Spas");
+        addJadeMode("potion_sprayers", "Potion Sprayers");
         addJadeMode("everfull_urns", "Everfull Urns");
         addJadeMode("infernal_furnaces", "Infernal Furnaces");
         addJadeMode("focal_manipulators", "Focal Manipulators");
@@ -1659,6 +1660,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.deconstruction.result", "Pending aspect: %s");
         add("jade.thaumaturge.spa.mix", "Mode: Mix bath salts");
         add("jade.thaumaturge.spa.water", "Mode: Dispense fluid");
+        add("jade.thaumaturge.spa.fluid", "Fluid: %s");
+        add("jade.thaumaturge.potion_sprayer.doses", "Stored doses: %s / %s");
+        add("jade.thaumaturge.potion_sprayer.potion", "Potion: %s");
         add("jade.thaumaturge.focal.vis", "Vis remaining: %s");
         add("jade.thaumaturge.focal.focus", "Focus: %s");
         add("jade.thaumaturge.focal.focus_inserted", "Focus inserted");

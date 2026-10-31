@@ -10,6 +10,7 @@
   "climate_tolerance": 0.45,
   "primitive_sapling": "thaumaturge:sapling_silverwood",
   "features": [
+    "thaumaturge:tree_footprint",
     "thaumaturge:shimmerleaf"
   ],
   "lang_overrides": {

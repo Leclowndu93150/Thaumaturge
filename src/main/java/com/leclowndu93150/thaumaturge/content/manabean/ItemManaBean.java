@@ -99,7 +99,7 @@ public final class ItemManaBean extends Item {
         }
         ItemStack stack = context.getItemInHand();
         Holder<IAspect> aspect = aspectOf(stack);
-        level.setBlock(below, TTBlocks.MANA_POD.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(below, BlockManaPod.placementState(level, below), Block.UPDATE_ALL);
         if (aspect != null && level.getBlockEntity(below) instanceof BlockEntityManaPod pod) {
             pod.setAspect(aspect.unwrapKey().orElse(null));
         }

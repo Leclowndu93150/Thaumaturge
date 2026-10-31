@@ -98,7 +98,7 @@ public final class TTBiomes {
         BiomeDefaultFeatures.addDefaultSoftDisks(generation);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.TREES_MAGIC_FOREST);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MAGIC_FOREST_FLORA);
-        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MANA_PODS);
+        generation.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TTPlacedFeatures.MANA_PODS);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_WATERLILY);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation, false);
 
@@ -124,7 +124,7 @@ public final class TTBiomes {
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MAGICAL_CAVE_FLORA);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MAGICAL_CAVE_VISHROOMS);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MAGICAL_CAVE_SHIMMERLEAFS);
-        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TTPlacedFeatures.MAGICAL_CAVE_MANA_PODS);
+        generation.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TTPlacedFeatures.MAGICAL_CAVE_MANA_PODS);
         generation.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TTPlacedFeatures.MAGICAL_CAVE_CRYSTALS);
         generation.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TTPlacedFeatures.MAGICAL_CAVE_NODES);
 
