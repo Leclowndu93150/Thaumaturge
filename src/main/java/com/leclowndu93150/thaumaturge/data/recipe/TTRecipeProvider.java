@@ -663,18 +663,32 @@ public final class TTRecipeProvider extends RecipeProvider {
                 TTItems.VOID_SPEAR.get());
         armorRecipes(TTItemTags.INGOTS_THAUMIUM, TTItems.THAUMIUM_HELM.get(), TTItems.THAUMIUM_CHEST.get(), TTItems.THAUMIUM_LEGS.get(), TTItems.THAUMIUM_BOOTS.get());
         armorRecipes(TTItemTags.INGOTS_VOID_METAL, TTItems.VOID_HELM.get(), TTItems.VOID_CHEST.get(), TTItems.VOID_LEGS.get(), TTItems.VOID_BOOTS.get());
-        robeDyeRecipe(TTItems.CLOTH_CHEST.get());
-        robeDyeRecipe(TTItems.CLOTH_LEGS.get());
-        robeDyeRecipe(TTItems.CLOTH_BOOTS.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_HELM.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_CHEST.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_LEGS.get());
+        dyeRecipe(TTItems.CLOTH_CHEST.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CLOTH_LEGS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CLOTH_BOOTS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_HELM.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_CHEST.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_LEGS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_CAPTAIN_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_CAPTAIN_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_LEGS.get(), CRIMSON_DYE_GROUP);
     }
 
-    private void robeDyeRecipe(Item target) {
+    private void dyeRecipe(Item target, String group) {
         CustomCraftingRecipeBuilder
                 .customCrafting(RecipeCategory.MISC, (commonInfo, bookInfo) -> new DyeRecipe(commonInfo, bookInfo, single(target), tag(ItemTags.DYES), new ItemStackTemplate(target)))
-                .unlockedBy(getHasName(target), has(target)).group("cloth_robes").save(output, TTIds.MODID + ":" + BuiltInRegistries.ITEM.getKey(target).getPath() + "_dyed");
+                .unlockedBy(getHasName(target), has(target)).group(group).save(output, TTIds.MODID + ":" + BuiltInRegistries.ITEM.getKey(target).getPath() + "_dyed");
     }
 
     private void toolRecipes(TagKey<Item> ingot, Item... tools) {
@@ -1276,6 +1290,8 @@ public final class TTRecipeProvider extends RecipeProvider {
     private static final TagKey<Item> NUGGETS_SILVER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "nuggets/silver"));
     private static final float AMBER_FROM_RESIN_XP = 0.2F;
     private static final String NITOR_DYE_GROUP = TTIds.rl("nitor_dye").toString();
+    private static final String ROBE_DYE_GROUP = "cloth_robes";
+    private static final String CRIMSON_DYE_GROUP = "crimson_armor";
     private static final int AMBER_FROM_RESIN_TIME = 100;
     private static final int WAND_CAP_GOLD_VIS = 9;
     private static final int WAND_CAP_COPPER_VIS = 6;
