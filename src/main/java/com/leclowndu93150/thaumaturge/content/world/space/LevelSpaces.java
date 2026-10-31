@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.space;
 
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -60,6 +61,25 @@ public final class LevelSpaces {
 
     public static double distanceSqr(Level level, Vec3 a, Vec3 b) {
         return toWorld(level, a).distanceToSqr(toWorld(level, b));
+    }
+
+    public static <T extends Entity> List<T> entitiesIn(
+            Level level, Class<T> type, BlockPos anchor, AABB local, Predicate<? super T> filter) {
+        SpaceFrame frame = frameOf(level, anchor);
+        if (frame.isWorld()) {
+            return level.getEntitiesOfClass(type, local, filter);
+        }
+        return level.getEntitiesOfClass(
+                type,
+                worldBox(level, anchor, local),
+                entity -> filter.test(entity) && insideLocal(frame, local, entity));
+    }
+
+    private static boolean insideLocal(SpaceFrame frame, AABB local, Entity entity) {
+        double halfWidth = entity.getBbWidth() / 2.0;
+        double halfHeight = entity.getBbHeight() / 2.0;
+        return local.inflate(halfWidth, halfHeight, halfWidth)
+                .contains(frame.toLocal(entity.getBoundingBox().getCenter()));
     }
 
     public static AABB worldBox(Level level, BlockPos anchor, AABB local) {

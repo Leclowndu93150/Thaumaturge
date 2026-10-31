@@ -21,6 +21,14 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         tag(TTEntityTags.TAINT_CONVERSION_IMMUNE);
+        tag(TTEntityTags.SABLE_RETAIN_IN_SUB_LEVEL)
+                .add(key(TTEntities.TAINT_SEED.get()))
+                .add(key(TTEntities.TAINT_SEED_PRIME.get()))
+                .add(key(TTEntities.TAINT_SPORE.get()))
+                .add(key(TTEntities.TAINT_SPORE_SWARMER.get()))
+                .add(key(TTEntities.TAINTACLE.get()))
+                .add(key(TTEntities.TAINTACLE_SMALL.get()))
+                .add(key(TTEntities.TAINTACLE_GIANT.get()));
         tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
                 .add(key(TTEntities.CULTIST_LEADER.get()))
                 .add(key(TTEntities.CULTIST_PORTAL_GREATER.get()))

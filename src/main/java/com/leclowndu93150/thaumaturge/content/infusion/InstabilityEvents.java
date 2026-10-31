@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityContext;
 import com.leclowndu93150.thaumaturge.content.infusion.instability.InstabilityOutcome;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -33,8 +34,9 @@ public final class InstabilityEvents {
     }
 
     private static void grantInstabilityResearch(ServerLevel level, BlockPos matrixPos) {
-        for (ServerPlayer player :
-                level.getEntitiesOfClass(ServerPlayer.class, new AABB(matrixPos).inflate(RESEARCH_RANGE))) {
+        for (ServerPlayer player : level.getEntitiesOfClass(
+                ServerPlayer.class,
+                LevelSpaces.worldBox(level, matrixPos, new AABB(matrixPos).inflate(RESEARCH_RANGE)))) {
             if (!PlayerResearchAccess.of(player).knows(INSTABILITY_RESEARCH)
                     && ResearchManager.complete(player, INSTABILITY_RESEARCH)) {
                 player.connection.send(new ClientboundSetActionBarTextPacket(

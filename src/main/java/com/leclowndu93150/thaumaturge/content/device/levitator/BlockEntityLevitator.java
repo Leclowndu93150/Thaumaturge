@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
@@ -78,13 +79,14 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
                         facing.getStepX() * (double) clearance,
                         facing.getStepY() * (double) clearance,
                         facing.getStepZ() * (double) clearance);
-        List<Entity> riders = level.getEntitiesOfClass(Entity.class, beam, BlockEntityLevitator::isCarried);
+        List<Entity> riders = LevelSpaces.entitiesIn(level, Entity.class, pos, beam, BlockEntityLevitator::isCarried);
+        Vec3 thrust = LevelSpaces.frameOf(level, pos).directionToWorld(Vec3.atLowerCornerOf(facing.getNormal()));
         int carried = 0;
         for (Entity rider : riders) {
             if (charge <= 0) {
                 break;
             }
-            push(rider, facing);
+            push(rider, facing, thrust);
             charge -= reach.visCost();
             carried++;
             if (level.isClientSide()) {
@@ -109,6 +111,10 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     }
 
     static void push(Entity rider, Direction facing) {
+        push(rider, facing, Vec3.atLowerCornerOf(facing.getNormal()));
+    }
+
+    private static void push(Entity rider, Direction facing, Vec3 thrust) {
         Vec3 motion = rider.getDeltaMovement();
         double x = motion.x;
         double y = motion.y;
@@ -116,9 +122,9 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         if (facing == Direction.UP && rider.isShiftKeyDown()) {
             y = y < 0.0 ? y * HOVER_DAMPING : y;
         } else {
-            x = Math.clamp(x + facing.getStepX() * THRUST, -SPEED_CAP, SPEED_CAP);
-            y = Math.clamp(y + facing.getStepY() * THRUST, -SPEED_CAP, SPEED_CAP);
-            z = Math.clamp(z + facing.getStepZ() * THRUST, -SPEED_CAP, SPEED_CAP);
+            x = Math.clamp(x + thrust.x * THRUST, -SPEED_CAP, SPEED_CAP);
+            y = Math.clamp(y + thrust.y * THRUST, -SPEED_CAP, SPEED_CAP);
+            z = Math.clamp(z + thrust.z * THRUST, -SPEED_CAP, SPEED_CAP);
             if (facing.getAxis() != Direction.Axis.Y && !rider.onGround()) {
                 y = (y < 0.0 ? y * HOVER_DAMPING : y) + LIFT;
             }

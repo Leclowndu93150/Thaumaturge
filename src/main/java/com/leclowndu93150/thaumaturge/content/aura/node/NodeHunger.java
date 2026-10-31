@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ final class NodeHunger {
             pulled.clear();
             cachedLevel = level;
         }
-        Vec3 centre = Vec3.atCenterOf(pos);
+        Vec3 centre = LevelSpaces.worldCenter(level, pos);
         double itemReach = eatRange(node.getNodeModifier()) + ITEM_RANGE_PADDING;
         if (counter % PULL_REFRESH_INTERVAL == 0) {
             gather(level, pos, Math.max(itemReach, GLOBAL_PULL_RANGE));
@@ -132,7 +133,8 @@ final class NodeHunger {
 
     private void gather(ServerLevel level, BlockPos pos, double reach) {
         pulled.clear();
-        pulled.addAll(level.getEntitiesOfClass(Entity.class, new AABB(pos).inflate(reach), NodeHunger::isPullable));
+        pulled.addAll(level.getEntitiesOfClass(
+                Entity.class, LevelSpaces.worldBox(level, pos, new AABB(pos).inflate(reach)), NodeHunger::isPullable));
     }
 
     private static void drag(Entity entity, Vec3 toCentre, double distance, double closeness) {

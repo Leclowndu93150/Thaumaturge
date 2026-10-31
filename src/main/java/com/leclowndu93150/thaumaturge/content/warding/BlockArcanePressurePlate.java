@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -46,7 +47,7 @@ public final class BlockArcanePressurePlate extends PressurePlateBlock {
     protected int getSignalStrength(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel server)) return 0;
         int mode = level.getBlockState(pos).getValue(MODE);
-        for (Entity entity : level.getEntities(null, TOUCH_AABB.move(pos))) {
+        for (Entity entity : level.getEntities(null, LevelSpaces.worldBox(level, pos, TOUCH_AABB.move(pos)))) {
             if (mode == 0
                     || (entity instanceof Player player && (mode == 1) == ArcaneAccess.canAccess(server, pos, player)))
                 return 15;

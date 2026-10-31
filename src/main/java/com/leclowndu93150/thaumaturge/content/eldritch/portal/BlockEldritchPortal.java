@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -52,8 +53,8 @@ public final class BlockEldritchPortal extends BaseEntityBlock implements Portal
     }
 
     private void touchNearby(ServerLevel level, BlockPos pos, BlockEntityEldritchPortal portal) {
-        for (ServerPlayer player :
-                level.getEntitiesOfClass(ServerPlayer.class, portal.reach(), EntitySelector.NO_SPECTATORS)) {
+        for (ServerPlayer player : level.getEntitiesOfClass(
+                ServerPlayer.class, LevelSpaces.worldBox(level, pos, portal.reach()), EntitySelector.NO_SPECTATORS)) {
             if (!player.isPassenger() && !player.isVehicle() && LabyrinthTransit.touch(level, player, portal.link())) {
                 player.setAsInsidePortal(this, pos);
             }

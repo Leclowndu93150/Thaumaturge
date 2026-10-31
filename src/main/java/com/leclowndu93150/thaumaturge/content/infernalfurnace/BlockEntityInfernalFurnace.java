@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -300,7 +301,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
     }
 
     private void pruneEjected(ServerLevel serverLevel) {
-        AABB furnaceBounds = new AABB(worldPosition);
+        AABB furnaceBounds = LevelSpaces.worldBox(serverLevel, worldPosition, new AABB(worldPosition));
         ejected.removeIf(uuid -> {
             Entity entity = serverLevel.getEntity(uuid);
             return entity == null

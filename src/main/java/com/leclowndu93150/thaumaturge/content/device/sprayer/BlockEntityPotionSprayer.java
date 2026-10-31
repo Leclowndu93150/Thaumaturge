@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
@@ -230,7 +231,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
         }
         charges--;
         setChangedAndSync();
-        Vec3 center = Vec3.atCenterOf(worldPosition.relative(facing, SPRAY_DISTANCE));
+        Vec3 center = LevelSpaces.toWorld(serverLevel, Vec3.atCenterOf(worldPosition.relative(facing, SPRAY_DISTANCE)));
         AABB area = AABB.ofSize(center, SPRAY_BOX_SIZE, SPRAY_BOX_SIZE, SPRAY_BOX_SIZE);
         PotionContents effects = contents();
         for (LivingEntity target :

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyZombie;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintFeeding;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -130,7 +131,10 @@ final class NodeTypeBehavior {
     }
 
     private static int guardsNear(ServerLevel level, BlockPos pos) {
-        AABB area = new AABB(pos).inflate(GUARD_COUNT_HORIZONTAL, GUARD_COUNT_VERTICAL, GUARD_COUNT_HORIZONTAL);
+        AABB area = LevelSpaces.worldBox(
+                level,
+                pos,
+                new AABB(pos).inflate(GUARD_COUNT_HORIZONTAL, GUARD_COUNT_VERTICAL, GUARD_COUNT_HORIZONTAL));
         return level.getEntities(TTEntities.BRAINY_ZOMBIE.get(), area, EntityBrainyZombie::isAlive)
                 .size();
     }

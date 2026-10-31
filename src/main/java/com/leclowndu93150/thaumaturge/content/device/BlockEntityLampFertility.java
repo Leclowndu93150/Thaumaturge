@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -64,7 +65,8 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
         if (charges < PAIRING_COST) {
             return;
         }
-        List<Animal> nearby = level.getEntitiesOfClass(Animal.class, new AABB(pos).inflate(PAIRING_RANGE));
+        List<Animal> nearby = level.getEntitiesOfClass(
+                Animal.class, LevelSpaces.worldBox(level, pos, new AABB(pos).inflate(PAIRING_RANGE)));
         Couple couple = findCouple(nearby);
         if (couple == null) {
             return;

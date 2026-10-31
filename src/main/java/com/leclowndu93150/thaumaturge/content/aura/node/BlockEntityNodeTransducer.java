@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -183,7 +184,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     private static void catastrophicFailure(ServerLevel level, BlockPos nodePos) {
         AuraHelper.polluteAura(level, nodePos, 32.0F, true);
         level.removeBlock(nodePos, false);
-        Vec3 centre = Vec3.atCenterOf(nodePos);
+        Vec3 centre = LevelSpaces.worldCenter(level, nodePos);
         level.explode(null, centre.x, centre.y, centre.z, 3.0F, Level.ExplosionInteraction.NONE);
         RandomSource random = level.getRandom();
         for (int attempt = 0; attempt < 50; attempt++) {

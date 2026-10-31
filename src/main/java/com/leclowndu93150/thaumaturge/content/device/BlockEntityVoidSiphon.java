@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
                 }
             }
             if (level instanceof ServerLevel server && siphon.counter % STREAK_INTERVAL == 0) {
-                Vec3 top = new Vec3(pos.getX() + 0.5, pos.getY() + 1.01, pos.getZ() + 0.5);
+                Vec3 top = LevelSpaces.toWorld(server, new Vec3(pos.getX() + 0.5, pos.getY() + 1.01, pos.getZ() + 0.5));
                 drained.forEach(rift -> showStreak(server, rift, top));
             }
         }
@@ -122,12 +123,12 @@ public final class BlockEntityVoidSiphon extends AbstractSyncedBlockEntity {
 
     private List<EntityFluxRift> getValidRifts(Level level, BlockPos pos) {
         List<EntityFluxRift> found = new ArrayList<>();
-        AABB box = new AABB(pos).inflate(RIFT_RANGE);
+        AABB box = LevelSpaces.worldBox(level, pos, new AABB(pos).inflate(RIFT_RANGE));
         for (EntityFluxRift rift : level.getEntitiesOfClass(EntityFluxRift.class, box)) {
             if (rift.isRemoved() || rift.currentSize() < 2) {
                 continue;
             }
-            Vec3 from = new Vec3(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+            Vec3 from = LevelSpaces.toWorld(level, new Vec3(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5));
             Vec3 to = rift.position();
             from = from.add(to.subtract(from).normalize());
             HitResult hit = level.clip(new ClipContext(

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.ExperienceOrbAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -87,12 +88,13 @@ public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityJarBrain brain) {
         brain.rotb = brain.rota;
         ExperienceOrb orb = brain.isHungry() ? nearestOrb(level, pos) : null;
-        Vec3 center = Vec3.atCenterOf(pos);
+        Vec3 center = LevelSpaces.worldCenter(level, pos);
         if (orb != null) {
-            brain.targetYaw = yawToward(center, orb.position());
+            brain.targetYaw = yawToward(level, pos, center, orb.position());
         } else {
             Player watcher = level.getNearestPlayer(center.x, center.y, center.z, PLAYER_RANGE, false);
-            brain.targetYaw = watcher == null ? brain.rota + IDLE_SPIN : yawToward(center, watcher.position());
+            brain.targetYaw =
+                    watcher == null ? brain.rota + IDLE_SPIN : yawToward(level, pos, center, watcher.position());
         }
         float remaining = Mth.wrapDegrees((brain.targetYaw - brain.rota) * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD;
         brain.rota = Mth.wrapDegrees((brain.rota + remaining * TURN_RATE) * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD;
@@ -102,14 +104,17 @@ public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
         return xp < XP_MAX && eatDelay <= 0;
     }
 
-    private static float yawToward(Vec3 from, Vec3 to) {
-        return (float) Mth.atan2(to.z - from.z, to.x - from.x);
+    private static float yawToward(Level level, BlockPos pos, Vec3 from, Vec3 to) {
+        Vec3 local = LevelSpaces.frameOf(level, pos).directionToLocal(to.subtract(from));
+        return (float) Mth.atan2(local.z, local.x);
     }
 
     private static @Nullable ExperienceOrb nearestOrb(Level level, BlockPos pos) {
-        Vec3 center = Vec3.atCenterOf(pos);
+        Vec3 center = LevelSpaces.worldCenter(level, pos);
         List<ExperienceOrb> orbs = level.getEntitiesOfClass(
-                ExperienceOrb.class, new AABB(pos).inflate(PULL_RANGE), EntitySelector.ENTITY_STILL_ALIVE);
+                ExperienceOrb.class,
+                LevelSpaces.worldBox(level, pos, new AABB(pos).inflate(PULL_RANGE)),
+                EntitySelector.ENTITY_STILL_ALIVE);
         ExperienceOrb nearest = null;
         double bestDistance = PULL_RANGE * PULL_RANGE;
         for (ExperienceOrb orb : orbs) {
@@ -127,7 +132,7 @@ public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
         if (orb == null) {
             return null;
         }
-        Vec3 toJar = Vec3.atCenterOf(pos).subtract(orb.position());
+        Vec3 toJar = LevelSpaces.worldCenter(level, pos).subtract(orb.position());
         double distance = toJar.length();
         if (distance > MIN_PULL_DISTANCE) {
             double strength = Math.max(0.0, 1.0 - distance / PULL_FADE_DISTANCE) * PULL_STRENGTH;
@@ -141,7 +146,9 @@ public final class BlockEntityJarBrain extends AbstractSyncedBlockEntity {
         boolean collected = false;
         RandomSource random = level.getRandom();
         for (ExperienceOrb orb : level.getEntitiesOfClass(
-                ExperienceOrb.class, new AABB(pos).inflate(COLLECT_MARGIN), EntitySelector.ENTITY_STILL_ALIVE)) {
+                ExperienceOrb.class,
+                LevelSpaces.worldBox(level, pos, new AABB(pos).inflate(COLLECT_MARGIN)),
+                EntitySelector.ENTITY_STILL_ALIVE)) {
             if (collectedXp >= XP_MAX) {
                 break;
             }

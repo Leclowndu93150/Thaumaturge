@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -143,7 +144,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     }
 
     private static void burst(ServerLevel server, BlockPos pos, int pockets) {
-        Vec3 center = Vec3.atCenterOf(pos);
+        Vec3 center = LevelSpaces.worldCenter(server, pos);
         server.explode(null, center.x, center.y, center.z, RUPTURE_EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
         FluxPocketScatter.scatter(server, pos, pockets + 1);
     }

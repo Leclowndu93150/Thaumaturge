@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,7 +65,7 @@ public final class BlockEntityStabilizer extends AbstractSyncedBlockEntity {
     }
 
     private void steadyRifts(Level level) {
-        AABB reach = new AABB(worldPosition).inflate(REACH);
+        AABB reach = LevelSpaces.worldBox(level, worldPosition, new AABB(worldPosition).inflate(REACH));
         int remaining = charge;
         for (EntityFluxRift rift : level.getEntitiesOfClass(EntityFluxRift.class, reach)) {
             if (remaining <= 0) {

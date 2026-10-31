@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -167,14 +168,10 @@ public record EjectEffect(
                         null, pedestalPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, FLUX_SOUND_VOLUME, 1.0F);
             }
             case POLLUTE -> AuraHelper.polluteAura(level, pedestalPos, pollution.sample(random), true);
-            case EXPLODE ->
-                level.explode(
-                        null,
-                        pedestalPos.getX() + 0.5,
-                        pedestalPos.getY() + 0.5,
-                        pedestalPos.getZ() + 0.5,
-                        explosionPower,
-                        Level.ExplosionInteraction.NONE);
+            case EXPLODE -> {
+                Vec3 centre = LevelSpaces.worldCenter(level, pedestalPos);
+                level.explode(null, centre.x, centre.y, centre.z, explosionPower, Level.ExplosionInteraction.NONE);
+            }
             case NONE -> {}
         }
     }
