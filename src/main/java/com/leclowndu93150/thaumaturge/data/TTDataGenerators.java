@@ -27,6 +27,7 @@ import com.leclowndu93150.thaumaturge.data.datamap.InfusionModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.SmelterStatsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.StrippingProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.TaintedProfileProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.TrimMaterialBonusProvider;
 import com.leclowndu93150.thaumaturge.data.infusion.InstabilityOutcomeBootstrap;
 import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthDefinitionBootstrap;
 import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthEncounterBootstrap;
@@ -57,6 +58,7 @@ import com.leclowndu93150.thaumaturge.data.tag.TTFluidTagsProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TTItemTagsProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TTMobEffectTagsProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TTStructureTagsProvider;
+import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
 import com.leclowndu93150.thaumaturge.data.worldgen.aspect.AspectBootstrap;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomeModifiers;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
@@ -107,7 +109,8 @@ public final class TTDataGenerators {
                 .add(LabyrinthEncounter.REGISTRY_KEY, LabyrinthEncounterBootstrap::bootstrap)
                 .add(LabyrinthDefinition.REGISTRY_KEY, LabyrinthDefinitionBootstrap::bootstrap)
                 .add(ObeliskSite.REGISTRY_KEY, ObeliskSiteBootstrap::bootstrap)
-                .add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap);
+                .add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap)
+                .add(Registries.TRIM_MATERIAL, TTTrimBootstrap::materials);
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TTEnglishProvider::new);
@@ -128,6 +131,7 @@ public final class TTDataGenerators {
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
         event.createProvider(FocusTierProvider::new);
+        event.createProvider(TrimMaterialBonusProvider::new);
         event.createProvider(SmelterStatsProvider::new);
         event.createProvider(InfusionModifierProvider::new);
         event.createProvider(
