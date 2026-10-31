@@ -18,39 +18,35 @@ import net.minecraft.world.phys.AABB;
 
 public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDioptra> {
     private static final ResourceLocation SURFACE_TEXTURE = TTIds.rl("textures/misc/gridblock.png");
-    private static final ResourceLocation WALL_TEXTURE = TTIds.rl("textures/misc/white.png");
-    private static final RenderType SURFACE_TYPE = TTRenderTypes.additiveTextured(SURFACE_TEXTURE);
-    private static final RenderType WALL_TYPE = TTRenderTypes.additiveTextured(WALL_TEXTURE);
+    private static final ResourceLocation SIDE_TEXTURE = TTIds.rl("textures/entity/dioptra_side.png");
+    private static final RenderType SURFACE_TYPE = TTRenderTypes.srcAlphaAdditiveTextured(SURFACE_TEXTURE);
+    private static final RenderType WALL_TYPE = TTRenderTypes.srcAlphaAdditiveTextured(SIDE_TEXTURE);
 
     private static final int LAST = BlockEntityDioptra.GRID_SIZE - 1;
     private static final float CELL = 1.0F / LAST;
     private static final float CENTER = LAST / 2.0F;
-    private static final float BASE_LIFT = 0.015F;
-    private static final float BASE_Y = 1.0F + BASE_LIFT;
+    private static final float PATCH_INSET = 0.005F;
+    private static final float PATCH_SPAN = 0.99F;
+    private static final float BASE_Y = 1.001F;
     private static final float PEAK_HEIGHT = 2.0F / 3.0F;
-    private static final float WALL_HEIGHT = 1.0F;
-    private static final float SURFACE_ALPHA = 0.55F;
-    private static final float SKIRT_TOP_ALPHA = 0.35F;
-    private static final float WALL_BASE_ALPHA = 0.12F;
-    private static final float WALL_TINT = 0.8F;
-    private static final float DRIFT_AMPLITUDE = 0.12F;
-    private static final float RED_DRIFT_RATE = 0.031F;
-    private static final float GREEN_DRIFT_RATE = 0.023F;
-    private static final float BLUE_DRIFT_RATE = 0.017F;
-    private static final float GREEN_DRIFT_PHASE = 2.1F;
-    private static final float BLUE_DRIFT_PHASE = 4.2F;
-    private static final float VIS_RED = 0.78F;
-    private static final float VIS_GREEN = 0.94F;
-    private static final float VIS_BLUE = 1.0F;
-    private static final float FLUX_RED = 0.62F;
-    private static final float FLUX_GREEN = 0.28F;
-    private static final float FLUX_BLUE = 0.95F;
-    private static final float RIPPLE_FLOOR = 0.6F;
-    private static final float RIPPLE_DEPTH = 0.4F;
-    private static final float RIPPLE_WAVENUMBER = 0.9F;
-    private static final float RIPPLE_SPEED = 0.12F;
-    private static final float HEIGHT_GLOW = 0.35F;
-    private static final double BOUNDS_HEIGHT = BASE_Y + WALL_HEIGHT;
+    private static final float WALL_BOTTOM = 1.0F;
+    private static final float WALL_TOP = 2.0F;
+    private static final float TOP_ALPHA = 0.9F;
+    private static final float WALL_ALPHA = 0.8F;
+    private static final float RED_PERIOD = 12.0F;
+    private static final float GREEN_PERIOD = 11.0F;
+    private static final float BLUE_PERIOD = 10.0F;
+    private static final float COLOR_SWING = 0.05F;
+    private static final float RED_BASE = 0.85F;
+    private static final float GREEN_BASE_ENABLED = 0.9F;
+    private static final float GREEN_BASE_DISABLED = 0.45F;
+    private static final float BLUE_BASE = 0.95F;
+    private static final float RED_CELL_FACTOR = 0.8F;
+    private static final float WAVE_SPEED = 10.0F;
+    private static final float WAVE_DIVISOR = 8.0F;
+    private static final float LUMINANCE_BASE = 200.0F;
+    private static final float LUMINANCE_SWING = 15.0F;
+    private static final float LUMINANCE_MAX = 255.0F;
 
     private final byte[] gridSnapshot = new byte[BlockEntityDioptra.GRID_LENGTH];
 
@@ -82,10 +78,11 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     private static void writeSurface(VertexConsumer buffer, PoseStack.Pose pose, byte[] grid, Palette palette) {
         for (int row = 0; row < LAST; row++) {
             for (int column = 0; column < LAST; column++) {
-                surfacePoint(buffer, pose, grid, palette, column, row, 0.0F, 0.0F);
-                surfacePoint(buffer, pose, grid, palette, column, row + 1, 0.0F, 1.0F);
-                surfacePoint(buffer, pose, grid, palette, column + 1, row + 1, 1.0F, 1.0F);
-                surfacePoint(buffer, pose, grid, palette, column + 1, row, 1.0F, 0.0F);
+                float brightness = palette.ripple(column, row);
+                surfacePoint(buffer, pose, grid, palette, column, row, brightness, 0.0F, 1.0F);
+                surfacePoint(buffer, pose, grid, palette, column + 1, row, brightness, 1.0F, 1.0F);
+                surfacePoint(buffer, pose, grid, palette, column + 1, row + 1, brightness, 1.0F, 0.0F);
+                surfacePoint(buffer, pose, grid, palette, column, row + 1, brightness, 0.0F, 0.0F);
             }
         }
     }
@@ -97,22 +94,22 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
             Palette palette,
             int column,
             int row,
+            float brightness,
             float u,
             float v) {
         float fill = fill(grid, column, row);
-        float brightness = palette.ripple(column, row) * (1.0F - HEIGHT_GLOW + HEIGHT_GLOW * fill);
         vertex(
                 buffer,
                 pose,
-                column * CELL,
+                patch(column * CELL),
                 BASE_Y + fill * PEAK_HEIGHT,
-                row * CELL,
+                patch(row * CELL),
                 u,
                 v,
-                palette.red * brightness,
+                palette.red * RED_CELL_FACTOR * brightness,
                 palette.green * brightness,
                 palette.blue * brightness,
-                SURFACE_ALPHA);
+                TOP_ALPHA);
     }
 
     private static void writeSkirts(VertexConsumer buffer, PoseStack.Pose pose, byte[] grid, Palette palette) {
@@ -133,50 +130,64 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
             int fromRow,
             int toColumn,
             int toRow) {
-        skirtPoint(buffer, pose, palette, fromColumn, fromRow, BASE_Y, 0.0F, 0.0F, 1.0F);
+        int cellColumn = Math.min(fromColumn, toColumn);
+        int cellRow = Math.min(fromRow, toRow);
+        if (cellColumn == LAST) {
+            cellColumn--;
+        }
+        if (cellRow == LAST) {
+            cellRow--;
+        }
+        float brightness = palette.ripple(cellColumn, cellRow);
+        boolean alongColumns = fromRow == toRow;
+        float start = alongColumns ? 0.0F : 1.0F;
+        float end = alongColumns ? 1.0F : 0.0F;
+        skirtPoint(buffer, pose, palette, brightness, fromColumn, fromRow, BASE_Y, 0.0F, 0.0F, 1.0F);
         skirtPoint(
                 buffer,
                 pose,
                 palette,
+                brightness,
                 fromColumn,
                 fromRow,
                 BASE_Y + fill(grid, fromColumn, fromRow) * PEAK_HEIGHT,
-                SKIRT_TOP_ALPHA,
-                0.0F,
-                0.0F);
+                TOP_ALPHA,
+                start,
+                start);
         skirtPoint(
                 buffer,
                 pose,
                 palette,
+                brightness,
                 toColumn,
                 toRow,
                 BASE_Y + fill(grid, toColumn, toRow) * PEAK_HEIGHT,
-                SKIRT_TOP_ALPHA,
-                0.0F,
-                1.0F);
-        skirtPoint(buffer, pose, palette, toColumn, toRow, BASE_Y, 0.0F, 1.0F, 1.0F);
+                TOP_ALPHA,
+                1.0F,
+                0.0F);
+        skirtPoint(buffer, pose, palette, brightness, toColumn, toRow, BASE_Y, 0.0F, end, end);
     }
 
     private static void skirtPoint(
             VertexConsumer buffer,
             PoseStack.Pose pose,
             Palette palette,
+            float brightness,
             int column,
             int row,
             float y,
             float alpha,
             float u,
             float v) {
-        float brightness = palette.ripple(column, row);
         vertex(
                 buffer,
                 pose,
-                column * CELL,
+                patch(column * CELL),
                 y,
-                row * CELL,
+                patch(row * CELL),
                 u,
                 v,
-                palette.red * brightness,
+                palette.red * RED_CELL_FACTOR * brightness,
                 palette.green * brightness,
                 palette.blue * brightness,
                 alpha);
@@ -184,25 +195,28 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
 
     private static void writeWalls(VertexConsumer buffer, PoseStack.Pose pose, Palette palette) {
         wall(buffer, pose, palette, 0.0F, 0.0F, 1.0F, 0.0F);
-        wall(buffer, pose, palette, 1.0F, 0.0F, 1.0F, 1.0F);
         wall(buffer, pose, palette, 1.0F, 1.0F, 0.0F, 1.0F);
         wall(buffer, pose, palette, 0.0F, 1.0F, 0.0F, 0.0F);
+        wall(buffer, pose, palette, 1.0F, 0.0F, 1.0F, 1.0F);
     }
 
     private static void wall(
             VertexConsumer buffer, PoseStack.Pose pose, Palette palette, float x0, float z0, float x1, float z1) {
-        float red = palette.red * WALL_TINT;
-        float green = palette.green * WALL_TINT;
-        float blue = palette.blue * WALL_TINT;
-        float top = BASE_Y + WALL_HEIGHT;
-        vertex(buffer, pose, x0, BASE_Y, z0, 0.0F, 1.0F, red, green, blue, WALL_BASE_ALPHA);
-        vertex(buffer, pose, x0, top, z0, 0.0F, 0.0F, red, green, blue, 0.0F);
-        vertex(buffer, pose, x1, top, z1, 1.0F, 0.0F, red, green, blue, 0.0F);
-        vertex(buffer, pose, x1, BASE_Y, z1, 1.0F, 1.0F, red, green, blue, WALL_BASE_ALPHA);
+        float red = palette.red;
+        float green = palette.green;
+        float blue = palette.blue;
+        vertex(buffer, pose, x0, WALL_BOTTOM, z0, 0.0F, 0.0F, red, green, blue, WALL_ALPHA);
+        vertex(buffer, pose, x0, WALL_TOP, z0, 1.0F, 0.0F, red, green, blue, WALL_ALPHA);
+        vertex(buffer, pose, x1, WALL_TOP, z1, 1.0F, 1.0F, red, green, blue, WALL_ALPHA);
+        vertex(buffer, pose, x1, WALL_BOTTOM, z1, 0.0F, 1.0F, red, green, blue, WALL_ALPHA);
     }
 
     private static float fill(byte[] grid, int column, int row) {
         return grid[row * BlockEntityDioptra.GRID_SIZE + column] / (float) BlockEntityDioptra.STEPS;
+    }
+
+    private static float patch(float coordinate) {
+        return PATCH_INSET + PATCH_SPAN * coordinate;
     }
 
     private static void vertex(
@@ -234,25 +248,26 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     public AABB getRenderBoundingBox(BlockEntityDioptra dioptra) {
         BlockPos pos = dioptra.getBlockPos();
         return new AABB(
-                pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1.0, pos.getY() + BOUNDS_HEIGHT, pos.getZ() + 1.0);
+                pos.getX() - 0.3,
+                pos.getY() - 0.3,
+                pos.getZ() - 0.3,
+                pos.getX() + 1.3,
+                pos.getY() + 2.3,
+                pos.getZ() + 1.3);
     }
 
     private record Palette(float red, float green, float blue, float time) {
         static Palette of(boolean vis, float time) {
-            float red = drift(vis ? VIS_RED : FLUX_RED, time * RED_DRIFT_RATE);
-            float green = drift(vis ? VIS_GREEN : FLUX_GREEN, time * GREEN_DRIFT_RATE + GREEN_DRIFT_PHASE);
-            float blue = drift(vis ? VIS_BLUE : FLUX_BLUE, time * BLUE_DRIFT_RATE + BLUE_DRIFT_PHASE);
+            float red = COLOR_SWING * Mth.sin(time / RED_PERIOD) + RED_BASE;
+            float green = COLOR_SWING * Mth.sin(time / GREEN_PERIOD) + (vis ? GREEN_BASE_ENABLED : GREEN_BASE_DISABLED);
+            float blue = COLOR_SWING * Mth.sin(time / BLUE_PERIOD) + BLUE_BASE;
             return new Palette(red, green, blue, time);
-        }
-
-        private static float drift(float base, float phase) {
-            return Mth.clamp(base + DRIFT_AMPLITUDE * Mth.sin(phase), 0.0F, 1.0F);
         }
 
         float ripple(int column, int row) {
             float distance = Mth.sqrt(Mth.square(column - CENTER) + Mth.square(row - CENTER));
-            return RIPPLE_FLOOR
-                    + RIPPLE_DEPTH * (0.5F + 0.5F * Mth.sin(distance * RIPPLE_WAVENUMBER - time * RIPPLE_SPEED));
+            float ripple = Mth.sin((time - WAVE_SPEED * distance) / WAVE_DIVISOR);
+            return (LUMINANCE_BASE + LUMINANCE_SWING * ripple) / LUMINANCE_MAX;
         }
     }
 }

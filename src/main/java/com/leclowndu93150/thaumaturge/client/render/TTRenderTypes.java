@@ -136,6 +136,13 @@ public final class TTRenderTypes {
             RenderStateShard.ADDITIVE_TRANSPARENCY,
             RenderStateShard.LEQUAL_DEPTH_TEST,
             false));
+    private static final Function<ResourceLocation, RenderType> SRC_ALPHA_ADDITIVE_TEXTURED =
+            Util.memoize(texture -> textured(
+                    "tt_src_alpha_additive_textured",
+                    texture,
+                    RenderStateShard.LIGHTNING_TRANSPARENCY,
+                    RenderStateShard.LEQUAL_DEPTH_TEST,
+                    false));
     private static final Function<ResourceLocation, RenderType> TRANSLUCENT_TEXTURED = Util.memoize(texture -> textured(
             "tt_translucent_textured",
             texture,
@@ -280,6 +287,10 @@ public final class TTRenderTypes {
 
     public static RenderType additiveTextured(ResourceLocation texture) {
         return ADDITIVE_TEXTURED.apply(texture);
+    }
+
+    public static RenderType srcAlphaAdditiveTextured(ResourceLocation texture) {
+        return SRC_ALPHA_ADDITIVE_TEXTURED.apply(texture);
     }
 
     public static RenderType translucentTextured(ResourceLocation texture) {
