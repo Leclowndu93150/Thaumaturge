@@ -1,0 +1,18 @@
+package com.leclowndu93150.thaumaturge.mixin.world.item.crafting;
+
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+@Mixin(SmithingTransformRecipe.class)
+public interface SmithingTransformRecipeAccessor {
+    @Accessor("template")
+    Ingredient thaumaturge$getTemplate();
+
+    @Accessor("base")
+    Ingredient thaumaturge$getBase();
+
+    @Accessor("addition")
+    Ingredient thaumaturge$getAddition();
+}

@@ -18,6 +18,8 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockR
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapelessCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.mixin.world.item.crafting.SmithingTransformRecipeAccessor;
+import com.leclowndu93150.thaumaturge.mixin.world.item.crafting.SmithingTrimRecipeAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -60,6 +62,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
@@ -94,6 +98,20 @@ public final class RecipeDisplayWidget {
     private static final int SLOT_FRAME_H = 16;
     private static final int SLOT_FRAME_OFFSET_X = -8;
     private static final int SLOT_FRAME_OFFSET_Y = -46;
+
+    private static final int SMITHING_SKETCH_U = 54;
+    private static final int SMITHING_SKETCH_V = 120;
+    private static final int SMITHING_SKETCH_W = 68;
+    private static final int SMITHING_SKETCH_H = 54;
+    private static final int SMITHING_SKETCH_OFFSET_X = -34;
+    private static final int SMITHING_SKETCH_OFFSET_Y = -30;
+    private static final int SMITHING_INPUT_Y = -22;
+    private static final int SMITHING_TEMPLATE_X = -40;
+    private static final int SMITHING_BASE_X = -8;
+    private static final int SMITHING_ADDITION_X = 24;
+    private static final int SMITHING_TEMPLATE_CYCLE = 0;
+    private static final int SMITHING_BASE_CYCLE = 1;
+    private static final int SMITHING_ADDITION_CYCLE = 2;
 
     private static final int VIS_COST_U = 68;
     private static final int VIS_COST_V = 76;
@@ -185,6 +203,10 @@ public final class RecipeDisplayWidget {
             drawConstructPage(graphics, cx, cy, multiblock, constructRotation, visibleConstructLayer);
             return;
         }
+        if (recipeValue instanceof SmithingRecipe smithing) {
+            drawSmithingPage(graphics, cx, cy, smithing);
+            return;
+        }
         Layout layout = collect(holder, registries());
         Font font = Minecraft.getInstance().font;
         if (layout.kind == Kind.ARCANE_SHAPED || layout.kind == Kind.ARCANE_SHAPELESS) {
@@ -220,6 +242,9 @@ public final class RecipeDisplayWidget {
         }
         if (recipeValue instanceof DustTriggerMultiblockRecipe multiblock) {
             return hoverConstructPage(cx, cy, multiblock, mouseX, mouseY);
+        }
+        if (recipeValue instanceof SmithingRecipe smithing) {
+            return hoverSmithingPage(cx, cy, smithing, mouseX, mouseY);
         }
         Layout layout = collect(holder, registries());
         ItemHit inputHover = hoverInput(cx, cy, layout, mouseX, mouseY);
@@ -327,6 +352,86 @@ public final class RecipeDisplayWidget {
         graphics.pose().popPose();
     }
 
+    private static void drawSmithingPage(GuiGraphics graphics, int cx, int cy, SmithingRecipe recipe) {
+        drawLabel(graphics, Minecraft.getInstance().font, cx, cy, Kind.SMITHING);
+        graphics.pose().pushPose();
+        graphics.pose().translate(cx, cy, 0);
+        graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
+        GuiBlend.blitTinted(
+                graphics,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
+                SMITHING_SKETCH_OFFSET_X,
+                SMITHING_SKETCH_OFFSET_Y,
+                (float) SMITHING_SKETCH_U,
+                (float) SMITHING_SKETCH_V,
+                SMITHING_SKETCH_W,
+                SMITHING_SKETCH_H,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                0xFFFFFFFF);
+        graphics.pose().popPose();
+        drawSlotFrame(graphics, cx, cy);
+        for (ItemHit hit : smithingHits(cx, cy, recipe)) {
+            drawStack(graphics, hit.stack(), hit.x(), hit.y());
+        }
+    }
+
+    private static @Nullable ItemHit hoverSmithingPage(
+            int cx, int cy, SmithingRecipe recipe, double mouseX, double mouseY) {
+        for (ItemHit hit : smithingHits(cx, cy, recipe)) {
+            if (hit.contains(mouseX, mouseY)) {
+                return hit;
+            }
+        }
+        return null;
+    }
+
+    private static List<ItemHit> smithingHits(int cx, int cy, SmithingRecipe recipe) {
+        List<ItemHit> hits = new ArrayList<>();
+        SmithingSlots slots = smithingSlots(recipe);
+        if (slots == null) {
+            return hits;
+        }
+        ItemStack template = pickRotating(cycle(slots.template()), SMITHING_TEMPLATE_CYCLE);
+        ItemStack base = pickRotating(cycle(slots.base()), SMITHING_BASE_CYCLE);
+        ItemStack addition = pickRotating(cycle(slots.addition()), SMITHING_ADDITION_CYCLE);
+        addHit(hits, template, cx + SMITHING_TEMPLATE_X, cy + SMITHING_INPUT_Y);
+        addHit(hits, base, cx + SMITHING_BASE_X, cy + SMITHING_INPUT_Y);
+        addHit(hits, addition, cx + SMITHING_ADDITION_X, cy + SMITHING_INPUT_Y);
+        addHit(hits, smithingResult(recipe, template, base, addition), cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
+        return hits;
+    }
+
+    private static void addHit(List<ItemHit> hits, ItemStack stack, int x, int y) {
+        if (!stack.isEmpty()) {
+            hits.add(new ItemHit(stack, x, y));
+        }
+    }
+
+    private static @Nullable SmithingSlots smithingSlots(SmithingRecipe recipe) {
+        if (recipe instanceof SmithingTrimRecipeAccessor trim) {
+            return new SmithingSlots(
+                    trim.thaumaturge$getTemplate(), trim.thaumaturge$getBase(), trim.thaumaturge$getAddition());
+        }
+        if (recipe instanceof SmithingTransformRecipeAccessor transform) {
+            return new SmithingSlots(
+                    transform.thaumaturge$getTemplate(),
+                    transform.thaumaturge$getBase(),
+                    transform.thaumaturge$getAddition());
+        }
+        return null;
+    }
+
+    private static ItemStack smithingResult(
+            SmithingRecipe recipe, ItemStack template, ItemStack base, ItemStack addition) {
+        HolderLookup.Provider reg = registries();
+        if (reg == null || template.isEmpty() || base.isEmpty() || addition.isEmpty()) {
+            return resultOf(recipe, reg);
+        }
+        ItemStack assembled = recipe.assemble(new SmithingRecipeInput(template, base, addition), reg);
+        return assembled.isEmpty() ? resultOf(recipe, reg) : assembled;
+    }
+
     private static void drawVisOverlay(GuiGraphics graphics, int cx, int cy) {
         graphics.pose().pushPose();
         graphics.pose().translate(cx, cy, 0);
@@ -366,6 +471,7 @@ public final class RecipeDisplayWidget {
             case WORKBENCH_SHAPELESS -> "gui.thaumaturge.recipe_type.workbench_shapeless";
             case ARCANE_SHAPED -> "gui.thaumaturge.recipe_type.arcane";
             case ARCANE_SHAPELESS -> "gui.thaumaturge.recipe_type.arcane_shapeless";
+            case SMITHING -> "gui.thaumaturge.recipe_type.smithing";
             case UNKNOWN -> null;
         };
     }
@@ -1184,8 +1290,11 @@ public final class RecipeDisplayWidget {
         WORKBENCH_SHAPELESS,
         ARCANE_SHAPED,
         ARCANE_SHAPELESS,
+        SMITHING,
         UNKNOWN
     }
+
+    private record SmithingSlots(Ingredient template, Ingredient base, Ingredient addition) {}
 
     private record Slot(int col, int row, int counter, List<ItemStack> cycle) {}
 

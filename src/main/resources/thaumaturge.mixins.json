@@ -12,6 +12,8 @@
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
+    "world.item.crafting.SmithingTransformRecipeAccessor",
+    "world.item.crafting.SmithingTrimRecipeAccessor",
     "world.level.block.FireBlockMixin",
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
     "world.level.block.piston.PistonBaseBlockMixin"
