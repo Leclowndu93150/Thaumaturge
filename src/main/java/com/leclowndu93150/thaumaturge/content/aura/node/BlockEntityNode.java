@@ -154,7 +154,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (!(level instanceof ServerLevel serverLevel) || !isNodeBlock()) {
             return;
         }
-        NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        if (!LevelSpaces.isPlot(serverLevel, worldPosition)) {
+            NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        }
         if (nodeType == NodeType.TAINTED) {
             TaintOrigins.register(serverLevel, worldPosition);
         } else {

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
@@ -59,7 +60,8 @@ public final class SealHandler {
     }
 
     public static boolean place(ServerLevel level, SealPos pos, ResourceLocation typeId, SealType type, Player player) {
-        return !index(level).seals().containsKey(pos)
+        return !LevelSpaces.isPlot(level, pos.pos())
+                && !index(level).seals().containsKey(pos)
                 && addSealEntity(level, SealEntity.place(pos, typeId, type, player.getUUID()));
     }
 
