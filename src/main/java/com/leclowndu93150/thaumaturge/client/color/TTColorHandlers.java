@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.GrassColor;
 import net.neoforged.api.distmarker.Dist;
@@ -15,6 +17,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTColorHandlers {
     private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
+    private static final int UNDYED_HIDDEN = 0;
     private static final int GREATWOOD_FOLIAGE_ARGB = 0xFF48B518;
     private static final int CRYSTAL_AER_COLOR = 0xFFFFFF7E;
     private static final int CRYSTAL_IGNIS_COLOR = 0xFFFF5A01;
@@ -68,10 +71,18 @@ public final class TTColorHandlers {
                 TTItems.VOID_ROBE_HELM.get(),
                 TTItems.VOID_ROBE_CHEST.get(),
                 TTItems.VOID_ROBE_LEGS.get());
+        ItemColor dyedCloth = dyedOverlay();
+        for (Item item : CultistArmorDyeing.dyeableArmor()) {
+            event.register(dyedCloth, item);
+        }
     }
 
     private static ItemColor constant(int argb) {
         return (stack, tintIndex) -> tintIndex == 0 ? argb : -1;
+    }
+
+    private static ItemColor dyedOverlay() {
+        return (stack, tintIndex) -> tintIndex == 1 ? DyedItemColor.getOrDefault(stack, UNDYED_HIDDEN) : -1;
     }
 
     private static ItemColor dyed(int fallbackArgb) {

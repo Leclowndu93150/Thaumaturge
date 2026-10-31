@@ -367,17 +367,17 @@ public final class TTModelProvider implements DataProvider {
         handheldItem(TTItems.PECH_WAND.get());
         handheldItem(TTItems.CRIMSON_BLADE.get());
         flatItem(TTItems.CRIMSON_PLATE_HELM.get());
-        flatItem(TTItems.CRIMSON_PLATE_CHEST.get());
-        flatItem(TTItems.CRIMSON_PLATE_LEGS.get());
-        flatItem(TTItems.CRIMSON_RANGER_HELM.get());
-        flatItem(TTItems.CRIMSON_RANGER_CHEST.get());
-        flatItem(TTItems.CRIMSON_RANGER_LEGS.get());
-        flatItem(TTItems.CRIMSON_CAPTAIN_HELM.get());
-        flatItem(TTItems.CRIMSON_CAPTAIN_CHEST.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_PLATE_CHEST.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_PLATE_LEGS.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_RANGER_HELM.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_RANGER_CHEST.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_RANGER_LEGS.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_CAPTAIN_HELM.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_CAPTAIN_CHEST.get());
         flatItem(TTItems.CRIMSON_BOOTS.get());
-        flatItem(TTItems.CRIMSON_ROBE_HELM.get());
-        flatItem(TTItems.CRIMSON_ROBE_CHEST.get());
-        flatItem(TTItems.CRIMSON_ROBE_LEGS.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_ROBE_HELM.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_ROBE_CHEST.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_ROBE_LEGS.get());
         flatItem(TTItems.TUBE.get());
         flatItem(TTItems.TUBE_VALVE.get());
         flatItem(TTItems.TUBE_RESTRICT.get());
@@ -1073,8 +1073,8 @@ public final class TTModelProvider implements DataProvider {
         registerMirrorItem(TTItems.MIRROR.get(), "mirrorframe");
         registerMirrorItem(TTItems.MIRROR_ESSENTIA.get(), "mirrorframe2");
         flatItem(TTItems.CRIMSON_PRAETOR_HELM.get());
-        flatItem(TTItems.CRIMSON_PRAETOR_CHEST.get());
-        flatItem(TTItems.CRIMSON_PRAETOR_LEGS.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_PRAETOR_CHEST.get());
+        registerDyeableCrimsonArmor(TTItems.CRIMSON_PRAETOR_LEGS.get());
         flatItem(TTItems.FORTRESS_HELM.get());
         flatItem(TTItems.FORTRESS_CHEST.get());
         flatItem(TTItems.FORTRESS_LEGS.get());
@@ -1507,6 +1507,14 @@ public final class TTModelProvider implements DataProvider {
 
     private void registerRobeItem(Item item, String name, ArmorItem.Type type) {
         trimmableItem(item, List.of(TTIds.rl("item/" + name), TTIds.rl("item/" + name + "_over")), type);
+    }
+
+    private void registerDyeableCrimsonArmor(Item item) {
+        ModelTemplates.TWO_LAYERED_ITEM.create(
+                ModelLocationUtils.getModelLocation(item),
+                TextureMapping.layered(
+                        TextureMapping.getItemTexture(item), TextureMapping.getItemTexture(item, "_cloth")),
+                modelOutput);
     }
 
     private void registerTrimmableArmor(Item item, ArmorItem.Type type) {

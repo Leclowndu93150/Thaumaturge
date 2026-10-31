@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -306,7 +307,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_BOOTS.get(),
                         TTItems.VOID_ROBE_HELM.get(),
                         TTItems.VOID_ROBE_CHEST.get(),
-                        TTItems.VOID_ROBE_LEGS.get());
+                        TTItems.VOID_ROBE_LEGS.get())
+                .add(CultistArmorDyeing.dyeableArmor().toArray(Item[]::new));
 
         tag(CuriosTags.BACK).add(TTItems.THAUMOSTATIC_HARNESS.get());
         tag(ItemTags.CHEST_ARMOR).add(TTItems.THAUMOSTATIC_HARNESS.get());
