@@ -15,6 +15,7 @@
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
+    "world.item.crafting.SmithingTrimRecipeMixin",
     "world.level.block.FireBlockMixin",
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
     "world.level.block.piston.PistonBaseBlockMixin"
@@ -35,7 +36,8 @@
     "iris.pathways.HandRendererMixin",
     "jei.gui.ingredients.IngredientFilterAccessor",
     "jei.gui.ingredients.IngredientFilterApiAccessor",
-    "jei.gui.search.ElementSearchAccessor"
+    "jei.gui.search.ElementSearchAccessor",
+    "neoforge.client.model.item.TrimmedArmorModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

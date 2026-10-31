@@ -22,7 +22,7 @@ import com.leclowndu93150.thaumaturge.data.datamap.InfusionModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.SmelterStatsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.EntityAspectsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.FocusTierProvider;
-import com.leclowndu93150.thaumaturge.data.datamap.TrimMaterialBonusProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.CrystalTrimMaterialProvider;
 import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
 import com.leclowndu93150.thaumaturge.data.trade.TTVillagerTradeBootstrap;
 import com.leclowndu93150.thaumaturge.data.tag.TTVillagerTradeTagsProvider;
@@ -123,7 +123,7 @@ public final class TTDataGenerators {
         event.createProvider(TTCurioProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
         event.createProvider(FocusTierProvider::new);
-        event.createProvider(TrimMaterialBonusProvider::new);
+        event.createProvider(CrystalTrimMaterialProvider::new);
         event.createProvider(LabyrinthRoomProvider::new);
         event.createProvider(SparseTemplateProvider::new);
 
