@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.leclowndu93150.thaumaturge.compat.sable.SableClientCompat;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.lang.reflect.Field;
@@ -50,10 +50,10 @@ class LateWorldRenderQueueTest {
 
         try (var client = mockStatic(Minecraft.class);
                 var iris = mockStatic(IrisCompat.class);
-                var sable = mockStatic(SableClientCompat.class)) {
+                var sable = mockStatic(ClientSpaces.class)) {
             client.when(Minecraft::getInstance).thenReturn(minecraft);
             iris.when(() -> IrisCompat.blockEntityEffectBuffers(buffers)).thenReturn(buffers);
-            sable.when(() -> SableClientCompat.renderPosition(null, Vec3.ZERO)).thenReturn(Vec3.ZERO);
+            sable.when(() -> ClientSpaces.renderPosition(null, Vec3.ZERO)).thenReturn(Vec3.ZERO);
             iris.when(IrisCompat::shadersActive).thenReturn(false);
             LateWorldRenderQueue.enqueueBlockEntityAfterTranslucent(Vec3.ZERO, (pose, source) -> draws.add("vanilla"));
             LateWorldRenderQueue.enqueueBlockEntityOverlay(Vec3.ZERO, (pose, source) -> draws.add("node"));

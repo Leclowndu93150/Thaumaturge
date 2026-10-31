@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.NodeAnimation;
 import com.leclowndu93150.thaumaturge.client.render.NodeTexture;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.leclowndu93150.thaumaturge.compat.sable.SableClientCompat;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
@@ -118,7 +118,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         if (data.jarred) {
             poseStack.pushPose();
             poseStack.translate(0.5F, JARRED_HEIGHT, 0.5F);
-            SableClientCompat.faceCamera(
+            ClientSpaces.faceCamera(
                     node.getLevel(),
                     origin,
                     poseStack,
@@ -189,7 +189,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
                 && drainer.isUsingItem()) {
             float useTicks = drainer.getTicksUsingItem() + partialTicks;
             Vec3 hand = drainHand(drainer, player, partialTicks);
-            Vec3 nodeCenter = SableClientCompat.renderPosition(node.getLevel(), Vec3.atCenterOf(node.getBlockPos()));
+            Vec3 nodeCenter = ClientSpaces.renderPosition(node.getLevel(), Vec3.atCenterOf(node.getBlockPos()));
             state.draining = true;
             state.drainFromX = hand.x - nodeCenter.x;
             state.drainFromY = hand.y - nodeCenter.y;

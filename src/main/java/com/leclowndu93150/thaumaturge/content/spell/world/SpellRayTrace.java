@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.world;
 
-import com.leclowndu93150.thaumaturge.compat.sable.SableCompat;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,8 +27,8 @@ public final class SpellRayTrace {
     }
 
     public static List<EntityHitResult> entitiesAlong(Level level, @Nullable Entity source, Vec3 from, Vec3 to) {
-        from = SableCompat.worldPosition(level, from);
-        to = SableCompat.worldPosition(level, to);
+        from = LevelSpaces.toWorld(level, from);
+        to = LevelSpaces.toWorld(level, to);
         Vec3 start = from;
         AABB sweep = new AABB(from, to).inflate(ENTITY_PADDING + 1.0);
         List<EntityHitResult> hits = new ArrayList<>();
