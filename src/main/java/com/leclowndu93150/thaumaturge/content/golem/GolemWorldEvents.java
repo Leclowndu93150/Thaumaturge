@@ -4,7 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +21,20 @@ public final class GolemWorldEvents {
     private static final int TASK_CLEAR_INTERVAL_TICKS = 20;
 
     private GolemWorldEvents() {}
+
+    @SubscribeEvent
+    public static void onBlocksMoved(BlocksMovedEvent event) {
+        SealHandler.carry(event.from(), event.to(), event.moves(), event.rotation());
+        if (!event.withinLevel()) {
+            return;
+        }
+        for (EntityThaumaturgeGolem golem : event.from()
+                .getEntities(
+                        TTEntities.THAUMATURGE_GOLEM.get(),
+                        golem -> golem.hasRestriction() && event.moves().containsKey(golem.getRestrictCenter()))) {
+            golem.restrictTo(event.moves().get(golem.getRestrictCenter()), (int) golem.getRestrictRadius());
+        }
+    }
 
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {

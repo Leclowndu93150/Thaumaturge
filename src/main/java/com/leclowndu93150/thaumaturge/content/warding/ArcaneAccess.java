@@ -65,6 +65,20 @@ public final class ArcaneAccess {
         level.getChunkAt(pos).setUnsaved(true);
     }
 
+    public static boolean carry(ServerLevel fromLevel, BlockPos from, ServerLevel toLevel, BlockPos to) {
+        if (!fromLevel.hasChunkAt(from) || !toLevel.hasChunkAt(to)) {
+            return false;
+        }
+        WardAccess lock = locks(fromLevel, from).take(from);
+        if (lock == null) {
+            return false;
+        }
+        fromLevel.getChunkAt(from).setUnsaved(true);
+        locks(toLevel, to).restore(to, lock);
+        toLevel.getChunkAt(to).setUnsaved(true);
+        return true;
+    }
+
     public static boolean isLock(ServerLevel level, BlockPos pos) {
         return level.getBlockState(pos).is(TTBlocks.ARCANE_DOOR.get())
                 || level.getBlockState(pos).is(TTBlocks.ARCANE_PRESSURE_PLATE.get());

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -100,6 +102,18 @@ public final class SealHandler {
         TaskBoard.of(level).endAllFrom(pos);
         PacketDistributor.sendToPlayersTrackingChunk(
                 level, new ChunkPos(pos.pos()), ClientboundSealPayload.remove(pos));
+    }
+
+    public static void carry(ServerLevel from, ServerLevel to, Map<BlockPos, BlockPos> moves, Rotation rotation) {
+        List<SealEntity> moving = index(from).seals().values().stream()
+                .filter(seal -> moves.containsKey(seal.pos().pos()))
+                .toList();
+        for (SealEntity seal : moving) {
+            SealPos target = new SealPos(
+                    moves.get(seal.pos().pos()), rotation.rotate(seal.pos().face()));
+            removeSealEntity(from, seal.pos(), true);
+            addSealEntity(to, seal.relocated(target, rotation));
+        }
     }
 
     public static void loadChunkSeals(ServerLevel level, LevelChunk chunk) {

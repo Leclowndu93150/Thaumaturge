@@ -24,6 +24,10 @@ public final class LevelSpaces {
         provider = spaces;
     }
 
+    public static boolean isWorldOnly() {
+        return provider == WorldOnlySpaces.INSTANCE;
+    }
+
     public static SpaceFrame frameOf(Level level, Vec3 pos) {
         return provider.frameOf(level, pos);
     }
@@ -41,7 +45,7 @@ public final class LevelSpaces {
     }
 
     public static List<BlockPos> foreignCentersNear(Level level, BlockPos origin, double reach) {
-        if (provider == WorldOnlySpaces.INSTANCE) {
+        if (isWorldOnly()) {
             return List.of();
         }
         SpaceFrame own = frameOf(level, origin);
@@ -96,7 +100,7 @@ public final class LevelSpaces {
     }
 
     public static double distanceSqr(Level level, BlockPos a, BlockPos b) {
-        if (provider == WorldOnlySpaces.INSTANCE) {
+        if (isWorldOnly()) {
             return a.distSqr(b);
         }
         return distanceSqr(level, Vec3.atCenterOf(a), Vec3.atCenterOf(b));

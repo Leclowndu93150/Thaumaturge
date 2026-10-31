@@ -5,6 +5,7 @@
   "plugin": "com.leclowndu93150.thaumaturge.TTMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "sable.api.SubLevelAssemblyHelperMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
     "world.entity.ExperienceOrbAccessor",
     "world.entity.MobAccessor",

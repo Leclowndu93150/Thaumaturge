@@ -58,6 +58,7 @@ prism {
 
             dependencies {
                 compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0")
+                compileOnly("dev.ryanhcode.sable:sable-common-1.21.1:2.0.6@jar")
                 implementation("maven.modrinth:lithostitched:1.8.0-neoforge-21.1")
 
                 compileOnly("mezz.jei:jei-$minecraftVersion-common-api:${prop("jei_version")}")

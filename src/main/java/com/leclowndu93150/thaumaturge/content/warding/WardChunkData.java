@@ -48,6 +48,23 @@ public final class WardChunkData {
         return owners.remove(pos) != null;
     }
 
+    public @Nullable WardAccess take(BlockPos pos) {
+        UUID owner = owners.remove(pos);
+        Access entry = access.remove(pos);
+        if (owner == null) {
+            return null;
+        }
+        return new WardAccess(
+                owner,
+                entry == null ? List.of() : List.copyOf(entry.iron()),
+                entry == null ? List.of() : List.copyOf(entry.gold()));
+    }
+
+    public void restore(BlockPos pos, WardAccess ward) {
+        owners.put(pos.immutable(), ward.owner());
+        access.put(pos.immutable(), new Access(ward.iron(), ward.gold()));
+    }
+
     public boolean canAccess(BlockPos pos, UUID player) {
         Access entry = access.get(pos);
         return entry != null && (entry.iron().contains(player) || entry.gold().contains(player));

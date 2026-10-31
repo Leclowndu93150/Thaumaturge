@@ -92,6 +92,23 @@ public final class WardHandler {
         return true;
     }
 
+    public static void carry(ServerLevel fromLevel, BlockPos from, ServerLevel toLevel, BlockPos to) {
+        WardChunkData data = existing(fromLevel, from);
+        if (data == null || !data.contains(from) || !toLevel.hasChunkAt(to)) {
+            return;
+        }
+        WardAccess ward = data.take(from);
+        LevelChunk source = fromLevel.getChunkAt(from);
+        source.setUnsaved(true);
+        PacketDistributor.sendToPlayersTrackingChunk(
+                fromLevel, source.getPos(), new ClientboundWardUpdatePayload(from, Optional.empty()));
+        LevelChunk target = toLevel.getChunkAt(to);
+        target.getData(TTAttachments.WARDS.get()).restore(to, ward);
+        target.setUnsaved(true);
+        PacketDistributor.sendToPlayersTrackingChunk(
+                toLevel, target.getPos(), new ClientboundWardUpdatePayload(to, Optional.of(ward.owner())));
+    }
+
     public static void syncChunk(ServerPlayer player, LevelChunk chunk) {
         if (!chunk.hasData(TTAttachments.WARDS.get())) {
             return;
