@@ -132,8 +132,7 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.SEAL_PROVIDER.get(),
                         TTItems.SEAL_STOCK.get());
         tag(TTItemTags.RESEARCH_NOTES).add(TTItems.RESEARCH_NOTE.get(), TTItems.CELESTIAL_NOTES.get());
-        tag(ItemTags.TRIM_MATERIALS)
-                .add(TTItems.INGOT_BRASS.get(), TTItems.INGOT_THAUMIUM.get(), TTItems.INGOT_VOID.get());
+        tag(ItemTags.TRIM_MATERIALS).add(TTItems.ESSENTIA_CRYSTAL.get());
         tag(ItemTags.TRIMMABLE_ARMOR)
                 .add(
                         TTItems.THAUMIUM_HELM.get(),

@@ -1,13 +1,19 @@
 package com.leclowndu93150.thaumaturge.mixin.client.renderer.entity.layers;
 
+import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteKey;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSpriteSource;
 import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimSprites;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.Util;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -29,6 +35,10 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
     private TextureAtlas armorTrimAtlas;
 
     @Unique
+    private static final String RENDER_TRIM =
+            "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V";
+
+    @Unique
     private Function<ArmorTrimSpriteKey, Optional<TextureAtlasSprite>> thaumaturge$armorTrimSprites;
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -38,8 +48,7 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
     }
 
     @ModifyExpressionValue(
-            method =
-                    "renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V",
+            method = RENDER_TRIM,
             at =
                     @At(
                             value = "INVOKE",
@@ -50,6 +59,29 @@ public abstract class HumanoidArmorLayerMixin implements ArmorTrimSpriteSource {
             @Local(argsOnly = true) Holder<ArmorMaterial> armorMaterial,
             @Local(argsOnly = true) ArmorTrim trim) {
         return thaumaturge$armorTrimSprite(new ArmorTrimSpriteKey(trim, armorMaterial), sprite);
+    }
+
+    @WrapOperation(
+            method = RENDER_TRIM,
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/client/model/Model;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V"))
+    private void thaumaturge$armorTrimTint(
+            Model model,
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            Operation<Void> original,
+            @Local(argsOnly = true) ArmorTrim trim) {
+        int color = ArmorTrimColors.of(trim.material());
+        if (color == -1) {
+            original.call(model, poseStack, buffer, packedLight, packedOverlay);
+        } else {
+            model.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
+        }
     }
 
     @Override

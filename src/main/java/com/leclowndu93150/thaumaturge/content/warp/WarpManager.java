@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
-import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimBonuses;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -77,7 +76,6 @@ public final class WarpManager {
         if (stack.getItem() instanceof IWarpingGear gear) {
             warp += gear.warp(stack, wearer);
         }
-        warp += TrimBonuses.of(stack).warp();
         warp += stack.getOrDefault(TTDataComponents.STACK_WARP.get(), 0);
         return warp;
     }

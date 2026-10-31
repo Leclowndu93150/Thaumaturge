@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
 import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthEncounterBootstrap;
+import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -133,9 +134,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.recipe_type.arcane_shapeless", "Arcane Workbench (Shapeless)");
         add("gui.thaumaturge.recipe_type.crucible", "Crucible");
         add("gui.thaumaturge.recipe_type.smithing", "Smithing Table");
-        add("trim_material.thaumaturge.brass", "Brass Material");
-        add("trim_material.thaumaturge.thaumium", "Thaumium Material");
-        add("trim_material.thaumaturge.void_metal", "Void Metal Material");
+        add(TTTrimBootstrap.CRYSTAL_DESCRIPTION_KEY, "Vis Crystal Material");
         add("trim_pattern.thaumaturge.arcane", "Arcane Armor Trim");
         add("trim_pattern.thaumaturge.occult", "Occult Armor Trim");
         add("item.thaumaturge.arcane_armor_trim_smithing_template", "Arcane Armor Trim");

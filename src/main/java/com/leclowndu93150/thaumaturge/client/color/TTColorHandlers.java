@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.equipment.ArmorTrimColors;
 import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -18,6 +19,9 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 public final class TTColorHandlers {
     private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
     private static final int UNDYED_HIDDEN = 0;
+    private static final int UNTINTED = -1;
+    private static final int PLAIN_TRIM_LAYER = 1;
+    private static final int DYED_TRIM_LAYER = 2;
     private static final int GREATWOOD_FOLIAGE_ARGB = 0xFF48B518;
     private static final int CRYSTAL_AER_COLOR = 0xFFFFFF7E;
     private static final int CRYSTAL_IGNIS_COLOR = 0xFFFF5A01;
@@ -64,10 +68,22 @@ public final class TTColorHandlers {
         event.register(dyed(CRYSTAL_PERDITIO_COLOR), TTItems.CRYSTAL_PERDITIO.get());
         event.register(dyed(CRYSTAL_VITIUM_COLOR), TTItems.CRYSTAL_VITIUM.get());
         event.register(
-                dyed(ROBES_UNDYED_ARGB),
+                trimmed(dyed(ROBES_UNDYED_ARGB), DYED_TRIM_LAYER),
                 TTItems.CLOTH_CHEST.get(),
                 TTItems.CLOTH_LEGS.get(),
-                TTItems.CLOTH_BOOTS.get(),
+                TTItems.CLOTH_BOOTS.get());
+        event.register(
+                trimmed((stack, tintIndex) -> UNTINTED, PLAIN_TRIM_LAYER),
+                TTItems.THAUMIUM_HELM.get(),
+                TTItems.THAUMIUM_CHEST.get(),
+                TTItems.THAUMIUM_LEGS.get(),
+                TTItems.THAUMIUM_BOOTS.get(),
+                TTItems.VOID_HELM.get(),
+                TTItems.VOID_CHEST.get(),
+                TTItems.VOID_LEGS.get(),
+                TTItems.VOID_BOOTS.get());
+        event.register(
+                dyed(ROBES_UNDYED_ARGB),
                 TTItems.VOID_ROBE_HELM.get(),
                 TTItems.VOID_ROBE_CHEST.get(),
                 TTItems.VOID_ROBE_LEGS.get());
@@ -83,6 +99,11 @@ public final class TTColorHandlers {
 
     private static ItemColor dyedOverlay() {
         return (stack, tintIndex) -> tintIndex == 1 ? DyedItemColor.getOrDefault(stack, UNDYED_HIDDEN) : -1;
+    }
+
+    private static ItemColor trimmed(ItemColor base, int trimLayer) {
+        return (stack, tintIndex) ->
+                tintIndex == trimLayer ? ArmorTrimColors.of(stack) : base.getColor(stack, tintIndex);
     }
 
     private static ItemColor dyed(int fallbackArgb) {
