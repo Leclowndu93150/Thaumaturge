@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,7 +13,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -43,7 +43,7 @@ public record RelayFlow(double seekRange) implements SpellBehavior {
         int mode = ctx.setting(SETTING);
         List<SpellTarget> out = new ArrayList<>(incoming.size());
         for (SpellTarget target : incoming) {
-            Vec3 position = lifted(target);
+            Vec3 position = lifted(ctx, target);
             out.add(target.moved(position, heading(ctx, target, position, mode)));
         }
         ctx.proceed(out);
@@ -52,7 +52,7 @@ public record RelayFlow(double seekRange) implements SpellBehavior {
     private Vec3 heading(CastContext ctx, SpellTarget target, Vec3 position, int mode) {
         return switch (mode) {
             case FORWARD -> target.direction();
-            case REFLECT -> reflect(target);
+            case REFLECT -> reflect(ctx, target);
             case UP -> new Vec3(0.0, 1.0, 0.0);
             case DOWN -> new Vec3(0.0, -1.0, 0.0);
             case TO_CASTER -> {
@@ -78,25 +78,25 @@ public record RelayFlow(double seekRange) implements SpellBehavior {
                 .orElse(target.direction());
     }
 
-    private static Vec3 reflect(SpellTarget target) {
+    private static Vec3 reflect(CastContext ctx, SpellTarget target) {
         Optional<BlockHitResult> block = target.block();
         if (block.isEmpty()) {
             return target.direction().reverse();
         }
-        Direction face = block.get().getDirection();
-        Vec3 normal = new Vec3(face.getStepX(), face.getStepY(), face.getStepZ());
+        Vec3 normal = LevelSpaces.faceNormal(
+                ctx.level(), block.get().getBlockPos(), block.get().getDirection());
         Vec3 direction = target.direction();
         return direction.subtract(normal.scale(2.0 * direction.dot(normal)));
     }
 
-    private static Vec3 lifted(SpellTarget target) {
+    private static Vec3 lifted(CastContext ctx, SpellTarget target) {
         Optional<BlockHitResult> block = target.block();
         if (block.isEmpty()) {
             return target.position();
         }
-        Direction face = block.get().getDirection();
-        return target.position()
-                .add(face.getStepX() * SURFACE_LIFT, face.getStepY() * SURFACE_LIFT, face.getStepZ() * SURFACE_LIFT);
+        Vec3 normal = LevelSpaces.faceNormal(
+                ctx.level(), block.get().getBlockPos(), block.get().getDirection());
+        return target.position().add(normal.scale(SURFACE_LIFT));
     }
 
     @Override

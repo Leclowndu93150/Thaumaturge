@@ -11,6 +11,8 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellNodeEvent;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 
 public final class SpellEngine {
@@ -83,11 +86,27 @@ public final class SpellEngine {
                 state.multiply(SpellStats.POWER, part.power()),
                 aspect,
                 Spells.color(level.registryAccess(), node));
-        SpellNodeEvent event = NeoForge.EVENT_BUS.post(new SpellNodeEvent(ctx, targets));
+        SpellNodeEvent event = NeoForge.EVENT_BUS.post(new SpellNodeEvent(ctx, inWorld(level, targets)));
         if (event.isCanceled()) {
             return;
         }
         part.behavior().execute(ctx, event.targets());
+    }
+
+    private static List<SpellTarget> inWorld(ServerLevel level, List<SpellTarget> targets) {
+        List<SpellTarget> converted = null;
+        for (int index = 0; index < targets.size(); index++) {
+            SpellTarget target = targets.get(index);
+            Vec3 world = LevelSpaces.toWorld(level, target.position());
+            if (world == target.position()) {
+                continue;
+            }
+            if (converted == null) {
+                converted = new ArrayList<>(targets);
+            }
+            converted.set(index, target.moved(world, target.direction()));
+        }
+        return converted == null ? targets : converted;
     }
 
     private static void playCastSounds(ServerLevel level, LivingEntity caster, Spell spell) {

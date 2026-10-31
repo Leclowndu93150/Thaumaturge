@@ -3,12 +3,12 @@ package com.leclowndu93150.thaumaturge.content.spell.carrier;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -175,7 +175,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         }
         List<SpellTarget> targets = new ArrayList<>();
         targets.add(struck != null ? SpellTarget.entity(struck, heading) : SpellTarget.of(hit, heading));
-        targets.addAll(splashTargets(level, hit.getLocation(), struck));
+        targets.addAll(splashTargets(level, LevelSpaces.toWorld(level, hit.getLocation()), struck));
         charge.resume(level, targets);
         discard();
     }
@@ -196,23 +196,17 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     }
 
     private boolean bounce(BlockHitResult hit) {
-        Direction face = hit.getDirection();
+        Vec3 normal = LevelSpaces.faceNormal(level(), hit.getBlockPos(), hit.getDirection());
         Vec3 velocity = getDeltaMovement();
-        double rx = face.getAxis() == Direction.Axis.X ? -velocity.x : velocity.x;
-        double ry = face.getAxis() == Direction.Axis.Y ? -velocity.y : velocity.y;
-        double rz = face.getAxis() == Direction.Axis.Z ? -velocity.z : velocity.z;
-        Vec3 reflected = new Vec3(rx, ry * BOUNCE_VERTICAL_KEPT, rz).scale(BOUNCE_SPEED_KEPT);
+        Vec3 mirrored = velocity.subtract(normal.scale(2.0 * velocity.dot(normal)));
+        Vec3 reflected = new Vec3(mirrored.x, mirrored.y * BOUNCE_VERTICAL_KEPT, mirrored.z).scale(BOUNCE_SPEED_KEPT);
         if (reflected.length() < BOUNCE_REST_SPEED) {
             bounces = 0;
             return false;
         }
         bounces--;
         setDeltaMovement(reflected);
-        Vec3 clear = hit.getLocation()
-                .add(
-                        face.getStepX() * BOUNCE_CLEARANCE,
-                        face.getStepY() * BOUNCE_CLEARANCE,
-                        face.getStepZ() * BOUNCE_CLEARANCE);
+        Vec3 clear = LevelSpaces.toWorld(level(), hit.getLocation()).add(normal.scale(BOUNCE_CLEARANCE));
         setPos(clear.x, clear.y, clear.z);
         hurtMarked = true;
         if (!level().isClientSide()) {

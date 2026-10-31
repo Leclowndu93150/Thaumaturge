@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.CarrierPayload;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellWall;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellRayTrace;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -48,7 +49,9 @@ public final class WallDelivery extends AbstractCarrierDelivery {
                 ? reachPoint(ctx, caster, origin)
                 : origin.position();
         BlockHitResult floor = SpellRayTrace.clipBlocks(ctx.level(), caster, anchor, anchor.subtract(0.0, DROP, 0.0));
-        Vec3 base = floor.getType() == HitResult.Type.BLOCK ? floor.getLocation() : anchor;
+        Vec3 base = floor.getType() == HitResult.Type.BLOCK
+                ? LevelSpaces.toWorld(ctx.level(), floor.getLocation())
+                : anchor;
         SpellWall.raise(
                 ctx.level(), caster, payload, base, facing, Math.max(1, ctx.setting(WIDTH)), seconds(ctx, DURATION));
     }
