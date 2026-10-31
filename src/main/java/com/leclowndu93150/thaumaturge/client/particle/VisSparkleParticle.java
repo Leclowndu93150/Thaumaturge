@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.VisSparkleParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -7,6 +8,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 
 public final class VisSparkleParticle extends TTParticle {
     private static final int SAFETY_LIFETIME = 1000;
@@ -43,9 +45,10 @@ public final class VisSparkleParticle extends TTParticle {
         } else {
             setColor(DEFAULT_RED, DEFAULT_GREEN + this.random.nextFloat() * DEFAULT_GREEN_VARIANCE, DEFAULT_BLUE);
         }
-        this.targetX = options.tx();
-        this.targetY = options.ty();
-        this.targetZ = options.tz();
+        Vec3 target = ClientSpaces.renderPosition(level, new Vec3(options.tx(), options.ty(), options.tz()));
+        this.targetX = target.x;
+        this.targetY = target.y;
+        this.targetZ = target.z;
         this.alpha = ALPHA;
         this.lifetime = SAFETY_LIFETIME;
         this.friction = FRICTION;

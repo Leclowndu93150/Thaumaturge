@@ -6,13 +6,13 @@ import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.List;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +24,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 public final class FocalManipulatorRenderer implements BlockEntityRenderer<BlockEntityFocalManipulator> {
     private static final float CENTER = 0.5F;
@@ -61,7 +63,10 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             int overlay) {
         var viewEntity = Minecraft.getInstance().getCameraEntity();
         float ticks = viewEntity == null ? partialTick : viewEntity.tickCount + partialTick;
-        var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Quaternionf facing = ClientSpaces.cameraFacing(
+                table.getLevel(),
+                Vec3.atCenterOf(table.getBlockPos()),
+                Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
 
         ItemStack focus = table.focusStack();
         if (!focus.isEmpty()) {
@@ -92,7 +97,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             float y = FocalManipulatorRenderMath.crystalHeight(ticks, a);
             int color = instance.aspect().value().color();
             drawCrystal(table, a, crystal, crystalLift, color, angle, y, ticks, poseStack, buffers, light, overlay);
-            drawGlint(color, a, x, y, z, ticks, camera, poseStack, buffers);
+            drawGlint(color, a, x, y, z, ticks, facing, poseStack, buffers);
         }
     }
 
@@ -134,7 +139,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             float y,
             float z,
             float ticks,
-            Camera camera,
+            Quaternionf facing,
             PoseStack poseStack,
             MultiBufferSource buffers) {
         int frame = Math.floorMod(
@@ -144,7 +149,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         int tint = ARGB32.color((int) (GLINT_ALPHA * 255.0F), color);
         poseStack.pushPose();
         poseStack.translate(x, y + GLINT_RISE, z);
-        poseStack.mulPose(camera.rotation());
+        poseStack.mulPose(facing);
         poseStack.scale(GLINT_SIZE, GLINT_SIZE, GLINT_SIZE);
         writeGlint(buffers.getBuffer(GLOW_TYPE), poseStack.last().pose(), u0, u1, tint);
         poseStack.popPose();

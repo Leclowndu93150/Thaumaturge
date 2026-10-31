@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityRedstoneRelay;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -77,9 +78,10 @@ public final class RelayTextOverlay {
             Component text) {
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cam = camera.getPosition();
-        float yaw = (float) Math.toDegrees(Math.atan2(cam.x - x, cam.z - z));
+        Vec3 at = ClientSpaces.renderPosition(mc.level, new Vec3(x, y, z));
+        float yaw = (float) Math.toDegrees(Math.atan2(cam.x - at.x, cam.z - at.z));
         poseStack.pushPose();
-        poseStack.translate(x - cam.x, y - cam.y, z - cam.z);
+        poseStack.translate(at.x - cam.x, at.y - cam.y, at.z - cam.z);
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0F));
         poseStack.scale(-TEXT_SCALE, -TEXT_SCALE, TEXT_SCALE);
         int width = mc.font.width(text);

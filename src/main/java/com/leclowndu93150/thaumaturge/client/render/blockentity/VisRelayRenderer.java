@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VisRelayBeamRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockVisRelay;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -64,7 +65,8 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
             var source = relay.getLevel().getCapability(VisRelayCapabilities.SOURCE, parent, null);
             target = source == null ? Vec3.atCenterOf(parent) : source.beamTarget(parent);
         }
-        Vec3 start = target.subtract(own);
+        Vec3 start = ClientSpaces.renderPosition(relay.getLevel(), target)
+                .subtract(ClientSpaces.renderPosition(relay.getLevel(), own));
         long now = relay.getLevel().getGameTime();
         float sincePulse = now - relay.pulseStart() + partialTick;
         int color = relay.pulseColor();

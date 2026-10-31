@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.equipment;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.client.input.TTKeybinds;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import com.leclowndu93150.thaumaturge.content.particle.BoltParticleOptions;
 import com.leclowndu93150.thaumaturge.network.ServerboundToggleHoverPayload;
@@ -111,7 +112,7 @@ public final class HoverClientHandler {
         BlockHitResult hit =
                 level.clip(new ClipContext(origin, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, hoverer));
         if (hit.getType() == HitResult.Type.BLOCK) {
-            Vec3 target = hit.getLocation();
+            Vec3 target = ClientSpaces.renderPosition(level, hit.getLocation());
             level.addParticle(
                     new BoltParticleOptions(target.x, target.y, target.z, BOLT_RED, BOLT_GREEN, BOLT_BLUE, BOLT_WIDTH),
                     origin.x,

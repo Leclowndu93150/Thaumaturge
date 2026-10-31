@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.AreaPreviewer;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -100,7 +101,11 @@ public final class ArchitectOverlayRenderer {
             return;
         }
         PoseStack poseStack = event.getPoseStack();
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        poseStack.pushPose();
+        Vec3 corner = Vec3.atLowerCornerOf(anchor);
+        ClientSpaces.applyFrame(
+                poseStack, mc.level, corner, mc.gameRenderer.getMainCamera().getPosition());
+        Vec3 cam = corner;
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
         drawArchitectAxis(
@@ -116,6 +121,7 @@ public final class ArchitectOverlayRenderer {
             drawOverlayBlock(poseStack, effectBuffers, pos, cam);
         }
         buffers.endBatch();
+        poseStack.popPose();
     }
 
     @SubscribeEvent

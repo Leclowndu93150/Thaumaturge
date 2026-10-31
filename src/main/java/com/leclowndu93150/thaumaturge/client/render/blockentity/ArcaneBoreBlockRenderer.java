@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
 import com.leclowndu93150.thaumaturge.client.render.BoreDrillFx;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -65,7 +66,10 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
             BoreDrillFx.render(
                     poseStack,
                     buffers,
-                    Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation(),
+                    ClientSpaces.cameraFacing(
+                            bore.getLevel(),
+                            Vec3.atCenterOf(bore.getBlockPos()),
+                            Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation()),
                     tip,
                     yaw,
                     pitch,

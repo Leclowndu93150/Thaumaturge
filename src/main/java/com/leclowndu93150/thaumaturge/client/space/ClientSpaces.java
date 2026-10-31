@@ -30,8 +30,11 @@ public final class ClientSpaces {
     }
 
     public static void faceCamera(@Nullable Level level, Vec3 position, PoseStack poseStack, Quaternionfc rotation) {
-        poseStack.mulPose(new Quaternionf(renderOrientation(level, position)).conjugate());
-        poseStack.mulPose(new Quaternionf(rotation));
+        poseStack.mulPose(cameraFacing(level, position, rotation));
+    }
+
+    public static Quaternionf cameraFacing(@Nullable Level level, Vec3 position, Quaternionfc rotation) {
+        return new Quaternionf(renderOrientation(level, position)).conjugate().mul(rotation);
     }
 
     public static void applyFrame(PoseStack poseStack, @Nullable Level level, Vec3 anchor, Vec3 camera) {

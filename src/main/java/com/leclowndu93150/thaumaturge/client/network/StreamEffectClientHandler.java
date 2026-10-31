@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.effect.instance.VoidStreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.manager.BeamManager;
 import com.leclowndu93150.thaumaturge.client.effect.manager.BoreVoidStreamManager;
 import com.leclowndu93150.thaumaturge.client.effect.manager.EssentiaStreamManager;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
@@ -22,33 +23,32 @@ public final class StreamEffectClientHandler {
     }
 
     private static void dispatch(ClientboundStreamEffectPayload p) {
+        Minecraft mc = Minecraft.getInstance();
+        Vec3 source = ClientSpaces.renderPosition(mc.level, new Vec3(p.sx(), p.sy(), p.sz()));
+        Vec3 target = ClientSpaces.renderPosition(mc.level, new Vec3(p.tx(), p.ty(), p.tz()));
         switch (p.kind()) {
             case ARC ->
-                BeamManager.addArc(
-                        new ArcInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
+                BeamManager.addArc(new ArcInstance(
+                        source.x, source.y, source.z, target.x, target.y, target.z, p.color(), p.extraFloat()));
             case BOLT -> {
-                double sx = p.sx();
-                double sy = p.sy();
-                double sz = p.sz();
-                Minecraft mc = Minecraft.getInstance();
+                Vec3 from = source;
                 if (p.entityId() == mc.player.getId()) {
                     Vec3 tip = WandTipTracker.firstPersonTip();
                     if (tip != null) {
-                        sx = tip.x;
-                        sy = tip.y;
-                        sz = tip.z;
+                        from = tip;
                     }
                 }
-                BeamManager.addBolt(new BoltInstance(sx, sy, sz, p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
+                BeamManager.addBolt(new BoltInstance(
+                        from.x, from.y, from.z, target.x, target.y, target.z, p.color(), p.extraFloat()));
             }
             case BEAM ->
                 BeamManager.addBeam(new BeamInstance(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
-                        p.tx(),
-                        p.ty(),
-                        p.tz(),
+                        source.x,
+                        source.y,
+                        source.z,
+                        target.x,
+                        target.y,
+                        target.z,
                         p.color(),
                         p.extraInt(),
                         p.extraInt2(),
@@ -59,12 +59,12 @@ public final class StreamEffectClientHandler {
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT)));
             case ESSENTIA ->
                 EssentiaStreamManager.spawn(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
-                        p.tx(),
-                        p.ty(),
-                        p.tz(),
+                        source.x,
+                        source.y,
+                        source.z,
+                        target.x,
+                        target.y,
+                        target.z,
                         p.color(),
                         p.extraInt(),
                         p.extraFloat(),
@@ -72,9 +72,9 @@ public final class StreamEffectClientHandler {
                         p.extraFloat2());
             case BORE ->
                 BoreVoidStreamManager.addBore(new BoreStreamInstance(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
+                        source.x,
+                        source.y,
+                        source.z,
                         p.entityId(),
                         p.color(),
                         p.extraInt(),
@@ -83,7 +83,7 @@ public final class StreamEffectClientHandler {
                         p.extraFloat2()));
             case VOID ->
                 BoreVoidStreamManager.addVoid(new VoidStreamInstance(
-                        p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.extraInt(), p.extraFloat()));
+                        source.x, source.y, source.z, target.x, target.y, target.z, p.extraInt(), p.extraFloat()));
         }
     }
 }

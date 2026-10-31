@@ -7,8 +7,11 @@ import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.client.model.connected.FaceCorners;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.spell.effect.WardEffect;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -84,14 +87,33 @@ public final class WardOverlayRenderer {
         BlockPos.MutableBlockPos neighbour = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (SectionPos section : ClientWardHolder.sections()) {
-            if (cam.distanceToSqr(section.center().getCenter()) > SECTION_RANGE * SECTION_RANGE) {
+            if (cam.distanceToSqr(ClientSpaces.renderPosition(
+                            minecraft.level, section.center().getCenter()))
+                    > SECTION_RANGE * SECTION_RANGE) {
                 continue;
             }
             for (BlockPos pos : ClientWardHolder.wardsIn(section)) {
-                if (cam.distanceToSqr(Vec3.atCenterOf(pos)) > RENDER_RANGE * RENDER_RANGE) {
+                if (cam.distanceToSqr(ClientSpaces.renderPosition(minecraft.level, Vec3.atCenterOf(pos)))
+                        > RENDER_RANGE * RENDER_RANGE) {
                     continue;
                 }
-                drawWard(buffer, pose, sprites, neighbour, cursor, pos, cam, time);
+                if (LevelSpaces.isDetached(minecraft.level, pos)) {
+                    PoseStack poseStack = event.getPoseStack();
+                    poseStack.pushPose();
+                    ClientSpaces.applyFrame(poseStack, minecraft.level, Vec3.atLowerCornerOf(pos), cam);
+                    drawWard(
+                            buffer,
+                            poseStack.last().pose(),
+                            sprites,
+                            neighbour,
+                            cursor,
+                            pos,
+                            Vec3.atLowerCornerOf(pos),
+                            time);
+                    poseStack.popPose();
+                } else {
+                    drawWard(buffer, pose, sprites, neighbour, cursor, pos, cam, time);
+                }
             }
         }
         buffers.endBatch(RUNES);

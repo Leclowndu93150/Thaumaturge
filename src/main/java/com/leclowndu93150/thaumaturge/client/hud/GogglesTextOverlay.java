@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.hud;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.List;
@@ -80,9 +81,10 @@ public final class GogglesTextOverlay {
             Component text) {
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cam = camera.getPosition();
-        float yaw = (float) Math.toDegrees(Math.atan2(cam.x - (x + 0.5), cam.z - (z + 0.5)));
+        Vec3 at = ClientSpaces.renderPosition(mc.level, new Vec3(x + 0.5, y + 0.5, z + 0.5));
+        float yaw = (float) Math.toDegrees(Math.atan2(cam.x - at.x, cam.z - at.z));
         poseStack.pushPose();
-        poseStack.translate(x + 0.5 - cam.x, y + 0.5 - cam.y, z + 0.5 - cam.z);
+        poseStack.translate(at.x - cam.x, at.y - cam.y, at.z - cam.z);
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0F));
         poseStack.scale(-TEXT_SCALE, -TEXT_SCALE, TEXT_SCALE);
         int width = mc.font.width(text);

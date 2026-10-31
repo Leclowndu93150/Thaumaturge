@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.particle.BoreDebrisParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
@@ -49,9 +50,15 @@ public final class BoreDigEffect implements IFXInstance {
         }
         RandomSource random = this.level.getRandom();
         for (int index = 0; index < this.particlesPerTick; index++) {
-            double x = this.target.getX() + random.nextFloat();
-            double y = this.target.getY() + random.nextFloat();
-            double z = this.target.getZ() + random.nextFloat();
+            Vec3 at = ClientSpaces.renderPosition(
+                    this.level,
+                    new Vec3(
+                            this.target.getX() + random.nextFloat(),
+                            this.target.getY() + random.nextFloat(),
+                            this.target.getZ() + random.nextFloat()));
+            double x = at.x;
+            double y = at.y;
+            double z = at.z;
             if (random.nextInt(SPARKLE_CHANCE) == 0) {
                 BoreSparkleParticleOptions options = new BoreSparkleParticleOptions(
                         this.boreEntityId,
@@ -73,10 +80,12 @@ public final class BoreDigEffect implements IFXInstance {
 
     private @Nullable Vec3 sourcePosition() {
         if (this.boreEntityId == BoreDebrisParticleOptions.NO_ENTITY) {
-            return new Vec3(
-                    this.borePos.getX() + 0.5,
-                    this.borePos.getY() + BlockEntityArcaneBore.EYE_HEIGHT,
-                    this.borePos.getZ() + 0.5);
+            return ClientSpaces.renderPosition(
+                    this.level,
+                    new Vec3(
+                            this.borePos.getX() + 0.5,
+                            this.borePos.getY() + BlockEntityArcaneBore.EYE_HEIGHT,
+                            this.borePos.getZ() + 0.5));
         }
         Entity bore = this.level.getEntity(this.boreEntityId);
         return bore == null ? null : bore.getEyePosition();
