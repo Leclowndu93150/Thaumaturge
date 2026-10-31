@@ -16,9 +16,9 @@ public final class AspectIndexClientHandler {
         ctx.enqueueWork(() -> {
             if (!Minecraft.getInstance().hasSingleplayerServer()) {
                 AspectIndexHolder.set(payload.index());
-                if (ModList.get().isLoaded(JEI_MOD_ID)) {
-                    AspectJeiSync.rebuildAspectStackPages();
-                }
+            }
+            if (ModList.get().isLoaded(JEI_MOD_ID)) {
+                AspectJeiSync.rebuildAspectStackPages();
             }
         });
     }
