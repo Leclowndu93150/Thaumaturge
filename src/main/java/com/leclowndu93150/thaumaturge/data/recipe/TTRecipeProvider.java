@@ -1060,7 +1060,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         SmithingTrimRecipeBuilder.smithingTrim(
                         Ingredient.of(template),
                         Ingredient.of(TTItemTags.TRIMMABLE_ARMOR),
-                        Ingredient.of(ItemTags.TRIM_MATERIALS),
+                        Ingredient.of(TTItemTags.TRIM_MATERIALS),
                         RecipeCategory.MISC)
                 .unlocks("has_smithing_trim_template", has(template))
                 .save(output, TTIds.rl("smithing/" + pattern.location().getPath() + "_armor_trim"));
