@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
+import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimBonuses;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import java.util.List;
@@ -27,7 +28,7 @@ public final class WarpGear {
         if (stack.getItem() instanceof IWarpingGear gear) {
             warp += gear.warp(stack, wearer);
         }
-        return warp + craftingWarp(stack);
+        return warp + TrimBonuses.of(stack).warp() + craftingWarp(stack);
     }
 
     public static int craftingWarp(ItemStack stack) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimMaterials;
 import net.minecraft.world.item.SmithingTemplateItem;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItem;
 import net.minecraft.util.Unit;
@@ -608,9 +609,9 @@ public final class TTItems {
     public static final DeferredItem<BlockItem> METAL_VOID_BLOCK = ITEMS.registerSimpleBlockItem(TTBlocks.METAL_VOID_BLOCK);
     public static final DeferredItem<BlockItem> AMBER_BLOCK = ITEMS.registerSimpleBlockItem(TTBlocks.AMBER_BLOCK);
 
-    public static final DeferredItem<Item> INGOT_BRASS = ITEMS.registerSimpleItem("ingot_brass");
-    public static final DeferredItem<Item> INGOT_THAUMIUM = ITEMS.registerSimpleItem("ingot_thaumium");
-    public static final DeferredItem<Item> INGOT_VOID = ITEMS.registerSimpleItem("ingot_void");
+    public static final DeferredItem<Item> INGOT_BRASS = ITEMS.registerSimpleItem("ingot_brass", props -> props.trimMaterial(TTTrimMaterials.BRASS));
+    public static final DeferredItem<Item> INGOT_THAUMIUM = ITEMS.registerSimpleItem("ingot_thaumium", props -> props.trimMaterial(TTTrimMaterials.THAUMIUM));
+    public static final DeferredItem<Item> INGOT_VOID = ITEMS.registerSimpleItem("ingot_void", props -> props.trimMaterial(TTTrimMaterials.VOID_METAL));
     public static final DeferredItem<Item> QUICKSILVER = ITEMS.registerSimpleItem("quicksilver");
     public static final DeferredItem<Item> AMBER = ITEMS.registerSimpleItem("amber");
 
