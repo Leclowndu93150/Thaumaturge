@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.world.space.WorldFrame;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.platform.SableEventPlatform;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Position;
@@ -17,6 +18,12 @@ import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public final class SableLevelSpaces implements LevelSpaceProvider {
+    private final SablePushes pushes = new SablePushes();
+
+    public SableLevelSpaces() {
+        SableEventPlatform.INSTANCE.onPhysicsTick(pushes);
+    }
+
     @Override
     public SpaceFrame frameOf(Level level, Position pos) {
         return frame(SableCompanion.INSTANCE.getContaining(level, pos));
@@ -42,12 +49,12 @@ public final class SableLevelSpaces implements LevelSpaceProvider {
         List<SpaceFrame> frames = new ArrayList<>();
         frames.add(WorldFrame.INSTANCE);
         for (SubLevelAccess subLevel : SableCompanion.INSTANCE.getAllIntersecting(level, new BoundingBox3d(worldBox))) {
-            frames.add(new SubLevelFrame(subLevel));
+            frames.add(new SubLevelFrame(subLevel, pushes));
         }
         return frames;
     }
 
-    private static SpaceFrame frame(@Nullable SubLevelAccess subLevel) {
-        return subLevel == null ? WorldFrame.INSTANCE : new SubLevelFrame(subLevel);
+    private SpaceFrame frame(@Nullable SubLevelAccess subLevel) {
+        return subLevel == null ? WorldFrame.INSTANCE : new SubLevelFrame(subLevel, pushes);
     }
 }

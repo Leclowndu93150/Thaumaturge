@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.space;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 
 public enum WorldFrame implements SpaceFrame {
@@ -29,4 +30,7 @@ public enum WorldFrame implements SpaceFrame {
     public Vec3 directionToLocal(Vec3 world) {
         return world;
     }
+
+    @Override
+    public void push(BlockPos source, Vec3 worldPoint, Vec3 worldDirection, double liftBlocks, double maxSpeed) {}
 }
