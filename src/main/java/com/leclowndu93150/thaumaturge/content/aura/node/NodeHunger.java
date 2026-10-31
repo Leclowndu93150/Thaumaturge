@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -194,22 +195,26 @@ final class NodeHunger {
             Level level, BlockPos pos, @Nullable NodeModifier modifier, RandomSource random) {
         int reach = eatRange(modifier);
         BlockPos aim = NodeScatter.triangular(pos, reach - 1, random);
+        SpaceFrame frame = LevelSpaces.frameOf(level, pos);
+        Vec3 to = frame.toWorld(Vec3.atCenterOf(aim));
         if (aim.equals(pos)
-                || !level.hasChunkAt(aim)
-                || aim.getY() >= level.getHeight(Heightmap.Types.WORLD_SURFACE, aim.getX(), aim.getZ())) {
+                || !level.hasChunkAt(BlockPos.containing(to))
+                || (frame.isWorld()
+                        && aim.getY() >= level.getHeight(Heightmap.Types.WORLD_SURFACE, aim.getX(), aim.getZ()))) {
             return null;
         }
         BlockHitResult hit = level.clip(new SourceIgnoringClipContext(
                 pos,
-                Vec3.atCenterOf(pos),
-                Vec3.atCenterOf(aim),
+                frame.toWorld(Vec3.atCenterOf(pos)),
+                to,
                 ClipContext.Block.OUTLINE,
                 ClipContext.Fluid.SOURCE_ONLY));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return null;
         }
         BlockPos struck = hit.getBlockPos();
-        if (struck.distSqr(pos) > (double) reach * reach || WardHandler.isWarded(level, struck)) {
+        if (LevelSpaces.distanceSqr(level, struck, pos) > (double) reach * reach
+                || WardHandler.isWarded(level, struck)) {
             return null;
         }
         BlockState state = level.getBlockState(struck);

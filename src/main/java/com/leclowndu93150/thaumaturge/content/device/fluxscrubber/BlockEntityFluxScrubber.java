@@ -9,7 +9,9 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -205,6 +207,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
 
     private void scan(ServerLevel level, BlockPos pos) {
         RandomSource random = level.getRandom();
+        List<BlockPos> foreign = LevelSpaces.foreignCentersNear(level, pos, SCAN_RADIUS);
         for (int checked = 0; checked < CELL_BUDGET; checked++) {
             if (scanIndex >= SCAN_CELLS) {
                 reseed(random);
@@ -217,22 +220,34 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
             if (dx * dx + dy * dy + dz * dz >= SCAN_RADIUS_SQUARED) {
                 continue;
             }
-            cursor.setWithOffset(pos, dx, dy, dz);
-            if (!level.hasChunkAt(cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
-                continue;
-            }
-            if (PhysicalFlux.reduce(level, cursor, REMOVAL_AMOUNT) > 0) {
-                power -= WORK_POWER;
-                charges++;
-                Effects.simpleSparkle(level, Vec3.atCenterOf(cursor))
-                        .color(SPARKLE_RED, SPARKLE_GREEN, SPARKLE_BLUE)
-                        .scale(SPARKLE_SCALE)
-                        .send();
-                roll(random);
-                setChangedAndSend();
+            if (scrubAt(level, pos, dx, dy, dz, random)) {
                 return;
             }
+            for (BlockPos center : foreign) {
+                if (scrubAt(level, center, dx, dy, dz, random)) {
+                    return;
+                }
+            }
         }
+    }
+
+    private boolean scrubAt(ServerLevel level, BlockPos center, int dx, int dy, int dz, RandomSource random) {
+        cursor.setWithOffset(center, dx, dy, dz);
+        if (!level.hasChunkAt(cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
+            return false;
+        }
+        if (PhysicalFlux.reduce(level, cursor, REMOVAL_AMOUNT) > 0) {
+            power -= WORK_POWER;
+            charges++;
+            Effects.simpleSparkle(level, Vec3.atCenterOf(cursor))
+                    .color(SPARKLE_RED, SPARKLE_GREEN, SPARKLE_BLUE)
+                    .scale(SPARKLE_SCALE)
+                    .send();
+            roll(random);
+            setChangedAndSend();
+            return true;
+        }
+        return false;
     }
 
     private void roll(RandomSource random) {

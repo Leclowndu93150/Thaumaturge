@@ -41,6 +41,9 @@ public final class LevelSpaces {
     }
 
     public static List<BlockPos> foreignCentersNear(Level level, BlockPos origin, double reach) {
+        if (provider == WorldOnlySpaces.INSTANCE) {
+            return List.of();
+        }
         SpaceFrame own = frameOf(level, origin);
         Vec3 world = own.toWorld(Vec3.atCenterOf(origin));
         List<SpaceFrame> frames = framesTouching(level, new AABB(world, world).inflate(reach));
@@ -81,6 +84,13 @@ public final class LevelSpaces {
 
     public static Vec3 faceNormal(Level level, BlockPos pos, Direction face) {
         return frameOf(level, pos).directionToWorld(Vec3.atLowerCornerOf(face.getNormal()));
+    }
+
+    public static double distanceSqr(Level level, BlockPos a, BlockPos b) {
+        if (provider == WorldOnlySpaces.INSTANCE) {
+            return a.distSqr(b);
+        }
+        return distanceSqr(level, Vec3.atCenterOf(a), Vec3.atCenterOf(b));
     }
 
     public static double distanceSqr(Level level, Vec3 a, Vec3 b) {

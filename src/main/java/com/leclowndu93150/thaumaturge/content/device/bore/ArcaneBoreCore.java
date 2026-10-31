@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.equipment.RefiningResults;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.HashSet;
@@ -174,7 +175,8 @@ public final class ArcaneBoreCore {
     }
 
     private static List<ItemEntity> itemsAround(ServerLevel level, BlockPos target) {
-        return level.getEntitiesOfClass(ItemEntity.class, new AABB(target).inflate(DROP_COLLECT_RANGE));
+        return level.getEntitiesOfClass(
+                ItemEntity.class, LevelSpaces.worldBox(level, target, new AABB(target).inflate(DROP_COLLECT_RANGE)));
     }
 
     private void collectAndEjectDrops(
@@ -242,7 +244,7 @@ public final class ArcaneBoreCore {
         int x = origin.getX() + (facing.getStepX() != 0 ? 0 : sideways);
         int y = origin.getY() - (phase == 3 && facing.getStepY() == 0 ? TUNNEL_LIGHT_DROP : 0);
         int z = origin.getZ() + (facing.getStepX() != 0 ? sideways : 0);
-        BlockPos target = new BlockPos(x, y, z);
+        BlockPos target = LevelSpaces.worldBlock(level, new BlockPos(x, y, z));
         if (level.hasChunkAt(target)
                 && level.getBlockState(target).isAir()
                 && level.getBrightness(LightLayer.BLOCK, target) < MAX_TUNNEL_LIGHT) {
@@ -291,19 +293,19 @@ public final class ArcaneBoreCore {
         ItemStack tool = host.boreTool();
         BlockPos end = scanPoint.relative(facing, ArcaneBoreTool.digDepth(tool));
         BlockHitResult hit = level.clip(new ClipContext(
-                Vec3.atCenterOf(scanPoint),
-                Vec3.atCenterOf(end),
+                LevelSpaces.toWorld(level, Vec3.atCenterOf(scanPoint)),
+                LevelSpaces.toWorld(level, Vec3.atCenterOf(end)),
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
                 host.boreCollisionContext()));
         if (hit.getType() == HitResult.Type.MISS) {
             return false;
         }
-        Vec3 eye = host.boreEye();
-        Vec3 digger = new Vec3(eye.x + facing.getStepX(), eye.y + facing.getStepY(), eye.z + facing.getStepZ());
+        Vec3 digger =
+                LevelSpaces.toWorld(level, host.boreEye()).add(LevelSpaces.faceNormal(level, host.borePos(), facing));
         hit = level.clip(new ClipContext(
                 digger,
-                Vec3.atCenterOf(hit.getBlockPos()),
+                LevelSpaces.worldCenter(level, hit.getBlockPos()),
                 ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE,
                 host.boreCollisionContext()));
