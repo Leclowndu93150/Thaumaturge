@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -130,11 +131,28 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
         ItemStack wand = getItem();
         WandParts parts = WandVisHelper.getParts(wand);
         int min = parts.rod() == TTWandParts.ROD_WOOD.get() || parts.cap() == TTWandParts.CAP_IRON.get() ? 0 : 1;
+        if (drawFromNodesAround(level, wand, min, worldPosition, false)) {
+            return true;
+        }
+        for (BlockPos center : LevelSpaces.foreignCentersNear(level, worldPosition, NODE_DRAW_RANGE * Math.sqrt(3.0))) {
+            if (drawFromNodesAround(level, wand, min, center, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean drawFromNodesAround(ServerLevel level, ItemStack wand, int min, BlockPos center, boolean foreign) {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int xx = -NODE_DRAW_RANGE; xx <= NODE_DRAW_RANGE; xx++) {
             for (int yy = -NODE_DRAW_RANGE; yy <= NODE_DRAW_RANGE; yy++) {
                 for (int zz = -NODE_DRAW_RANGE; zz <= NODE_DRAW_RANGE; zz++) {
-                    cursor.setWithOffset(worldPosition, xx, yy, zz);
+                    cursor.setWithOffset(center, xx, yy, zz);
+                    if (foreign
+                            && (!level.isLoaded(cursor)
+                                    || !LevelSpaces.withinCube(level, worldPosition, cursor, NODE_DRAW_RANGE))) {
+                        continue;
+                    }
                     if (!(level.getBlockEntity(cursor) instanceof BlockEntityNode node)
                             || node instanceof BlockEntityJarNode) {
                         continue;

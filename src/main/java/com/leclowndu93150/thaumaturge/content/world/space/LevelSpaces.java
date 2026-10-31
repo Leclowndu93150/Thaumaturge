@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.space;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -37,6 +38,24 @@ public final class LevelSpaces {
 
     public static List<SpaceFrame> framesTouching(Level level, AABB worldBox) {
         return provider.framesTouching(level, worldBox);
+    }
+
+    public static List<BlockPos> foreignCentersNear(Level level, BlockPos origin, double reach) {
+        SpaceFrame own = frameOf(level, origin);
+        Vec3 world = own.toWorld(Vec3.atCenterOf(origin));
+        List<SpaceFrame> frames = framesTouching(level, new AABB(world, world).inflate(reach));
+        List<BlockPos> centers = new ArrayList<>(frames.size());
+        for (SpaceFrame frame : frames) {
+            if (!frame.equals(own)) {
+                centers.add(BlockPos.containing(frame.toLocal(world)));
+            }
+        }
+        return centers;
+    }
+
+    public static boolean withinCube(Level level, BlockPos a, BlockPos b, double range) {
+        Vec3 delta = worldCenter(level, a).subtract(worldCenter(level, b));
+        return Math.abs(delta.x) <= range && Math.abs(delta.y) <= range && Math.abs(delta.z) <= range;
     }
 
     public static boolean isPlotChunk(Level level, ChunkPos pos) {
