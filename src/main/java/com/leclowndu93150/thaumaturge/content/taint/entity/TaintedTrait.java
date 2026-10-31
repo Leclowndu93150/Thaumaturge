@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitGoals;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Map;
 import net.minecraft.core.Holder;
@@ -58,7 +59,7 @@ public final class TaintedTrait implements MobTrait {
     public void tick(LivingEntity mob) {
         if (mob.tickCount % WITHER_INTERVAL != 0
                 || !(mob.level() instanceof ServerLevel level)
-                || TaintOrigins.isSustained(level, mob.blockPosition().below())) {
+                || TaintOrigins.isSustained(level, LevelSpaces.localBlock(mob).below())) {
             return;
         }
         mob.hurt(level.damageSources().starve(), WITHER_DAMAGE);

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
@@ -56,12 +57,12 @@ public final class TaintBiomeManager {
                 || TaintBlooms.isProtected(level, pos)) {
             return false;
         }
-        return replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
+        return LevelSpaces.isPlot(level, pos) || replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
     }
 
     public static boolean replaceColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> biomeKey) {
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null) {
+        if (chunk == null || LevelSpaces.isPlot(level, pos)) {
             return false;
         }
         int quartX = QuartPos.fromBlock(pos.getX());
@@ -101,7 +102,7 @@ public final class TaintBiomeManager {
 
     public static boolean restoreColumn(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null || !isTainted(level, pos)) {
+        if (chunk == null || LevelSpaces.isPlot(level, pos) || !isTainted(level, pos)) {
             return false;
         }
         int quartX = QuartPos.fromBlock(pos.getX());
@@ -132,7 +133,7 @@ public final class TaintBiomeManager {
 
     public static boolean revertColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> painted) {
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null) {
+        if (chunk == null || LevelSpaces.isPlot(level, pos)) {
             return false;
         }
         int quartX = QuartPos.fromBlock(pos.getX());

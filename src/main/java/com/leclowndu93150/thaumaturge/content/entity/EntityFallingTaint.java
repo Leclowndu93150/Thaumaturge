@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -80,7 +81,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         if (!(this.level() instanceof ServerLevel server)) {
             return;
         }
-        BlockPos here = this.blockPosition();
+        BlockPos here = LevelSpaces.localBlock(this);
 
         fallTime++;
 

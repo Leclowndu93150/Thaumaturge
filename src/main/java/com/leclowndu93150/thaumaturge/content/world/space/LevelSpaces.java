@@ -69,6 +69,15 @@ public final class LevelSpaces {
         return !frameOf(level, pos).isWorld();
     }
 
+    public static BlockPos localBlock(Entity entity) {
+        SpaceFrame frame = trackedFrame(entity);
+        return frame.isWorld() ? entity.blockPosition() : BlockPos.containing(frame.toLocal(entity.position()));
+    }
+
+    public static boolean isPlot(Level level, BlockPos pos) {
+        return isPlotChunk(level, new ChunkPos(pos));
+    }
+
     public static Vec3 toWorld(Level level, Vec3 pos) {
         return frameOf(level, pos).toWorld(pos);
     }
