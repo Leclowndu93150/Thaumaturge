@@ -503,6 +503,60 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                         TTBlockTags.STORAGE_BLOCKS_FLESH,
                         TTBlockTags.STORAGE_BLOCKS_TALLOW);
 
+        tag(TTBlockTags.SABLE_SUPER_HEAVY)
+                .remove(TTBlocks.AMBER_BLOCK.get())
+                .remove(TTBlocks.FLESH_BLOCK.get())
+                .remove(TTBlocks.TALLOW_BLOCK.get());
+        tag(TTBlockTags.SABLE_HEAVY)
+                .add(TTBlocks.STONE_ARCANE.get())
+                .add(TTBlocks.STONE_ANCIENT.get())
+                .add(TTBlocks.STONE_ANCIENT_ROCK.get())
+                .add(TTBlocks.STONE_POROUS.get())
+                .add(TTBlocks.ELDRITCH_STONE.get())
+                .add(TTBlocks.ELDRITCH_STONE_INERT.get())
+                .add(TTBlocks.ELDRITCH_ROCK.get())
+                .add(TTBlocks.TAINT_ROCK.get())
+                .add(TTBlocks.OBSIDIAN_TILE.get())
+                .add(TTBlocks.OBSIDIAN_TOTEM.get())
+                .add(TTBlocks.OBSIDIAN_TOTEM_CHARGED.get())
+                .add(TTBlocks.ALCHEMICAL_CONSTRUCT.get())
+                .add(TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
+        tag(TTBlockTags.SABLE_LIGHT)
+                .add(TTBlocks.HUNGRY_CHEST.get())
+                .add(TTBlocks.TABLE_WOOD.get())
+                .add(TTBlocks.RESEARCH_TABLE.get())
+                .add(TTBlocks.ARCANE_WORKBENCH.get())
+                .add(TTBlocks.LOOT_CRATE_COMMON.get())
+                .add(TTBlocks.LOOT_CRATE_UNCOMMON.get())
+                .add(TTBlocks.LOOT_CRATE_RARE.get())
+                .add(TTBlocks.TUBE_BUFFER.get())
+                .add(TTBlocks.CRYSTAL_AER.get())
+                .add(TTBlocks.CRYSTAL_IGNIS.get())
+                .add(TTBlocks.CRYSTAL_AQUA.get())
+                .add(TTBlocks.CRYSTAL_TERRA.get())
+                .add(TTBlocks.CRYSTAL_ORDO.get())
+                .add(TTBlocks.CRYSTAL_PERDITIO.get())
+                .add(TTBlocks.CRYSTAL_VITIUM.get());
+        for (TagKey<Block> thin : List.of(TTBlockTags.SABLE_SUPER_LIGHT, TTBlockTags.SABLE_QUARTER_VOLUME)) {
+            TagAppender<Block> appender = tag(thin)
+                    .addTag(TTBlockTags.CANDLES)
+                    .add(TTBlocks.TUBE.get())
+                    .add(TTBlocks.TUBE_VALVE.get())
+                    .add(TTBlocks.TUBE_RESTRICT.get())
+                    .add(TTBlocks.TUBE_FILTER.get())
+                    .add(TTBlocks.TUBE_ONEWAY.get())
+                    .add(TTBlocks.MANA_POD.get())
+                    .add(TTBlocks.VIS_RELAY.get())
+                    .add(TTBlocks.REDSTONE_RELAY.get());
+            TTBlocks.NITORS.values().forEach(nitor -> appender.add(nitor.getKey()));
+        }
+        tag(TTBlockTags.SABLE_HALF_VOLUME)
+                .add(TTBlocks.JAR_NORMAL.get())
+                .add(TTBlocks.JAR_VOID.get())
+                .add(TTBlocks.JAR_CREATIVE.get())
+                .add(TTBlocks.JAR_BRAIN.get())
+                .add(TTBlocks.JAR_NODE.get());
+
         tag(TTBlockTags.GREATWOOD_LOGS)
                 .add(TTBlocks.LOG_GREATWOOD.get())
                 .add(TTBlocks.WOOD_GREATWOOD.get())
