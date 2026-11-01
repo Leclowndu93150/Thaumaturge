@@ -31,7 +31,7 @@ class LateWorldRenderQueueTest {
     }
 
     @Test
-    void nodeLayersRenderAfterWaterWithoutShadersAndKeepTheIrisPass() throws Exception {
+    void nodeLayersRenderAfterTheLevelWithAndWithoutShaders() throws Exception {
         Minecraft minecraft = mock(Minecraft.class);
         GameRenderer renderer = mock(GameRenderer.class);
         Field field = Minecraft.class.getField("gameRenderer");
@@ -68,6 +68,8 @@ class LateWorldRenderQueueTest {
             iris.when(IrisCompat::shadersActive).thenReturn(true);
             LateWorldRenderQueue.enqueueBlockEntityAfterTranslucent(Vec3.ZERO, (pose, source) -> draws.add("iris"));
             LateWorldRenderQueue.onRender(event(RenderLevelStageEvent.Stage.AFTER_PARTICLES));
+            assertEquals(List.of("vanilla", "node"), draws);
+            LateWorldRenderQueue.onRender(event(RenderLevelStageEvent.Stage.AFTER_LEVEL));
             assertEquals(List.of("vanilla", "node", "iris"), draws);
         }
     }

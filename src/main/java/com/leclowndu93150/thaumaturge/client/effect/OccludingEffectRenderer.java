@@ -45,14 +45,14 @@ public final class OccludingEffectRenderer {
             float speed,
             float distanceFraction,
             float width) {
-        if (!isWithinEntityRenderDistance(cullOrigin)) {
+        if (IrisCompat.isShadowPass() || !isWithinEntityRenderDistance(cullOrigin)) {
             return;
         }
         BEAMS.add(new Beam(origin, fromRelative, time, color, speed, distanceFraction, width));
     }
 
     public static void enqueuePortal(Vec3 origin, float scaleX, float scaleY, float u0, float u1, int tint, int light) {
-        if (!isWithinEntityRenderDistance(origin)) {
+        if (IrisCompat.isShadowPass() || !isWithinEntityRenderDistance(origin)) {
             return;
         }
         PORTALS.add(new Portal(origin, scaleX, scaleY, u0, u1, tint, light));
@@ -70,8 +70,10 @@ public final class OccludingEffectRenderer {
         }
         Minecraft mc = Minecraft.getInstance();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
-        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource effectBuffers = event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL
+                ? buffers
+                : IrisCompat.entityEffectBuffers(buffers);
+        PoseStack poseStack = LateWorldRenderQueue.renderPose(event);
         Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         try {
             renderBeams(poseStack, effectBuffers, camera, WISPY);

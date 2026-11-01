@@ -246,7 +246,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     public static void forEachLayer(NodeRenderState state, LayerSink sink) {
         int frame = Math.floorMod(Mth.floor(state.ticks * FRAME_ADVANCE_PER_TICK) + state.frameSeed, GRID);
         if (!state.visible || state.layers.isEmpty()) {
-            float faintAlpha = IrisCompat.shadersActive() ? IRIS_FAINT_ALPHA : FAINT_ALPHA;
+            float faintAlpha = IrisCompat.overridesShaders() ? IRIS_FAINT_ALPHA : FAINT_ALPHA;
             RenderType faintType = state.visible && state.depthIgnore ? NODE_ADDITIVE_NO_DEPTH : NODE_ADDITIVE;
             sink.layer(0, faintType, 0.0F, FAINT_SCALE, faintAlpha, 0xFFFFFF, STRIP_NORMAL, frame);
             return;

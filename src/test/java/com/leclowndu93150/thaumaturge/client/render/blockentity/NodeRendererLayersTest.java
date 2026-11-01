@@ -70,7 +70,7 @@ class NodeRendererLayersTest {
     void unaidedRenderingKeepsTheFaintStarWithoutLeakingAspectLayers() {
         try (var iris = mockStatic(IrisCompat.class)) {
             for (boolean shaders : new boolean[] {false, true}) {
-                iris.when(IrisCompat::shadersActive).thenReturn(shaders);
+                iris.when(IrisCompat::overridesShaders).thenReturn(shaders);
                 NodeRenderState state = state(NodeType.HUNGRY, 6);
                 state.visible = false;
                 List<Layer> layers = layers(state);
