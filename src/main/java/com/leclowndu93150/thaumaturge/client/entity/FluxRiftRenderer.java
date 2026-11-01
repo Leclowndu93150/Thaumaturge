@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.TTFXRenderTypes;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -72,7 +73,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
     }
 
     private static void submitTube(SubmitNodeCollector collector, PoseStack poseStack, RenderType type, Tube tube, float scale) {
-        collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> tube.write(buffer, pose.pose(), scale));
+        LateWorldRenderQueue.submitOwnShader(poseStack, collector, type, (pose, buffer) -> tube.write(buffer, pose.pose(), scale));
     }
 
     private static int ringCount(FluxRiftRenderState state) {
