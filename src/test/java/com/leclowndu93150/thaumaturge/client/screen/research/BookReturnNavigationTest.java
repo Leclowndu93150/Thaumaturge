@@ -1,18 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
-import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -35,39 +31,17 @@ class BookReturnNavigationTest {
         EntryDetailScreen detail = detail(game, map);
         field(EntryDetailScreen.class, "shownRecipe").set(detail, RECIPE);
 
-        try (MockedStatic<ThaumaturgeClientConfig> config = mockStatic(ThaumaturgeClientConfig.class)) {
-            config.when(ThaumaturgeClientConfig::useBookReturnButton).thenReturn(false);
+        assertTrue(detail.mouseClicked(100, 100, 1));
+        assertNull(field(EntryDetailScreen.class, "shownRecipe").get(detail));
+        verify(game, org.mockito.Mockito.never()).setScreen(map);
 
-            assertTrue(detail.mouseClicked(100, 100, 1));
-            assertNull(field(EntryDetailScreen.class, "shownRecipe").get(detail));
-            verifyNoInteractions(game);
-
-            assertTrue(detail.mouseClicked(100, 100, 1));
-            verify(game).setScreen(map);
-        }
-    }
-
-    @Test
-    void buttonModeLeavesRightClickInactive() throws Exception {
-        Minecraft game = mock(Minecraft.class);
-        EntryDetailScreen detail = detail(game, mock(Screen.class));
-        field(EntryDetailScreen.class, "shownRecipe").set(detail, RECIPE);
-
-        try (MockedStatic<ThaumaturgeClientConfig> config = mockStatic(ThaumaturgeClientConfig.class)) {
-            config.when(ThaumaturgeClientConfig::useBookReturnButton).thenReturn(true);
-
-            assertFalse(detail.mouseClicked(100, 100, 1));
-            assertSame(RECIPE, field(EntryDetailScreen.class, "shownRecipe").get(detail));
-            verifyNoInteractions(game);
-        }
+        assertTrue(detail.mouseClicked(100, 100, 1));
+        verify(game).setScreen(map);
     }
 
     @Test
     void returnControlClosesEveryInsertBeforeReturningToTheSameMap() throws Exception {
-        try (MockedStatic<ThaumaturgeClientConfig> config = mockStatic(ThaumaturgeClientConfig.class);
-                MockedStatic<Minecraft> minecraft = mockStatic(Minecraft.class)) {
-            config.when(ThaumaturgeClientConfig::useBookReturnButton).thenReturn(true);
-
+        try (MockedStatic<Minecraft> minecraft = mockStatic(Minecraft.class)) {
             for (String insert : List.of("shownRecipe", "showingAspects", "showingKnowledge", "showingConstruct")) {
                 Minecraft game = mock(Minecraft.class);
                 when(game.getSoundManager()).thenReturn(mock(SoundManager.class));
