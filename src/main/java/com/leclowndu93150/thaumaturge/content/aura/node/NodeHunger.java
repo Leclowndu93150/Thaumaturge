@@ -38,7 +38,6 @@ import org.jspecify.annotations.Nullable;
 
 final class NodeHunger {
     private static final int PULL_REFRESH_INTERVAL = 10;
-    private static final double GLOBAL_PULL_RANGE = 15.0;
     private static final double ITEM_RANGE_PADDING = 0.5;
     private static final double MINIMUM_PULL_DISTANCE = 1.0E-4;
     private static final float DEVOUR_DAMAGE = 1.0F;
@@ -61,12 +60,12 @@ final class NodeHunger {
     }
 
     static int eatRange(@Nullable NodeModifier modifier) {
-        int fixed = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
-        if (!ThaumaturgeCommonConfig.SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER.get()) {
+        int fixed = ThaumaturgeCommonConfig.HUNGRY_NODE_EAT_RANGE.get();
+        if (!ThaumaturgeCommonConfig.SCALE_HUNGRY_NODE_EAT_RANGE_BY_MODIFIER.get()) {
             return fixed;
         }
-        int minimum = ThaumaturgeCommonConfig.HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE.get();
-        int maximum = Math.max(minimum, ThaumaturgeCommonConfig.HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE.get());
+        int minimum = ThaumaturgeCommonConfig.HUNGRY_NODE_MINIMUM_EAT_RANGE.get();
+        int maximum = Math.max(minimum, ThaumaturgeCommonConfig.HUNGRY_NODE_MAXIMUM_EAT_RANGE.get());
         return scaledEatRange(minimum, maximum, modifier);
     }
 
@@ -94,14 +93,19 @@ final class NodeHunger {
     }
 
     void tick(ServerLevel level, BlockPos pos, int counter) {
+        if (!ThaumaturgeCommonConfig.HUNGRY_NODE_EATS_ENTITIES.get()) {
+            pulled.clear();
+            return;
+        }
         if (cachedLevel != level) {
             pulled.clear();
             cachedLevel = level;
         }
         Vec3 centre = LevelSpaces.worldCenter(level, pos);
-        double itemReach = eatRange(node.getNodeModifier()) + ITEM_RANGE_PADDING;
+        double entityReach = eatRange(node.getNodeModifier());
+        double itemReach = entityReach + ITEM_RANGE_PADDING;
         if (counter % PULL_REFRESH_INTERVAL == 0) {
-            gather(level, pos, Math.max(itemReach, GLOBAL_PULL_RANGE));
+            gather(level, pos, itemReach);
         }
         if (pulled.isEmpty()) {
             return;
@@ -114,15 +118,17 @@ final class NodeHunger {
             }
             Vec3 toCentre = centre.subtract(entity.position());
             double distance = toCentre.length();
-            double reach = entity instanceof ItemEntity ? itemReach : GLOBAL_PULL_RANGE;
+            double reach = entity instanceof ItemEntity ? itemReach : entityReach;
             double closeness = 1.0 - distance / reach;
             if (closeness <= 0.0) {
                 continue;
             }
-            if (distance > MINIMUM_PULL_DISTANCE) {
+            if (distance > MINIMUM_PULL_DISTANCE
+                    && (!(entity instanceof Player) || ThaumaturgeCommonConfig.HUNGRY_NODE_PULLS_PLAYERS.get())) {
                 drag(entity, toCentre, distance, closeness);
             }
-            if (shouldSwallow(distance)) {
+            if (shouldSwallow(distance)
+                    && (!(entity instanceof Player) || ThaumaturgeCommonConfig.HUNGRY_NODE_DAMAGES_PLAYERS.get())) {
                 swallow(level, entity);
             }
         }
@@ -226,6 +232,9 @@ final class NodeHunger {
     }
 
     static void predict(Level level, BlockPos pos, @Nullable NodeModifier modifier) {
+        if (!ThaumaturgeCommonConfig.HUNGRY_NODE_EATS_BLOCKS.get()) {
+            return;
+        }
         RandomSource random = level.getRandom();
         BlockPos target = findTarget(level, pos, modifier, random);
         if (target == null) {

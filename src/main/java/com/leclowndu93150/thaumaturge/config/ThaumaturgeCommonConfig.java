@@ -31,10 +31,14 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.DoubleValue PURE_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue TAINTED_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue HUNGRY_NODE_CHANCE;
-    public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_RANGE;
-    public static final ModConfigSpec.BooleanValue SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER;
-    public static final ModConfigSpec.IntValue HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE;
-    public static final ModConfigSpec.IntValue HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE;
+    public static final ModConfigSpec.BooleanValue HUNGRY_NODE_EATS_BLOCKS;
+    public static final ModConfigSpec.BooleanValue HUNGRY_NODE_EATS_ENTITIES;
+    public static final ModConfigSpec.BooleanValue HUNGRY_NODE_PULLS_PLAYERS;
+    public static final ModConfigSpec.BooleanValue HUNGRY_NODE_DAMAGES_PLAYERS;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_EAT_RANGE;
+    public static final ModConfigSpec.BooleanValue SCALE_HUNGRY_NODE_EAT_RANGE_BY_MODIFIER;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_MINIMUM_EAT_RANGE;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_MAXIMUM_EAT_RANGE;
     public static final ModConfigSpec.DoubleValue HUNGRY_NODE_BLOCK_HARDNESS;
     public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_INTERVAL;
     public static final ModConfigSpec.IntValue SHIELD_RECHARGE;
@@ -137,17 +141,28 @@ public final class ThaumaturgeCommonConfig {
 
         builder.pop(2);
 
-        HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
-                        "Maximum block-eating ray length in blocks. Dropped items are pulled from this range plus half a block; the entity pulling range is not affected.")
+        HUNGRY_NODE_EATS_BLOCKS =
+                builder.comment("Allows hungry nodes to destroy edible blocks.").define("hungryNodeEatsBlocks", true);
+        HUNGRY_NODE_EATS_ENTITIES = builder.comment(
+                        "Allows hungry nodes to pull in and consume entities, including dropped items.")
+                .define("hungryNodeEatsEntities", true);
+        HUNGRY_NODE_PULLS_PLAYERS = builder.comment(
+                        "Allows hungry nodes to pull players toward them. Disabling this does not prevent damage to players who enter the maw.")
+                .define("hungryNodePullsPlayers", true);
+        HUNGRY_NODE_DAMAGES_PLAYERS = builder.comment(
+                        "Allows hungry nodes to damage and consume players that reach the maw. Creative and spectator players are excluded. Does not control player pulling.")
+                .define("hungryNodeDamagesPlayers", true);
+        HUNGRY_NODE_EAT_RANGE = builder.comment(
+                        "Maximum range in blocks for hungry node block eating and entity pulling. Dropped items are pulled from this range plus half a block.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
-        SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER = builder.comment(
-                        "Scales hungry node block-eating range by quality. Uses the minimum and maximum ranges below instead of the fixed range.")
+        SCALE_HUNGRY_NODE_EAT_RANGE_BY_MODIFIER = builder.comment(
+                        "Scales hungry node range by quality. Uses the minimum and maximum ranges below instead of the fixed range.")
                 .define("scaleHungryNodeBlockEatRangeByModifier", false);
-        HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE = builder.comment(
-                        "Block-eating range for fading hungry nodes when quality scaling is enabled. Ignored when scaling is disabled.")
+        HUNGRY_NODE_MINIMUM_EAT_RANGE = builder.comment(
+                        "Range for fading hungry nodes when quality scaling is enabled. Ignored when scaling is disabled.")
                 .defineInRange("hungryNodeMinimumBlockEatRange", 16, 1, 64);
-        HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE = builder.comment(
-                        "Block-eating range for bright hungry nodes when quality scaling is enabled. Values below the minimum use the minimum for all qualities.")
+        HUNGRY_NODE_MAXIMUM_EAT_RANGE = builder.comment(
+                        "Range for bright hungry nodes when quality scaling is enabled. Values below the minimum use the minimum for all qualities.")
                 .defineInRange("hungryNodeMaximumBlockEatRange", 32, 1, 64);
         HUNGRY_NODE_BLOCK_HARDNESS = builder.comment(
                         "Maximum edible block hardness (exclusive). Default: 5; obsidian is 50. 0 disables block destruction. Unbreakable blocks are excluded.")

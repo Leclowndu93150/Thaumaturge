@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
@@ -61,7 +62,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private static final float BRIGHTEN_FLUX_LIMIT = 0.1F;
     private static final float BRIGHTEN_FILL_FRACTION = 0.9F;
     private static final int BRIGHTEN_CHANCE = 50;
-    private static final double HUNGRY_PULL_RANGE = 15.0;
     private static final int ORB_BURST_MAX_PER_ASPECT = 10;
     private static final int ORB_BURST_MAX_ORBS_PER_ASPECT = 20;
     private static final float ZAP_WIDTH = 0.3F;
@@ -755,7 +755,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         RandomSource random = serverLevel.getRandom();
         if (nodeType == NodeType.HUNGRY) {
             hunger.tick(serverLevel, pos, count);
-            if (NodeHunger.eatDue(count)) {
+            if (ThaumaturgeCommonConfig.HUNGRY_NODE_EATS_BLOCKS.get() && NodeHunger.eatDue(count)) {
                 eatBlock(serverLevel, pos, random);
             }
             return false;
