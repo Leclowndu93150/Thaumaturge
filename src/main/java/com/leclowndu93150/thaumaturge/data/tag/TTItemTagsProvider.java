@@ -7,12 +7,15 @@ import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -212,6 +215,10 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
         tag(TTItemTags.DT_BRANCHES_THAT_BURN)
                 .add(TagEntry.optionalElement(TTIds.DT_SILVERWOOD_BRANCH))
                 .add(TagEntry.optionalElement(TTIds.DT_GREATWOOD_BRANCH));
+        tag(TTItemTags.SCANNABLE_DYNAMIC_TREE_BRANCHES)
+                .addOptionalTag(TagKey.create(
+                        Registries.ITEM, ResourceLocation.fromNamespaceAndPath(TTIds.DYNAMIC_TREES, "branches")))
+                .addOptionalTag(TTItemTags.DT_BRANCHES_THAT_BURN);
         tag(TTItemTags.DT_SEEDS)
                 .add(TagEntry.optionalElement(TTIds.DT_SILVERWOOD_SEED))
                 .add(TagEntry.optionalElement(TTIds.DT_GREATWOOD_SEED));

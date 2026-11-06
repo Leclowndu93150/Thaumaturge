@@ -54,6 +54,16 @@
         "amount": 1
       }
     ],
+    "#thaumaturge:scan/dynamic_tree_branches": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 20
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 5
+      }
+    ],
     "#c:concrete_powders": [
       {
         "aspect": "thaumaturge:terra",
@@ -2292,6 +2302,16 @@
       {
         "aspect": "thaumaturge:ordo",
         "amount": 2
+      }
+    ],
+    "minecraft:cobblestone": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:perditio",
+        "amount": 1
       }
     ],
     "minecraft:dispenser": [
@@ -5761,6 +5781,34 @@
     "thaumaturge:leaves_silverwood": [
       {
         "aspect": "thaumaturge:herba",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:obsidian_tile": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:tenebrae",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:obsidian_totem": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:ignis",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:tenebrae",
         "amount": 5
       }
     ],

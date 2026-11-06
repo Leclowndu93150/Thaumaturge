@@ -23,6 +23,7 @@ public final class TTItemTags {
     public static final TagKey<Item> SCAN_IRON = key("scan/f_matiron");
     public static final TagKey<Item> NITORS = key("nitors");
     public static final TagKey<Item> MEAT_CHUNKS = key("meat_chunks");
+    public static final TagKey<Item> SCANNABLE_DYNAMIC_TREE_BRANCHES = key("scan/dynamic_tree_branches");
 
     public static final TagKey<Item> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Item> SILVERWOOD_LOGS = key("silverwood_logs");

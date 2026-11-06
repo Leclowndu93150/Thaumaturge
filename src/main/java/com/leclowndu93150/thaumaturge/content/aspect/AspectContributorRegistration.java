@@ -20,7 +20,9 @@ public final class AspectContributorRegistration {
                     new CrucibleAspectContributor(),
                     new InfusionAspectContributor(),
                     new CraftingAspectContributor(),
-                    new CookingAspectContributor()));
+                    new CookingAspectContributor(),
+                    new StonecuttingAspectContributor(),
+                    new SmithingAspectContributor()));
             RegisterAspectContributorsEvent contributors = new RegisterAspectContributorsEvent();
             ModLoader.postEvent(contributors);
             TTAspectContributors.register(contributors.contributors());
