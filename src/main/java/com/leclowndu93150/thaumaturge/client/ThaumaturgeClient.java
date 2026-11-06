@@ -3,9 +3,12 @@ package com.leclowndu93150.thaumaturge.client;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.donator.DonatorCapeClient;
 import com.leclowndu93150.thaumaturge.client.donator.DonatorConfigFilter;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
+import com.leclowndu93150.thaumaturge.compat.sable.SableClientSpaces;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -17,5 +20,8 @@ public final class ThaumaturgeClient {
         container.registerExtensionPoint(
                 IConfigScreenFactory.class,
                 (mod, parent) -> new ConfigurationScreen(mod, parent, new DonatorConfigFilter()));
+        if (ModList.get().isLoaded(TTIds.SABLE)) {
+            ClientSpaces.install(new SableClientSpaces());
+        }
     }
 }

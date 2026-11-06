@@ -2,12 +2,14 @@ package com.leclowndu93150.thaumaturge.compat.iris;
 
 import com.leclowndu93150.thaumaturge.client.render.NodeTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.irisshaders.iris.Iris;
 import net.irisshaders.iris.api.v0.IrisApi;
 import net.irisshaders.iris.layer.BlockEntityRenderStateShard;
 import net.irisshaders.iris.layer.BufferSourceWrapper;
 import net.irisshaders.iris.layer.EntityRenderStateShard;
 import net.irisshaders.iris.layer.OuterWrappedRenderType;
 import net.irisshaders.iris.pathways.HandRenderer;
+import net.irisshaders.iris.pipeline.ShaderRenderingPipeline;
 import net.irisshaders.iris.pipeline.programs.ShaderAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,6 +25,16 @@ public final class IrisCompatImpl {
 
     public static boolean shadersActive() {
         return IrisApi.getInstance().isShaderPackInUse();
+    }
+
+    public static boolean overridesShaders() {
+        return isShadowPass()
+                || Iris.getPipelineManager().getPipelineNullable() instanceof ShaderRenderingPipeline pipeline
+                        && pipeline.shouldOverrideShaders();
+    }
+
+    public static boolean isShadowPass() {
+        return IrisApi.getInstance().isRenderingShadowPass();
     }
 
     public static boolean isSolidHandPass() {

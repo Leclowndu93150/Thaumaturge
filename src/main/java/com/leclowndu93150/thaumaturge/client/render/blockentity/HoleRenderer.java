@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.leclowndu93150.thaumaturge.content.spell.block.BlockEntityHole;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -7,6 +8,8 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
@@ -52,19 +55,22 @@ public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole> 
         }
         BlockPos pos = hole.getBlockPos();
         BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
-        VertexConsumer buffer = null;
-        PoseStack.Pose pose = poseStack.last();
+        List<Direction> walls = new ArrayList<>();
         for (Direction direction : Direction.values()) {
             neighborPos.setWithOffset(pos, direction);
             BlockState neighbor = level.getBlockState(neighborPos);
-            if (neighbor.is(TTBlocks.HOLE.get()) || !neighbor.isSolidRender(level, neighborPos)) {
-                continue;
+            if (!neighbor.is(TTBlocks.HOLE.get()) && neighbor.isSolidRender(level, neighborPos)) {
+                walls.add(direction);
             }
-            if (buffer == null) {
-                buffer = buffers.getBuffer(SURFACE);
-            }
-            renderWall(pose, buffer, direction);
         }
+        if (walls.isEmpty()) {
+            return;
+        }
+        LateWorldRenderQueue.drawOwnShader(poseStack, buffers, SURFACE, (pose, buffer) -> {
+            for (Direction direction : walls) {
+                renderWall(pose, buffer, direction);
+            }
+        });
     }
 
     private static void renderWall(PoseStack.Pose pose, VertexConsumer buffer, Direction direction) {

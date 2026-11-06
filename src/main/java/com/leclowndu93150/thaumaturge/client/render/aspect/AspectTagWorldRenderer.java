@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -154,7 +155,10 @@ public final class AspectTagWorldRenderer {
         }
         List<AspectInstance> entries = aspects.sortedByTag();
         List<TagOffset> tagOffsets = new ArrayList<>(entries.size());
-        float yawDeg = (float) Math.toDegrees(Math.atan2(cam.x - (x + 0.5), cam.z - (z + 0.5)));
+        Vec3 center = ClientSpaces.renderPosition(mc.level, new Vec3(x + 0.5, y + 0.5, z + 0.5));
+        Vec3 anchor = ClientSpaces.renderPosition(
+                mc.level, new Vec3(x + 0.5 + offsetX, y + 0.5 + tagScale * 2.0F * stepY, z + 0.5 + offsetZ));
+        float yawDeg = (float) Math.toDegrees(Math.atan2(cam.x - center.x, cam.z - center.z));
         int current = 0;
         float rowShift = 0.0F;
         int left = entries.size();
@@ -172,8 +176,7 @@ public final class AspectTagWorldRenderer {
             tagOffsets.add(new TagOffset(shift, rowShift));
 
             poseStack.pushPose();
-            poseStack.translate(
-                    x + 0.5 + offsetX - cam.x, y + 0.5 + tagScale * 2.0F * stepY - cam.y, z + 0.5 + offsetZ - cam.z);
+            poseStack.translate(anchor.x - cam.x, anchor.y - cam.y, anchor.z - cam.z);
             poseStack.mulPose(Axis.YP.rotationDegrees(yawDeg + 180.0F));
             poseStack.scale(-1.0F, 1.0F, 1.0F);
             poseStack.translate(shift, rowShift, 0.0);
@@ -204,10 +207,7 @@ public final class AspectTagWorldRenderer {
                 String amount = Integer.toString(entry.amount());
                 int width = font.width(amount);
                 poseStack.pushPose();
-                poseStack.translate(
-                        x + 0.5 + offsetX - cam.x,
-                        y + 0.5 + tagScale * 2.0F * stepY - cam.y,
-                        z + 0.5 + offsetZ - cam.z);
+                poseStack.translate(anchor.x - cam.x, anchor.y - cam.y, anchor.z - cam.z);
                 poseStack.mulPose(Axis.YP.rotationDegrees(yawDeg + 180.0F));
                 poseStack.scale(-1.0F, 1.0F, 1.0F);
                 poseStack.translate(offset.x(), offset.y(), 0.0F);

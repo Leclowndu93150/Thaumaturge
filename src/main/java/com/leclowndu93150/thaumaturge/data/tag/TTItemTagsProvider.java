@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.equipment.CultistArmorDyeing;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -131,6 +132,49 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.SEAL_PROVIDER.get(),
                         TTItems.SEAL_STOCK.get());
         tag(TTItemTags.RESEARCH_NOTES).add(TTItems.RESEARCH_NOTE.get(), TTItems.CELESTIAL_NOTES.get());
+        tag(TTItemTags.TRIM_MATERIALS)
+                .add(TTItems.INGOT_THAUMIUM.get(), TTItems.INGOT_VOID.get(), TTItems.ESSENTIA_CRYSTAL.get());
+        tag(ItemTags.TRIM_MATERIALS).add(TTItems.INGOT_BRASS.get()).addTag(TTItemTags.TRIM_MATERIALS);
+        tag(ItemTags.TRIMMABLE_ARMOR)
+                .add(
+                        TTItems.THAUMIUM_HELM.get(),
+                        TTItems.THAUMIUM_CHEST.get(),
+                        TTItems.THAUMIUM_LEGS.get(),
+                        TTItems.THAUMIUM_BOOTS.get(),
+                        TTItems.VOID_HELM.get(),
+                        TTItems.VOID_CHEST.get(),
+                        TTItems.VOID_LEGS.get(),
+                        TTItems.VOID_BOOTS.get(),
+                        TTItems.CLOTH_CHEST.get(),
+                        TTItems.CLOTH_LEGS.get(),
+                        TTItems.CLOTH_BOOTS.get(),
+                        TTItems.GOGGLES_REVEALING.get(),
+                        TTItems.TRAVELLER_BOOTS.get());
+        tag(TTItemTags.MODELLED_TRIMMABLE_ARMOR)
+                .add(
+                        TTItems.CRIMSON_PLATE_HELM.get(),
+                        TTItems.CRIMSON_PLATE_CHEST.get(),
+                        TTItems.CRIMSON_PLATE_LEGS.get(),
+                        TTItems.CRIMSON_RANGER_HELM.get(),
+                        TTItems.CRIMSON_RANGER_CHEST.get(),
+                        TTItems.CRIMSON_RANGER_LEGS.get(),
+                        TTItems.CRIMSON_CAPTAIN_HELM.get(),
+                        TTItems.CRIMSON_CAPTAIN_CHEST.get(),
+                        TTItems.CRIMSON_ROBE_HELM.get(),
+                        TTItems.CRIMSON_ROBE_CHEST.get(),
+                        TTItems.CRIMSON_ROBE_LEGS.get(),
+                        TTItems.CRIMSON_BOOTS.get(),
+                        TTItems.CRIMSON_PRAETOR_HELM.get(),
+                        TTItems.CRIMSON_PRAETOR_CHEST.get(),
+                        TTItems.CRIMSON_PRAETOR_LEGS.get(),
+                        TTItems.VOID_ROBE_HELM.get(),
+                        TTItems.VOID_ROBE_CHEST.get(),
+                        TTItems.VOID_ROBE_LEGS.get(),
+                        TTItems.FORTRESS_HELM.get(),
+                        TTItems.FORTRESS_CHEST.get(),
+                        TTItems.FORTRESS_LEGS.get(),
+                        TTItems.THAUMOSTATIC_HARNESS.get());
+        tag(TTItemTags.TRIMMABLE_ARMOR).addTag(ItemTags.TRIMMABLE_ARMOR).addTag(TTItemTags.MODELLED_TRIMMABLE_ARMOR);
         tag(ItemTags.BOOKSHELF_BOOKS)
                 .add(
                         TTItems.THAUMONOMICON.get(),
@@ -264,7 +308,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_BOOTS.get(),
                         TTItems.VOID_ROBE_HELM.get(),
                         TTItems.VOID_ROBE_CHEST.get(),
-                        TTItems.VOID_ROBE_LEGS.get());
+                        TTItems.VOID_ROBE_LEGS.get())
+                .add(CultistArmorDyeing.dyeableArmor().toArray(Item[]::new));
 
         tag(CuriosTags.BACK).add(TTItems.THAUMOSTATIC_HARNESS.get());
         tag(ItemTags.CHEST_ARMOR).add(TTItems.THAUMOSTATIC_HARNESS.get());

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -26,6 +27,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
@@ -86,7 +88,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
         poseStack.popPose();
 
         if (!input.isEmpty()) {
-            submitInput(input, ticks, poseStack, buffers, light, overlay);
+            submitInput(table, input, ticks, poseStack, buffers, light, overlay);
         }
 
         if (aspect != null) {
@@ -108,12 +110,22 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
     }
 
     private void submitInput(
-            ItemStack input, float ticks, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
+            BlockEntityDeconstructionTable table,
+            ItemStack input,
+            float ticks,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            int overlay) {
         float bob = DeconstructionTableRenderMath.itemBob(ticks);
         float centreY = INPUT_Y + bob;
         poseStack.pushPose();
         poseStack.translate(0.5F, centreY, 0.5F);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        ClientSpaces.faceCamera(
+                table.getLevel(),
+                Vec3.atCenterOf(table.getBlockPos()),
+                poseStack,
+                Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         poseStack.scale(GLOW_SIZE, GLOW_SIZE, GLOW_SIZE);
         float alpha = DeconstructionTableRenderMath.glowAlpha(ticks);
         int tint = ARGB32.color(Math.round(alpha * 255.0F), GLOW_RGB);

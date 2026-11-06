@@ -23,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Rotation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
@@ -58,6 +59,22 @@ public final class SealEntity implements ISealEntity {
                 pos, typeId, type, Contents.fresh(type), type.hasArea() ? openingArea(pos.face()) : UNIT_AREA);
         seal.owner = owner;
         return seal;
+    }
+
+    public SealEntity relocated(SealPos to, Rotation rotation) {
+        SealEntity moved = new SealEntity(to, typeId, type, contents.restarted(type), turned(area, rotation));
+        moved.priority = priority;
+        moved.color = color;
+        moved.locked = locked;
+        moved.redstoneControlled = redstoneControlled;
+        moved.owner = owner;
+        return moved;
+    }
+
+    private static BlockPos turned(BlockPos area, Rotation rotation) {
+        return rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90
+                ? new BlockPos(area.getZ(), area.getY(), area.getX())
+                : area;
     }
 
     private static BlockPos openingArea(Direction face) {
@@ -220,6 +237,10 @@ public final class SealEntity implements ISealEntity {
     }
 
     private record Contents(Optional<SealFilterState> filter, SealSettingValues settings, ISealBehavior behavior) {
+        Contents restarted(SealType type) {
+            return new Contents(filter, settings, type.newBehavior());
+        }
+
         static Contents fresh(SealType type) {
             return new Contents(
                     type.filter().map(SealFilterState::new), new SealSettingValues(type), type.newBehavior());

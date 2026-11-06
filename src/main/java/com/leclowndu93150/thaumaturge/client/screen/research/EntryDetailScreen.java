@@ -32,7 +32,6 @@ import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
 import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
-import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -353,8 +352,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         super.init();
         sw = (width - PANE_W) / 2;
         sh = (height - PANE_H) / 2;
-        returnControl =
-                ThaumaturgeClientConfig.useBookReturnButton() ? addRenderableWidget(createReturnControl()) : null;
+        returnControl = addRenderableWidget(createReturnControl());
         currentPage = clampPage(currentPage);
         for (IResearchStage stage : entry.value().stages()) {
             for (ResourceLocation recipeId : stage.recipes()) {
@@ -2178,7 +2176,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (returnControl != null && super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && !ThaumaturgeClientConfig.useBookReturnButton()) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
             returnToBrowser();
             return true;
         }

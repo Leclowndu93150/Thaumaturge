@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -42,13 +43,29 @@ public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
         if (targetLevel == null || link == null) {
             return null;
         }
+        followLink(targetLevel);
         BlockEntity be = targetLevel.getBlockEntity(link.pos());
         return be instanceof BlockEntityMirrorBase mirror && isSameKind(mirror) ? mirror : null;
     }
 
     private boolean isTargetLoaded() {
         ServerLevel targetLevel = targetLevel();
-        return targetLevel != null && link != null && targetLevel.isLoaded(link.pos());
+        if (targetLevel == null || link == null) {
+            return false;
+        }
+        followLink(targetLevel);
+        return targetLevel.isLoaded(link.pos());
+    }
+
+    private void followLink(ServerLevel targetLevel) {
+        if (link == null) {
+            return;
+        }
+        BlockPos moved = BlockForwarding.follow(targetLevel, link.pos());
+        if (!moved.equals(link.pos())) {
+            link = GlobalPos.of(link.dimension(), moved);
+            setChanged();
+        }
     }
 
     protected @Nullable ServerLevel targetLevel() {
@@ -122,6 +139,11 @@ public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
     }
 
     private boolean linksBackToSelf(BlockEntityMirrorBase target) {
+        if (level instanceof ServerLevel serverLevel
+                && target.link != null
+                && target.link.dimension() == level.dimension()) {
+            target.followLink(serverLevel);
+        }
         return level != null
                 && target.link != null
                 && target.link.pos().equals(worldPosition)

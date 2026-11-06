@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -27,7 +28,7 @@ public final class BoreSparkleParticle extends SeekerParticle {
                 z,
                 sheet,
                 options.targetEntityId(),
-                new Vec3(options.tx(), options.ty(), options.tz()),
+                ClientSpaces.renderPosition(level, new Vec3(options.tx(), options.ty(), options.tz())),
                 Vec3.ZERO,
                 DRIFT_STRENGTH);
         setColor(options.r(), options.g(), options.b());

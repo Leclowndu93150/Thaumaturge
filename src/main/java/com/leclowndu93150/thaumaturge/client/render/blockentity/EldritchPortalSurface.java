@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
@@ -24,6 +26,11 @@ public final class EldritchPortalSurface {
                     .createCompositeState(false));
 
     private EldritchPortalSurface() {}
+
+    public static void draw(
+            PoseStack poseStack, MultiBufferSource buffers, LateWorldRenderQueue.OwnShaderGeometry geometry) {
+        LateWorldRenderQueue.drawOwnShader(poseStack, buffers, SURFACE, geometry);
+    }
 
     public static void quad(
             PoseStack.Pose pose,

@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +28,7 @@ public final class EssentiaSources {
     private static final float STREAM_SCALE = 0.1F;
     private static final double STREAM_DRIFT = 0.0;
     private static final int UNIT = 1;
+    private static final double FACING_SLACK = 0.5;
 
     private final BlockPos owner;
     private final int range;
@@ -150,6 +152,7 @@ public final class EssentiaSources {
         List<Candidate> candidates = new ArrayList<>(cache.size());
         for (BlockPos pos : cache) {
             if (level.hasChunkAt(pos)
+                    && LevelSpaces.withinCube(level, owner, pos, range)
                     && level.getCapability(AspectCapabilities.CONTAINER, pos, null) instanceof IAspectSource source) {
                 candidates.add(new Candidate(
                         pos,
@@ -157,7 +160,7 @@ public final class EssentiaSources {
                         source.getSourcePriority(),
                         suction(level, pos, aspect),
                         source.getAspects().isEmpty(),
-                        owner.distSqr(pos)));
+                        LevelSpaces.distanceSqr(level, Vec3.atCenterOf(owner), Vec3.atCenterOf(pos))));
             }
         }
         return candidates;
@@ -202,14 +205,35 @@ public final class EssentiaSources {
         }
         List<BlockPos> found = new ArrayList<>();
         for (BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
-            if (!pos.equals(owner)
-                    && level.hasChunkAt(pos)
-                    && level.getCapability(AspectCapabilities.CONTAINER, pos, null) instanceof IAspectSource
-                    && !rejected(level, pos)) {
+            if (!pos.equals(owner) && isSource(level, pos)) {
                 found.add(pos.immutable());
             }
         }
+        for (BlockPos center : LevelSpaces.foreignCentersNear(level, owner, range * Math.sqrt(3.0))) {
+            for (BlockPos pos :
+                    BlockPos.betweenClosed(center.offset(-range, -range, -range), center.offset(range, range, range))) {
+                if (LevelSpaces.withinCube(level, owner, pos, range) && inFront(level, pos) && isSource(level, pos)) {
+                    found.add(pos.immutable());
+                }
+            }
+        }
         return found;
+    }
+
+    private boolean isSource(ServerLevel level, BlockPos pos) {
+        return level.hasChunkAt(pos)
+                && level.getCapability(AspectCapabilities.CONTAINER, pos, null) instanceof IAspectSource
+                && !rejected(level, pos);
+    }
+
+    private boolean inFront(ServerLevel level, BlockPos pos) {
+        if (facing == null) {
+            return true;
+        }
+        double ahead = LevelSpaces.worldCenter(level, pos)
+                .subtract(LevelSpaces.worldCenter(level, owner))
+                .dot(LevelSpaces.faceNormal(level, owner, facing));
+        return ahead >= -FACING_SLACK && ahead <= range - 1 + FACING_SLACK;
     }
 
     private boolean rejected(ServerLevel level, BlockPos pos) {

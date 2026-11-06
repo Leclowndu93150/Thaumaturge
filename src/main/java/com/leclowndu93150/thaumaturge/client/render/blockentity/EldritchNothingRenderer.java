@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritch
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -29,16 +31,23 @@ public final class EldritchNothingRenderer implements BlockEntityRenderer<BlockE
         if (level == null) {
             return;
         }
-        VertexConsumer buffer = buffers.getBuffer(EldritchPortalSurface.SURFACE);
-        PoseStack.Pose pose = poseStack.last();
+        List<Direction> faces = new ArrayList<>();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (Direction dir : Direction.values()) {
             cursor.setWithOffset(nothing.getBlockPos(), dir);
             BlockState neighbor = level.getBlockState(cursor);
             if (!neighbor.isSolidRender(level, cursor) && !neighbor.is(TTBlocks.ELDRITCH_NOTHING.get())) {
-                faceQuad(pose, buffer, dir);
+                faces.add(dir);
             }
         }
+        if (faces.isEmpty()) {
+            return;
+        }
+        EldritchPortalSurface.draw(poseStack, buffers, (pose, buffer) -> {
+            for (Direction dir : faces) {
+                faceQuad(pose, buffer, dir);
+            }
+        });
     }
 
     private static void faceQuad(PoseStack.Pose pose, VertexConsumer buffer, Direction dir) {

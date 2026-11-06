@@ -65,6 +65,13 @@ public final class TTBlockTags {
     public static final TagKey<Block> DT_LEAVES = dynamicTrees("leaves");
     public static final TagKey<Block> DT_SAPLINGS = dynamicTrees("saplings");
 
+    public static final TagKey<Block> SABLE_SUPER_HEAVY = sable("super_heavy");
+    public static final TagKey<Block> SABLE_HEAVY = sable("heavy");
+    public static final TagKey<Block> SABLE_LIGHT = sable("light");
+    public static final TagKey<Block> SABLE_SUPER_LIGHT = sable("super_light");
+    public static final TagKey<Block> SABLE_HALF_VOLUME = sable("half_volume");
+    public static final TagKey<Block> SABLE_QUARTER_VOLUME = sable("quarter_volume");
+
     private TTBlockTags() {}
 
     private static TagKey<Block> key(String path) {
@@ -73,6 +80,10 @@ public final class TTBlockTags {
 
     private static TagKey<Block> common(String path) {
         return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", path));
+    }
+
+    private static TagKey<Block> sable(String path) {
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(TTIds.SABLE, path));
     }
 
     private static TagKey<Block> dynamicTrees(String path) {

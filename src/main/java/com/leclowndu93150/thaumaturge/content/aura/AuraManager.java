@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.transaction.RootCommitJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
@@ -38,6 +39,9 @@ public final class AuraManager {
     private AuraManager() {}
 
     public static void onChunkLoaded(ServerLevel level, ChunkPos pos) {
+        if (LevelSpaces.isPlotChunk(level, pos)) {
+            return;
+        }
         STATES.computeIfAbsent(level.dimension(), key -> new DimensionState())
                 .loaded
                 .add(pos);
@@ -123,7 +127,7 @@ public final class AuraManager {
         if (!(level instanceof ServerLevel server)) {
             return null;
         }
-        return chunkAt(server, chunkOf(pos));
+        return chunkAt(server, chunkOf(level, pos));
     }
 
     public static @Nullable AuraData chunkAt(ServerLevel level, ChunkPos pos) {
@@ -176,7 +180,7 @@ public final class AuraManager {
 
     static void markChunkDirty(Level level, BlockPos pos) {
         if (level instanceof ServerLevel server) {
-            markChunkDirty(server, chunkOf(pos));
+            markChunkDirty(server, chunkOf(level, pos));
         }
     }
 
@@ -191,8 +195,9 @@ public final class AuraManager {
         return level.getChunkSource().getChunkNow(pos.x, pos.z);
     }
 
-    private static ChunkPos chunkOf(BlockPos pos) {
-        return new ChunkPos(pos.getX() >> CHUNK_SHIFT, pos.getZ() >> CHUNK_SHIFT);
+    private static ChunkPos chunkOf(Level level, BlockPos pos) {
+        BlockPos world = LevelSpaces.worldBlock(level, pos);
+        return new ChunkPos(world.getX() >> CHUNK_SHIFT, world.getZ() >> CHUNK_SHIFT);
     }
 
     private static void emitFume(ServerLevel level, BlockPos pos) {

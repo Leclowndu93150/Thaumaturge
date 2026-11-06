@@ -137,7 +137,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                     DISPLAY_SEED);
             poseStack.popPose();
         }
-        writePortal(poseStack.last(), buffers.getBuffer(EldritchPortalSurface.SURFACE), facing, hub);
+        EldritchPortalSurface.draw(poseStack, buffers, (pose, buffer) -> writePortal(pose, buffer, facing, hub));
     }
 
     private static float animationTime(float partialTick) {

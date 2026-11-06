@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion.instability;
 
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -26,11 +27,12 @@ public record InstabilityContext(ServerLevel level, BlockPos matrix, List<BlockP
     }
 
     public <T extends Entity> List<T> nearby(Class<T> type) {
-        return level.getEntitiesOfClass(type, new AABB(matrix).inflate(EVENT_RANGE));
+        return level.getEntitiesOfClass(
+                type, LevelSpaces.worldBox(level, matrix, new AABB(matrix).inflate(EVENT_RANGE)));
     }
 
     public void arcTo(Vec3 target) {
-        EffectDispatch.spawnArc(level, Vec3.atCenterOf(matrix), target, ARC_COLOR, 0.0F);
+        EffectDispatch.spawnArc(level, LevelSpaces.worldCenter(level, matrix), target, ARC_COLOR, 0.0F);
     }
 
     public void zapSound() {

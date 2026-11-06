@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.InfusionCrumbsParticleOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,7 +39,7 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
                 z,
                 sprite,
                 NO_ENTITY,
-                new Vec3(options.tx(), options.ty(), options.tz()),
+                ClientSpaces.renderPosition(level, new Vec3(options.tx(), options.ty(), options.tz())),
                 new Vec3(options.sx(), options.sy(), options.sz()),
                 DRIFT);
         setColor(TINT, TINT, TINT);

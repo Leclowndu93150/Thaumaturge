@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public final class NodeJarRitual {
         }
         int lastBreak = 0;
         for (BlockPos structurePos : structure) {
-            double dist = Math.sqrt(hand.distanceToSqr(Vec3.atCenterOf(structurePos)));
+            double dist = Math.sqrt(LevelSpaces.distanceSqr(level, hand, Vec3.atCenterOf(structurePos)));
             int delay = (int) (dist * DustTriggerFx.SPARKLE_TICKS_PER_BLOCK) + SHELL_BREAK_MARGIN_TICKS;
             DustTriggerSwapQueue.enqueueClear(level, structurePos, level.getBlockState(structurePos), delay);
             lastBreak = Math.max(lastBreak, delay);

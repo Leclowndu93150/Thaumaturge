@@ -23,6 +23,7 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
+import com.leclowndu93150.thaumaturge.compat.sable.SableLevelSpaces;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -47,6 +48,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandAccessBindings;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.*;
 import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
 import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
@@ -143,5 +145,6 @@ public final class Thaumaturge {
 
         LabyrinthHelper.bind(new LabyrinthBindings());
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
+        if (ModList.get().isLoaded(TTIds.SABLE)) LevelSpaces.install(new SableLevelSpaces());
     }
 }

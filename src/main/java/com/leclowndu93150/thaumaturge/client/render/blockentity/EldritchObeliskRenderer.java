@@ -51,68 +51,68 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
         float base = COLUMN_BASE + bob;
         float top = base + COLUMN_HEIGHT;
 
-        VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.SURFACE);
-        PoseStack.Pose surfacePose = poseStack.last();
-        EldritchPortalSurface.quad(
-                surfacePose,
-                surface,
-                0.0F,
-                base,
-                PLANE_INSET,
-                0.0F,
-                top,
-                PLANE_INSET,
-                1.0F,
-                top,
-                PLANE_INSET,
-                1.0F,
-                base,
-                PLANE_INSET);
-        EldritchPortalSurface.quad(
-                surfacePose,
-                surface,
-                0.0F,
-                base,
-                1.0F - PLANE_INSET,
-                0.0F,
-                top,
-                1.0F - PLANE_INSET,
-                1.0F,
-                top,
-                1.0F - PLANE_INSET,
-                1.0F,
-                base,
-                1.0F - PLANE_INSET);
-        EldritchPortalSurface.quad(
-                surfacePose,
-                surface,
-                PLANE_INSET,
-                base,
-                0.0F,
-                PLANE_INSET,
-                top,
-                0.0F,
-                PLANE_INSET,
-                top,
-                1.0F,
-                PLANE_INSET,
-                base,
-                1.0F);
-        EldritchPortalSurface.quad(
-                surfacePose,
-                surface,
-                1.0F - PLANE_INSET,
-                base,
-                0.0F,
-                1.0F - PLANE_INSET,
-                top,
-                0.0F,
-                1.0F - PLANE_INSET,
-                top,
-                1.0F,
-                1.0F - PLANE_INSET,
-                base,
-                1.0F);
+        EldritchPortalSurface.draw(poseStack, buffers, (surfacePose, surface) -> {
+            EldritchPortalSurface.quad(
+                    surfacePose,
+                    surface,
+                    0.0F,
+                    base,
+                    PLANE_INSET,
+                    0.0F,
+                    top,
+                    PLANE_INSET,
+                    1.0F,
+                    top,
+                    PLANE_INSET,
+                    1.0F,
+                    base,
+                    PLANE_INSET);
+            EldritchPortalSurface.quad(
+                    surfacePose,
+                    surface,
+                    0.0F,
+                    base,
+                    1.0F - PLANE_INSET,
+                    0.0F,
+                    top,
+                    1.0F - PLANE_INSET,
+                    1.0F,
+                    top,
+                    1.0F - PLANE_INSET,
+                    1.0F,
+                    base,
+                    1.0F - PLANE_INSET);
+            EldritchPortalSurface.quad(
+                    surfacePose,
+                    surface,
+                    PLANE_INSET,
+                    base,
+                    0.0F,
+                    PLANE_INSET,
+                    top,
+                    0.0F,
+                    PLANE_INSET,
+                    top,
+                    1.0F,
+                    PLANE_INSET,
+                    base,
+                    1.0F);
+            EldritchPortalSurface.quad(
+                    surfacePose,
+                    surface,
+                    1.0F - PLANE_INSET,
+                    base,
+                    0.0F,
+                    1.0F - PLANE_INSET,
+                    top,
+                    0.0F,
+                    1.0F - PLANE_INSET,
+                    top,
+                    1.0F,
+                    1.0F - PLANE_INSET,
+                    base,
+                    1.0F);
+        });
 
         renderPhysicalModel(poseStack, buffers, light, base, top, outerLands);
     }

@@ -112,7 +112,7 @@ public final class TravellerBootsItem extends ArmorItem {
     }
 
     static boolean isStepActive(Player player, ItemStack boots) {
-        return isActive(player, boots) && !player.isShiftKeyDown() && player.zza > 0.0F;
+        return isActive(player, boots);
     }
 
     public static void clientMovementTick(Player player, ItemStack stack) {

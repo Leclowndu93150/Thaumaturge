@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.spell.engine;
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFx;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
-import com.leclowndu93150.thaumaturge.compat.sable.SableCompat;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ final class SpellFxBatch implements SpellFx {
     @Override
     public void arc(Vec3 from, Vec3 to, int color, float width) {
         if (arcs++ < MAX_ARCS) {
-            Effects.arcBolt(level, SableCompat.worldPosition(level, from))
-                    .to(SableCompat.worldPosition(level, to))
+            Effects.arcBolt(level, LevelSpaces.toWorld(level, from))
+                    .to(LevelSpaces.toWorld(level, to))
                     .color(color)
                     .width(width)
                     .send();
@@ -59,8 +59,8 @@ final class SpellFxBatch implements SpellFx {
     @Override
     public void beam(Vec3 from, Vec3 to, int color, int ticks, boolean hit) {
         if (arcs++ < MAX_ARCS) {
-            Effects.beamBore(level, SableCompat.worldPosition(level, from))
-                    .to(SableCompat.worldPosition(level, to))
+            Effects.beamBore(level, LevelSpaces.toWorld(level, from))
+                    .to(LevelSpaces.toWorld(level, to))
                     .color(color)
                     .age(ticks)
                     .hit(hit)
@@ -82,7 +82,7 @@ final class SpellFxBatch implements SpellFx {
         if (events.size() >= MAX_EVENTS) {
             return;
         }
-        at = SableCompat.worldPosition(level, at);
+        at = LevelSpaces.toWorld(level, at);
         if (anchor == null) {
             anchor = at;
         }

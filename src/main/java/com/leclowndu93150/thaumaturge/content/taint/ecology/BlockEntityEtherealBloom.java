@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -37,7 +38,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
         }
         ticks++;
         if (sleeping) {
-            if (ticks % SLEEP_RECHECK_INTERVAL != 0 || !hasNearbyEcology(server, pos)) {
+            if (ticks % SLEEP_RECHECK_INTERVAL != 0 || !anyNearbyEcology(server, pos)) {
                 return;
             }
             sleeping = false;
@@ -49,6 +50,10 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
         }
         boolean worked = cleanEcology(server, pos);
         worked |= cleanSampledBlocks(server, pos, server.getRandom());
+        for (BlockPos center : LevelSpaces.foreignCentersNear(server, pos, TaintBlooms.PROTECTION_RADIUS)) {
+            worked |= cleanEcology(server, center);
+            worked |= cleanSampledBlocks(server, center, server.getRandom());
+        }
         if (worked) {
             idleWork = 0;
         } else if (++idleWork >= IDLE_WORK_LIMIT) {
@@ -77,6 +82,18 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
             }
         }
         return worked;
+    }
+
+    private boolean anyNearbyEcology(ServerLevel level, BlockPos origin) {
+        if (hasNearbyEcology(level, origin)) {
+            return true;
+        }
+        for (BlockPos center : LevelSpaces.foreignCentersNear(level, origin, TaintBlooms.PROTECTION_RADIUS)) {
+            if (hasNearbyEcology(level, center)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasNearbyEcology(ServerLevel level, BlockPos origin) {

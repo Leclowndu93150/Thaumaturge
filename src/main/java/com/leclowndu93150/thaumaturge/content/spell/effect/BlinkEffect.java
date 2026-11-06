@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.spell.behavior.AbstractEffectBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -58,11 +59,11 @@ public final class BlinkEffect extends AbstractEffectBehavior {
                 || target.entity().filter(entity -> entity == caster).isPresent()) {
             return;
         }
-        Vec3 landing = landing(target);
+        ServerLevel level = ctx.level();
+        Vec3 landing = LevelSpaces.toWorld(level, landing(target));
         if (landing.distanceToSqr(caster.position()) > maxDistance * maxDistance) {
             return;
         }
-        ServerLevel level = ctx.level();
         for (int lift = 0; lift < HEADROOM_TRIES; lift++) {
             Vec3 spot = landing.add(0.0, lift, 0.0);
             AABB box = caster.getDimensions(caster.getPose()).makeBoundingBox(spot);

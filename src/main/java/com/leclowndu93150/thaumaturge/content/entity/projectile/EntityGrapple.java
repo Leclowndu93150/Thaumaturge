@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.projectile;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -206,7 +207,7 @@ public final class EntityGrapple extends ThrowableProjectile {
         }
         anchored = true;
         setDeltaMovement(Vec3.ZERO);
-        setPos(hit.getLocation());
+        setPos(LevelSpaces.toWorld(level(), hit.getLocation()));
         if (!level().isClientSide()) {
             entityData.set(PULLING, true);
         }

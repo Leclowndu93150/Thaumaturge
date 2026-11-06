@@ -2,13 +2,21 @@ package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
+import com.leclowndu93150.thaumaturge.content.equipment.trim.TrimBonuses;
+import java.util.EnumMap;
+import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,6 +36,9 @@ public final class TTAttributes {
             "vis_discount",
             () -> new PercentageAttribute("attributes.thaumaturge.vis_discount", 0, 0, 1).setSyncable(true));
 
+    private static final float PERCENT = 100.0F;
+    private static final Map<EquipmentSlot, ResourceLocation> TRIM_DISCOUNT_IDS = trimDiscountIds();
+
     private TTAttributes() {}
 
     public static void register(IEventBus modBus) {
@@ -36,6 +47,7 @@ public final class TTAttributes {
 
     @SubscribeEvent
     public static void onItemAttributeModifier(ItemAttributeModifierEvent event) {
+        addTrimDiscount(event);
         if (event.getItemStack().getItem() instanceof IVisDiscountGear gear) {
             float contribution = (float) gear.getVisDiscount(event.getItemStack()) / 100;
             if (contribution != 0) {
@@ -49,6 +61,28 @@ public final class TTAttributes {
                         gear.getAppliedSlot(event.getItemStack()));
             }
         }
+    }
+
+    private static void addTrimDiscount(ItemAttributeModifierEvent event) {
+        ItemStack stack = event.getItemStack();
+        int discount = TrimBonuses.of(stack).visDiscount();
+        Equipable equipable = Equipable.get(stack);
+        if (discount != 0 && equipable != null) {
+            EquipmentSlot slot = equipable.getEquipmentSlot();
+            event.addModifier(
+                    VIS_DISCOUNT,
+                    new AttributeModifier(
+                            TRIM_DISCOUNT_IDS.get(slot), discount / PERCENT, AttributeModifier.Operation.ADD_VALUE),
+                    EquipmentSlotGroup.bySlot(slot));
+        }
+    }
+
+    private static Map<EquipmentSlot, ResourceLocation> trimDiscountIds() {
+        Map<EquipmentSlot, ResourceLocation> ids = new EnumMap<>(EquipmentSlot.class);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ids.put(slot, TTIds.rl("trim_vis_discount/" + slot.getName()));
+        }
+        return ids;
     }
 
     @SubscribeEvent

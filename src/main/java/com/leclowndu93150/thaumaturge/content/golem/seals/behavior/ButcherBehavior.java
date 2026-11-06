@@ -4,7 +4,10 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.AbstractGolem;
@@ -27,8 +30,10 @@ public final class ButcherBehavior extends HuntBehavior {
             return;
         }
         AABB pasture = SealArea.bounds(seal);
-        for (LivingEntity candidate : level.getEntitiesOfClass(LivingEntity.class, pasture)) {
-            if (isLivestock(candidate) && herdSize(level, pasture, candidate) >= HERD_SIZE) {
+        BlockPos anchor = seal.pos().pos();
+        for (LivingEntity candidate :
+                LevelSpaces.entitiesIn(level, LivingEntity.class, anchor, pasture, EntitySelector.NO_SPECTATORS)) {
+            if (isLivestock(candidate) && herdSize(level, anchor, pasture, candidate) >= HERD_SIZE) {
                 mark(level, seal, candidate);
                 hunting = true;
                 return;
@@ -36,9 +41,10 @@ public final class ButcherBehavior extends HuntBehavior {
         }
     }
 
-    private static int herdSize(ServerLevel level, AABB pasture, LivingEntity member) {
+    private static int herdSize(ServerLevel level, BlockPos anchor, AABB pasture, LivingEntity member) {
         int count = 0;
-        for (LivingEntity kin : level.getEntitiesOfClass(member.getClass(), pasture)) {
+        for (LivingEntity kin :
+                LevelSpaces.entitiesIn(level, member.getClass(), anchor, pasture, EntitySelector.NO_SPECTATORS)) {
             if (isLivestock(kin) && ++count >= HERD_SIZE) {
                 break;
             }

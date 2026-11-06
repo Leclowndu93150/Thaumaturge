@@ -21,6 +21,14 @@ public final class IrisCompat {
         return invokeBoolean("shadersActive", NO_ARGUMENTS, NO_VALUES);
     }
 
+    public static boolean overridesShaders() {
+        return invokeBoolean("overridesShaders", NO_ARGUMENTS, NO_VALUES);
+    }
+
+    public static boolean isShadowPass() {
+        return invokeBoolean("isShadowPass", NO_ARGUMENTS, NO_VALUES);
+    }
+
     public static boolean isSolidHandPass() {
         return invokeBoolean("isSolidHandPass", NO_ARGUMENTS, NO_VALUES);
     }

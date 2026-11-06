@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.items.ItemMatch;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -100,7 +101,7 @@ public final class ProvideBehavior implements ISealBehavior {
             }
             BlockPos destination = destination(request);
             if (destination == null
-                    || destination.distSqr(at.pos()) >= SERVICE_RANGE * SERVICE_RANGE
+                    || LevelSpaces.distanceSqr(level, destination, at.pos()) >= SERVICE_RANGE * SERVICE_RANGE
                     || !supplies(seal, request.wanted())
                     || InvHelper.count(store, request.wanted(), ItemMatch.EXACT) < minimumStock) {
                 continue;

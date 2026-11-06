@@ -40,6 +40,10 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
     private static final int SMITH_EMPTY_WEIGHT = 1;
 
     private static final float LORE_CHANCE = 0.0005F;
+    private static final float ARCANE_TEMPLATE_TREASURE_CHANCE = 0.1F;
+    private static final float ARCANE_TEMPLATE_COMMON_BAG_CHANCE = 0.05F;
+    private static final float OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE = 0.05F;
+    private static final float OCCULT_TEMPLATE_RARE_BAG_CHANCE = 0.1F;
     private static final float KEY_ROOM_POOL_MIN = 2.0F;
     private static final float KEY_ROOM_POOL_MAX = 4.0F;
     private static final float KEY_ROOM_CHEST_ROLLS = 2.0F;
@@ -59,10 +63,22 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
 
     @Override
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
-        output.accept(TTLootTables.LOOT_BAG_COMMON, bagTable(TreasureLootPools.COMMON));
-        output.accept(TTLootTables.LOOT_BAG_UNCOMMON, bagTable(TreasureLootPools.UNCOMMON));
         output.accept(
-                TTLootTables.LOOT_BAG_RARE, bagTable(TreasureLootPools.RARE).withPool(lorePool()));
+                TTLootTables.LOOT_BAG_COMMON,
+                bagTable(TreasureLootPools.COMMON)
+                        .withPool(templatePool(
+                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE, ARCANE_TEMPLATE_COMMON_BAG_CHANCE)));
+        output.accept(
+                TTLootTables.LOOT_BAG_UNCOMMON,
+                bagTable(TreasureLootPools.UNCOMMON)
+                        .withPool(templatePool(
+                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
+        output.accept(
+                TTLootTables.LOOT_BAG_RARE,
+                bagTable(TreasureLootPools.RARE)
+                        .withPool(lorePool())
+                        .withPool(templatePool(
+                                TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_RARE_BAG_CHANCE)));
 
         output.accept(
                 TTLootTables.TREASURE_COMMON,
@@ -74,7 +90,9 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                 .add(entry(TTItems.QUICKSILVER, 2, 1.0F, 3.0F))
                                 .add(entry(TTItems.AMBER, 2, 1.0F, 3.0F))
                                 .add(entry(TTItems.NUGGET_QUICKSILVER, 2, 2.0F, 6.0F))
-                                .add(entry(TTItems.SALIS_MUNDUS, 1, 1.0F, 2.0F))));
+                                .add(entry(TTItems.SALIS_MUNDUS, 1, 1.0F, 2.0F)))
+                        .withPool(templatePool(
+                                TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE, ARCANE_TEMPLATE_TREASURE_CHANCE)));
 
         output.accept(
                 TTLootTables.TREASURE_UNCOMMON,
@@ -188,6 +206,13 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(chestRolls))
                         .add(NestedLootTable.lootTableReference(chest)));
+    }
+
+    private static LootPool.Builder templatePool(ItemLike template, float chance) {
+        return LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1.0F))
+                .when(LootItemRandomChanceCondition.randomChance(chance))
+                .add(LootItem.lootTableItem(template));
     }
 
     private static LootPool.Builder lorePool() {

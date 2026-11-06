@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
@@ -64,7 +65,9 @@ public final class ItemHandMirror extends Item {
             return InteractionResultHolder.pass(stack);
         }
         ServerLevel targetLevel = serverPlayer.level().getServer().getLevel(link.dimension());
-        BlockEntity target = targetLevel == null ? null : targetLevel.getBlockEntity(link.pos());
+        BlockEntity target = targetLevel == null
+                ? null
+                : targetLevel.getBlockEntity(BlockForwarding.follow(targetLevel, link.pos()));
         if (!(target instanceof BlockEntityMirror)) {
             stack.remove(TTDataComponents.MIRROR_LINK.get());
             serverPlayer
@@ -101,7 +104,9 @@ public final class ItemHandMirror extends Item {
             return false;
         }
         ServerLevel targetLevel = player.level().getServer().getLevel(link.dimension());
-        BlockEntity target = targetLevel == null ? null : targetLevel.getBlockEntity(link.pos());
+        BlockEntity target = targetLevel == null
+                ? null
+                : targetLevel.getBlockEntity(BlockForwarding.follow(targetLevel, link.pos()));
         if (target instanceof BlockEntityMirror targetMirror) {
             if (targetMirror.transportDirect(items)) {
                 player.level()

@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.NoteBlockEvent;
@@ -23,7 +25,7 @@ public final class ArcaneEarEvents {
         BlockPos source = event.getPos();
         List<BlockPos> ears = List.copyOf(level.getData(TTAttachments.EAR_INDEX.get()));
         for (BlockPos earPos : ears) {
-            if (earPos.distToCenterSqr(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) > MAX_RANGE_SQ) {
+            if (LevelSpaces.distanceSqr(level, Vec3.atCenterOf(earPos), Vec3.atCenterOf(source)) > MAX_RANGE_SQ) {
                 continue;
             }
             if (level.getBlockEntity(earPos) instanceof BlockEntityArcaneEar ear

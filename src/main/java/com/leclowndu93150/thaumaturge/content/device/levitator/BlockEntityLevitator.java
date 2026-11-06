@@ -2,14 +2,18 @@ package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -20,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     private static final String REACH_KEY = "reach";
@@ -35,6 +40,9 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     private static final int RIDER_SYNC_INTERVAL = 20;
     private static final float IDLE_MIST_CHANCE = 0.1F;
     private static final float WORKING_MIST_CHANCE = 0.6F;
+    private static final double SHIP_LIFT_BLOCKS = 64.0;
+    private static final double SHIP_PROBE_STEP = 0.5;
+    private static final double BEAM_MARGIN = 0.5;
 
     private final BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
     private LevitatorReach reach = LevitatorReach.MEDIUM;
@@ -78,13 +86,14 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
                         facing.getStepX() * (double) clearance,
                         facing.getStepY() * (double) clearance,
                         facing.getStepZ() * (double) clearance);
-        List<Entity> riders = level.getEntitiesOfClass(Entity.class, beam, BlockEntityLevitator::isCarried);
+        List<Entity> riders = LevelSpaces.entitiesIn(level, Entity.class, pos, beam, BlockEntityLevitator::isCarried);
+        Vec3 thrust = LevelSpaces.frameOf(level, pos).directionToWorld(Vec3.atLowerCornerOf(facing.getNormal()));
         int carried = 0;
         for (Entity rider : riders) {
             if (charge <= 0) {
                 break;
             }
-            push(rider, facing);
+            push(rider, facing, thrust);
             charge -= reach.visCost();
             carried++;
             if (level.isClientSide()) {
@@ -98,6 +107,48 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         return carried;
     }
 
+    private int pushShips(ServerLevel level, BlockPos pos, Direction facing) {
+        if (LevelSpaces.isWorldOnly()) {
+            return 0;
+        }
+        SpaceFrame own = LevelSpaces.frameOf(level, pos);
+        Vec3 thrust = own.directionToWorld(Vec3.atLowerCornerOf(facing.getNormal()));
+        Vec3 start = own.toWorld(Vec3.atCenterOf(pos));
+        double length = clearance + BEAM_MARGIN;
+        AABB beam = new AABB(start, start.add(thrust.scale(length))).inflate(BEAM_MARGIN);
+        int pushed = 0;
+        for (SpaceFrame frame : LevelSpaces.framesTouching(level, beam)) {
+            if (charge <= 0) {
+                break;
+            }
+            if (frame.isWorld() || frame.equals(own)) {
+                continue;
+            }
+            Vec3 contact = firstContact(level, frame, start, thrust, length);
+            if (contact != null) {
+                frame.push(pos, contact, thrust, SHIP_LIFT_BLOCKS, SPEED_CAP * SharedConstants.TICKS_PER_SECOND);
+                charge -= reach.visCost();
+                pushed++;
+            }
+        }
+        if (pushed > 0) {
+            setChanged();
+        }
+        return pushed;
+    }
+
+    private static @Nullable Vec3 firstContact(Level level, SpaceFrame frame, Vec3 start, Vec3 thrust, double length) {
+        for (double travelled = SHIP_PROBE_STEP; travelled <= length; travelled += SHIP_PROBE_STEP) {
+            Vec3 point = start.add(thrust.scale(travelled));
+            BlockPos cell = BlockPos.containing(frame.toLocal(point));
+            if (level.isLoaded(cell)
+                    && !level.getBlockState(cell).getCollisionShape(level, cell).isEmpty()) {
+                return point;
+            }
+        }
+        return null;
+    }
+
     private static boolean isCarried(Entity entity) {
         if (!entity.isAlive() || entity.isSpectator()) {
             return false;
@@ -109,6 +160,10 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
     }
 
     static void push(Entity rider, Direction facing) {
+        push(rider, facing, Vec3.atLowerCornerOf(facing.getNormal()));
+    }
+
+    private static void push(Entity rider, Direction facing, Vec3 thrust) {
         Vec3 motion = rider.getDeltaMovement();
         double x = motion.x;
         double y = motion.y;
@@ -116,9 +171,9 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         if (facing == Direction.UP && rider.isShiftKeyDown()) {
             y = y < 0.0 ? y * HOVER_DAMPING : y;
         } else {
-            x = Math.clamp(x + facing.getStepX() * THRUST, -SPEED_CAP, SPEED_CAP);
-            y = Math.clamp(y + facing.getStepY() * THRUST, -SPEED_CAP, SPEED_CAP);
-            z = Math.clamp(z + facing.getStepZ() * THRUST, -SPEED_CAP, SPEED_CAP);
+            x = Math.clamp(x + thrust.x * THRUST, -SPEED_CAP, SPEED_CAP);
+            y = Math.clamp(y + thrust.y * THRUST, -SPEED_CAP, SPEED_CAP);
+            z = Math.clamp(z + thrust.z * THRUST, -SPEED_CAP, SPEED_CAP);
             if (facing.getAxis() != Direction.Axis.Y && !rider.onGround()) {
                 y = (y < 0.0 ? y * HOVER_DAMPING : y) + LIFT;
             }
@@ -160,6 +215,9 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
             return;
         }
         int carried = carry(level, pos, facing);
+        if (level instanceof ServerLevel server) {
+            carried += pushShips(server, pos, facing);
+        }
         if (level.isClientSide()) {
             LevitatorMist.stream(level, pos, facing, IDLE_MIST_CHANCE);
         } else if (carried > 0 && level.getGameTime() % RIDER_SYNC_INTERVAL == 0) {

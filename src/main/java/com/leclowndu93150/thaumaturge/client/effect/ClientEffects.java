@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.NitorCoreParticleOptions;
@@ -16,6 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class ClientEffects {
@@ -156,6 +158,7 @@ public final class ClientEffects {
     private static void spawn(ParticleOptions options, double x, double y, double z, double vx, double vy, double vz) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
-        mc.particleEngine.createParticle(options, x, y, z, vx, vy, vz);
+        Vec3 at = ClientSpaces.renderPosition(mc.level, new Vec3(x, y, z));
+        mc.particleEngine.createParticle(options, at.x, at.y, at.z, vx, vy, vz);
     }
 }

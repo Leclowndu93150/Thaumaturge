@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 
 public final class ItemGolemPlacer extends Item implements ISealDisplayer {
@@ -87,7 +89,8 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         if (golem == null) {
             return InteractionResult.FAIL;
         }
-        golem.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+        Vec3 spawn = LevelSpaces.toWorld(serverLevel, new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5));
+        golem.moveTo(spawn.x, spawn.y, spawn.z, 0.0F, 0.0F);
         golem.setValidSpawn();
         golem.setOwner(player);
         ItemStack held = context.getItemInHand();
@@ -98,6 +101,9 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         golem.setRankXp(held.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0));
         EventHooks.finalizeMobSpawn(
                 golem, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
+        if (LevelSpaces.isDetached(serverLevel, pos)) {
+            golem.restrictTo(pos, (int) golem.getRestrictRadius());
+        }
         if (!serverLevel.addFreshEntity(golem)) {
             return InteractionResult.FAIL;
         }

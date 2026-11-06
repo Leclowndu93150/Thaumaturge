@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +48,8 @@ public final class ScanRaycastHelper {
         EntityHitResult entityResult = clipEntity(level, start, direction, entityReach, ctx.entity());
 
         if (blockResult.getType() != HitResult.Type.MISS && entityResult != null) {
-            double blockDistance = blockResult.getLocation().distanceToSqr(start);
+            double blockDistance =
+                    LevelSpaces.toWorld(level, blockResult.getLocation()).distanceToSqr(start);
             double entityDistance = entityResult.getLocation().distanceToSqr(start);
             if (blockDistance < entityDistance) {
                 return blockResult;

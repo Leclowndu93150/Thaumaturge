@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class VisRelayNetwork implements VisRelayHelper.Bindings {
@@ -141,7 +143,8 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
             if (!relay.isLinked()) {
                 continue;
             }
-            double distance = relay.getBlockPos().distSqr(consumerPos);
+            double distance =
+                    LevelSpaces.distanceSqr(level, Vec3.atCenterOf(relay.getBlockPos()), Vec3.atCenterOf(consumerPos));
             if (distance < bestDistance) {
                 bestDistance = distance;
                 best = relay;
@@ -153,6 +156,15 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
     private static <T extends BlockEntity> List<T> blockEntitiesNear(
             ServerLevel level, BlockPos center, Class<T> type) {
         List<T> found = new ArrayList<>();
+        collectNear(level, center, center, type, false, found);
+        for (BlockPos foreign : LevelSpaces.foreignCentersNear(level, center, CONSUMER_RANGE * Math.sqrt(3.0))) {
+            collectNear(level, center, foreign, type, true, found);
+        }
+        return found;
+    }
+
+    private static <T extends BlockEntity> void collectNear(
+            ServerLevel level, BlockPos owner, BlockPos center, Class<T> type, boolean foreign, List<T> found) {
         int minChunkX = SectionPos.blockToSectionCoord(center.getX() - CONSUMER_RANGE);
         int maxChunkX = SectionPos.blockToSectionCoord(center.getX() + CONSUMER_RANGE);
         int minChunkZ = SectionPos.blockToSectionCoord(center.getZ() - CONSUMER_RANGE);
@@ -169,13 +181,13 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
                             && !blockEntity.isRemoved()
                             && Math.abs(pos.getX() - center.getX()) <= CONSUMER_RANGE
                             && Math.abs(pos.getY() - center.getY()) <= CONSUMER_RANGE
-                            && Math.abs(pos.getZ() - center.getZ()) <= CONSUMER_RANGE) {
+                            && Math.abs(pos.getZ() - center.getZ()) <= CONSUMER_RANGE
+                            && (!foreign || LevelSpaces.withinCube(level, owner, pos, CONSUMER_RANGE))) {
                         found.add(type.cast(blockEntity));
                     }
                 }
             }
         }
-        return found;
     }
 
     private record Tap(BlockEntityVisRelay relay, LinkedRelaySource source, Holder<IAspect> aspect) {}

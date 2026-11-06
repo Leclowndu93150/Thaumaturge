@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.block;
 
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,7 @@ public final class PortableHoles {
     private PortableHoles() {}
 
     public static boolean canOpen(Level level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!level.hasChunkAt(pos) || LevelSpaces.isPlot(level, pos)) {
             return false;
         }
         BlockState state = level.getBlockState(pos);

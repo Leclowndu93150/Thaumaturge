@@ -15,10 +15,10 @@ public final class BeamRenderType {
     public static final ResourceLocation NODE =
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/effect/auranodes.png");
 
-    public static final RenderType TRUNK_BEAM = TTRenderTypes.additiveTextured(BEAM);
-    public static final RenderType TRUNK_BEAML = TTRenderTypes.additiveTextured(BEAML);
-    public static final RenderType TRUNK_BEAMH = TTRenderTypes.additiveTextured(BEAMH);
-    public static final RenderType NODE_TYPE = TTRenderTypes.additiveTextured(NODE);
+    public static final RenderType TRUNK_BEAM = TTRenderTypes.srcAlphaAdditiveTextured(BEAM);
+    public static final RenderType TRUNK_BEAML = TTRenderTypes.srcAlphaAdditiveTextured(BEAML);
+    public static final RenderType TRUNK_BEAMH = TTRenderTypes.srcAlphaAdditiveTextured(BEAMH);
+    public static final RenderType NODE_TYPE = TTRenderTypes.srcAlphaAdditiveTextured(NODE);
 
     public static RenderType trunkForType(int type) {
         return switch (type) {

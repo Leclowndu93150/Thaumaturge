@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -74,14 +75,13 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
             if (!(level.getBlockState(getBlockPos().above()).getBlock() instanceof BlockArcaneWorkbenchCharger)) {
                 auraVis = (int) AuraHelper.getVis(level, getBlockPos());
             } else {
-                ChunkPos chunkPos = new ChunkPos(getBlockPos());
+                BlockPos home = LevelSpaces.worldBlock(level, getBlockPos());
+                ChunkPos chunkPos = new ChunkPos(home);
 
                 for (int x = -1; x <= 1; x++) {
                     for (int z = -1; z <= 1; z++) {
                         ChunkPos current = new ChunkPos(chunkPos.x + x, chunkPos.z + z);
-                        auraVis += (int) AuraHelper.getVis(
-                                level,
-                                current.getMiddleBlockPosition(getBlockPos().getY()));
+                        auraVis += (int) AuraHelper.getVis(level, current.getMiddleBlockPosition(home.getY()));
                     }
                 }
             }
@@ -110,12 +110,13 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
             return AuraHelper.drainVis(level, getBlockPos(), vis, transaction) >= vis;
         }
 
-        ChunkPos chunkPos = new ChunkPos(getBlockPos());
+        BlockPos home = LevelSpaces.worldBlock(level, getBlockPos());
+        ChunkPos chunkPos = new ChunkPos(home);
         List<BlockPos> anchors = new ArrayList<>(9);
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
                 ChunkPos current = new ChunkPos(chunkPos.x + x, chunkPos.z + z);
-                BlockPos anchor = current.getMiddleBlockPosition(getBlockPos().getY());
+                BlockPos anchor = current.getMiddleBlockPosition(home.getY());
                 if (level.hasChunkAt(anchor)) {
                     anchors.add(anchor);
                 }

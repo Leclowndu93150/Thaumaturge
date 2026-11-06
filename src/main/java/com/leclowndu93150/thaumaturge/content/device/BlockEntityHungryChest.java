@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -47,7 +48,8 @@ public final class BlockEntityHungryChest extends ChestBlockEntity {
         }
         boolean swallowed = false;
         RandomSource random = level.getRandom();
-        for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, chest.swallowBox)) {
+        for (ItemEntity item :
+                level.getEntitiesOfClass(ItemEntity.class, LevelSpaces.worldBox(level, pos, chest.swallowBox))) {
             if (!item.isRemoved() && chest.swallow(level, pos, item, random)) {
                 swallowed = true;
             }

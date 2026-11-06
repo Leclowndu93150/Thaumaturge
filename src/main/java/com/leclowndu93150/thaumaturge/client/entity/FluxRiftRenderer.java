@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -114,11 +115,19 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
                 FluxRiftGeometry.build(outline, widths, entity.stabilityValue(), entity.tickCount + partialTicks);
         boolean goggles = Minecraft.getInstance().player != null
                 && GogglesAccess.wearsRevealingGear(Minecraft.getInstance().player);
-        Matrix4f pose = poseStack.last().pose();
         for (int pass = 0; pass < GLOW_PASSES; pass++) {
-            renderTube(buffers.getBuffer(renderTypeForPass(pass, goggles)), pose, tube, GLOW_SCALES[pass]);
+            float scale = GLOW_SCALES[pass];
+            LateWorldRenderQueue.drawOwnShader(
+                    poseStack,
+                    buffers,
+                    renderTypeForPass(pass, goggles),
+                    (pose, buffer) -> renderTube(buffer, pose.pose(), tube, scale));
         }
-        renderTube(buffers.getBuffer(renderTypeForPass(GLOW_PASSES, goggles)), pose, tube, 1.0F);
+        LateWorldRenderQueue.drawOwnShader(
+                poseStack,
+                buffers,
+                renderTypeForPass(GLOW_PASSES, goggles),
+                (pose, buffer) -> renderTube(buffer, pose.pose(), tube, 1.0F));
     }
 
     @Override

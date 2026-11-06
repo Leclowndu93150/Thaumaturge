@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
@@ -22,6 +26,7 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
 
     public static final int PULSE_TICKS = 5;
     private static final int RELINK_INTERVAL = 40;
+    private static final double LINK_REACH = LINK_RANGE * Math.sqrt(3.0) + 1.0;
     private static final int PULSE_EVENT = 0;
     private static final long NO_PULSE = -1000L;
     private static final int WHITE = 0xFFFFFF;
@@ -128,10 +133,14 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
         if (parentPos == null || depth <= 0) {
             return false;
         }
+        if (LevelSpaces.distanceSqr(level, Vec3.atCenterOf(worldPosition), Vec3.atCenterOf(parentPos))
+                > LINK_REACH * LINK_REACH) {
+            return false;
+        }
         if (!level.isLoaded(parentPos)) {
             return true;
         }
-        if (!RelaySightline.isClear(level, worldPosition, parentPos)) {
+        if (!sightClear(level, parentPos)) {
             return false;
         }
         if (level.getBlockEntity(parentPos) instanceof BlockEntityVisRelay relay) {
@@ -141,47 +150,72 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
     }
 
     private void relink(ServerLevel level) {
-        BlockPos bestSource = null;
-        double bestSourceDistance = Double.MAX_VALUE;
-        BlockPos bestRelay = null;
-        int bestRelayDepth = Integer.MAX_VALUE;
-        double bestRelayDistance = Double.MAX_VALUE;
+        LinkSearch search = new LinkSearch();
+        scanAround(level, worldPosition, search, false);
+        for (BlockPos center : LevelSpaces.foreignCentersNear(level, worldPosition, LINK_REACH)) {
+            scanAround(level, center, search, true);
+        }
+        if (search.bestSource != null) {
+            parentPos = search.bestSource;
+            depth = 1;
+        } else if (search.bestRelay != null) {
+            parentPos = search.bestRelay;
+            depth = search.bestRelayDepth + 1;
+        }
+    }
+
+    private void scanAround(ServerLevel level, BlockPos center, LinkSearch search, boolean foreign) {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = -LINK_RANGE; x <= LINK_RANGE; x++) {
             for (int y = -LINK_RANGE; y <= LINK_RANGE; y++) {
                 for (int z = -LINK_RANGE; z <= LINK_RANGE; z++) {
-                    if (x == 0 && y == 0 && z == 0) {
+                    cursor.setWithOffset(center, x, y, z);
+                    if (cursor.equals(worldPosition)
+                            || (foreign
+                                    && (!level.isLoaded(cursor)
+                                            || !LevelSpaces.withinCube(level, worldPosition, cursor, LINK_RANGE)))) {
                         continue;
                     }
-                    cursor.setWithOffset(worldPosition, x, y, z);
-                    if (level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) {
-                        double distance = cursor.distSqr(worldPosition);
-                        if (relay.isLinked()
-                                && relay.depth < HOP_CAP
-                                && (relay.depth < bestRelayDepth
-                                        || (relay.depth == bestRelayDepth && distance < bestRelayDistance))
-                                && RelaySightline.isClear(level, worldPosition, cursor)) {
-                            bestRelayDepth = relay.depth;
-                            bestRelayDistance = distance;
-                            bestRelay = cursor.immutable();
-                        }
-                    } else if (usableSource(level, cursor) != null) {
-                        double distance = cursor.distSqr(worldPosition);
-                        if (distance < bestSourceDistance && RelaySightline.isClear(level, worldPosition, cursor)) {
-                            bestSourceDistance = distance;
-                            bestSource = cursor.immutable();
-                        }
-                    }
+                    consider(level, cursor, search);
                 }
             }
         }
-        if (bestSource != null) {
-            parentPos = bestSource;
-            depth = 1;
-        } else if (bestRelay != null) {
-            parentPos = bestRelay;
-            depth = bestRelayDepth + 1;
+    }
+
+    private void consider(ServerLevel level, BlockPos cursor, LinkSearch search) {
+        if (level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) {
+            double distance = linkDistance(level, cursor);
+            if (relay.isLinked()
+                    && relay.depth < HOP_CAP
+                    && (relay.depth < search.bestRelayDepth
+                            || (relay.depth == search.bestRelayDepth && distance < search.bestRelayDistance))
+                    && sightClear(level, cursor)) {
+                search.bestRelayDepth = relay.depth;
+                search.bestRelayDistance = distance;
+                search.bestRelay = cursor.immutable();
+            }
+        } else if (usableSource(level, cursor) != null) {
+            double distance = linkDistance(level, cursor);
+            if (distance < search.bestSourceDistance && sightClear(level, cursor)) {
+                search.bestSourceDistance = distance;
+                search.bestSource = cursor.immutable();
+            }
         }
+    }
+
+    private double linkDistance(Level level, BlockPos target) {
+        return LevelSpaces.distanceSqr(level, Vec3.atCenterOf(worldPosition), Vec3.atCenterOf(target));
+    }
+
+    private boolean sightClear(Level level, BlockPos target) {
+        return BlockSightline.isClear(
+                level,
+                Vec3.atCenterOf(worldPosition),
+                Vec3.atCenterOf(target),
+                worldPosition,
+                target,
+                LINK_REACH,
+                CollisionContext.empty());
     }
 
     private static @Nullable IVisRelaySource usableSource(ServerLevel level, BlockPos pos) {
@@ -220,5 +254,13 @@ public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
         super.loadAdditional(input, registries);
         parentPos = TTNbt.read(input, "Parent", BlockPos.CODEC, registries).orElse(null);
         depth = input.getInt("Depth");
+    }
+
+    private static final class LinkSearch {
+        private @Nullable BlockPos bestSource;
+        private double bestSourceDistance = Double.MAX_VALUE;
+        private @Nullable BlockPos bestRelay;
+        private int bestRelayDepth = Integer.MAX_VALUE;
+        private double bestRelayDistance = Double.MAX_VALUE;
     }
 }

@@ -33,7 +33,7 @@ public final class TTShaders {
     }
 
     public static ShaderInstance entityFlat() {
-        return IrisCompat.shadersActive() ? GameRenderer.getRendertypeEntityTranslucentEmissiveShader() : entityFlat;
+        return IrisCompat.overridesShaders() ? GameRenderer.getRendertypeEntityTranslucentEmissiveShader() : entityFlat;
     }
 
     /**
@@ -45,11 +45,11 @@ public final class TTShaders {
     }
 
     public static ShaderInstance fx() {
-        return IrisCompat.shadersActive() ? IrisCompat.particleTranslucentShader() : fx;
+        return IrisCompat.overridesShaders() ? IrisCompat.particleTranslucentShader() : fx;
     }
 
     public static ShaderInstance fxAlphaTest() {
-        return IrisCompat.shadersActive() ? IrisCompat.particleTranslucentShader() : fxAlphaTest;
+        return IrisCompat.overridesShaders() ? IrisCompat.particleTranslucentShader() : fxAlphaTest;
     }
 
     public static ShaderInstance portal() {
@@ -57,11 +57,11 @@ public final class TTShaders {
     }
 
     public static ShaderInstance voidStream() {
-        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexColorShader() : voidStream;
+        return IrisCompat.overridesShaders() ? GameRenderer.getPositionTexColorShader() : voidStream;
     }
 
     public static ShaderInstance wardAdd() {
-        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexColorShader() : wardAdd;
+        return IrisCompat.overridesShaders() ? GameRenderer.getPositionTexColorShader() : wardAdd;
     }
 
     @SubscribeEvent

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,7 @@ public final class ItemArcaneKey extends Item {
             player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_bound"));
             return InteractionResult.SUCCESS;
         }
-        if (!link.equals(target)) {
+        if (!link.equals(target) && !BlockForwarding.leadsTo(server, link, pos)) {
             player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_wrong_lock"));
             return InteractionResult.SUCCESS;
         }

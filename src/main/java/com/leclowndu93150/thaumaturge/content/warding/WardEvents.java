@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.content.warding;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
+import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
+import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.DoorBlock;
@@ -101,6 +103,16 @@ public final class WardEvents {
         if (event.getLevel().hasChunkAt(origin)) {
             WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
         }
+    }
+
+    @SubscribeEvent
+    public static void onBlocksMoved(BlocksMovedEvent event) {
+        event.moves().forEach((from, to) -> {
+            WardHandler.carry(event.from(), from, event.to(), to);
+            if (ArcaneAccess.carry(event.from(), from, event.to(), to) && event.withinLevel()) {
+                BlockForwarding.record(event.to(), from, to);
+            }
+        });
     }
 
     private static void clearWard(ServerLevel level, BlockPos pos) {

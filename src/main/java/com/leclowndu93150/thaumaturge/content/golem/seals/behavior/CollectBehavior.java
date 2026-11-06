@@ -9,9 +9,11 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.StackFilter;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -33,7 +35,8 @@ public final class CollectBehavior implements ISealBehavior {
         if (now % SCAN_PERIOD != 0) {
             return;
         }
-        for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, SealArea.bounds(seal))) {
+        for (ItemEntity item : LevelSpaces.entitiesIn(
+                level, ItemEntity.class, seal.pos().pos(), SealArea.bounds(seal), EntitySelector.NO_SPECTATORS)) {
             if (isLoose(item) && !claimedItems.tracks(item.getUUID()) && wanted(seal, item.getItem())) {
                 Task task = Task.onEntity(seal.pos(), item);
                 task.setPriority(seal.priority());

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import net.minecraft.core.BlockPos;
@@ -105,8 +106,19 @@ public final class BlockEntityLampGrowth extends AbstractSyncedBlockEntity imple
         int column = takeColumn(level.getRandom());
         int offsetX = column / COLUMN_SIDE - RADIUS;
         int offsetZ = column % COLUMN_SIDE - RADIUS;
-        if (!level.hasChunkAt(cell.set(origin.getX() + offsetX, origin.getY(), origin.getZ() + offsetZ))) {
+        if (growColumn(level, origin, offsetX, offsetZ)) {
             return;
+        }
+        for (BlockPos center : LevelSpaces.foreignCentersNear(level, origin, RADIUS)) {
+            if (growColumn(level, center, offsetX, offsetZ)) {
+                return;
+            }
+        }
+    }
+
+    private boolean growColumn(ServerLevel level, BlockPos origin, int offsetX, int offsetZ) {
+        if (!level.hasChunkAt(cell.set(origin.getX() + offsetX, origin.getY(), origin.getZ() + offsetZ))) {
+            return false;
         }
         int reach = verticalReach(offsetX * offsetX + offsetZ * offsetZ);
         for (int offsetY = reach; offsetY >= -reach; offsetY--) {
@@ -114,9 +126,10 @@ public final class BlockEntityLampGrowth extends AbstractSyncedBlockEntity imple
             BlockState target = level.getBlockState(cell);
             if (isValidTarget(level, cell, target)) {
                 applyGrowth(level, target);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     private static int verticalReach(int horizontalSqr) {
