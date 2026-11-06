@@ -165,14 +165,14 @@ public final class HarvestBehavior implements ISealBehavior {
         BlockPos pos = task.pos();
         BlockState crop = level.getBlockState(pos);
         if (CropUtils.isClickableCrop(crop)) {
-            GolemInteractionHelper.golemClick(level, golem, pos, Direction.UP, ItemStack.EMPTY, false, false);
+            GolemInteractionHelper.golemClick(level, golem, pos, Direction.UP, ItemStack.EMPTY, false, true);
             return;
         }
         FakePlayer hand = TTFakePlayer.GOLEM.at(level, golem.asEntity());
         ItemStack seed = CropUtils.getSeed(level, pos, crop);
         Direction support = CropUtils.plantingSupport(crop).orElse(null);
         boolean tilled = level.getBlockState(pos.below()).getBlock() instanceof FarmBlock;
-        GolemInteractionHelper.golemClick(level, golem, pos, Direction.UP, ItemStack.EMPTY, false, false);
+        GolemInteractionHelper.golemClick(level, golem, pos, Direction.UP, ItemStack.EMPTY, false, true);
         if (!CropUtils.isGrownCrop(level, pos)) {
             return;
         }
