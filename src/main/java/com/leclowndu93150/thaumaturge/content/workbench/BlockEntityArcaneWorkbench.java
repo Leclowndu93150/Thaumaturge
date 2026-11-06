@@ -4,12 +4,12 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.content.aura.AuraVisDrain;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -127,32 +127,7 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
     }
 
     static boolean drainAcrossAnchors(double owed, List<BlockPos> anchors, AuraDrainer drainer) {
-        if (owed <= AURA_PAYMENT_EPSILON) {
-            return true;
-        }
-        List<BlockPos> availableAnchors = new ArrayList<>(anchors);
-        double remaining = owed;
-        while (remaining > AURA_PAYMENT_EPSILON && !availableAnchors.isEmpty()) {
-            double progress = 0.0D;
-            double share = remaining / availableAnchors.size();
-            for (Iterator<BlockPos> iterator = availableAnchors.iterator(); iterator.hasNext(); ) {
-                BlockPos anchor = iterator.next();
-                float request = (float) Math.min(remaining, share);
-                float supplied = Math.max(0.0F, Math.min(request, drainer.drain(anchor, request)));
-                remaining -= supplied;
-                progress += supplied;
-                if (supplied + AURA_PAYMENT_EPSILON < request) {
-                    iterator.remove();
-                }
-                if (remaining <= AURA_PAYMENT_EPSILON) {
-                    return true;
-                }
-            }
-            if (progress <= AURA_PAYMENT_EPSILON) {
-                return false;
-            }
-        }
-        return remaining <= AURA_PAYMENT_EPSILON;
+        return AuraVisDrain.acrossAnchors(owed, anchors, drainer::drain) + AURA_PAYMENT_EPSILON >= owed;
     }
 
     @FunctionalInterface

@@ -8,15 +8,19 @@ import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellInscribeEvent;
+import com.leclowndu93150.thaumaturge.content.aura.AuraVisDrain;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -35,6 +39,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -50,7 +55,6 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     private static final int VIS_PER_COMPLEXITY = 10;
     private static final int VIS_PER_BUDGET_DIVISOR = 5;
     private static final int CHARGER_REACH = 1;
-    private static final int CHUNK = 16;
     private static final int SPARKLE_SPREAD = 3;
     private static final Component TITLE = Component.translatable("block.thaumaturge.focal_manipulator");
 
@@ -188,18 +192,20 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         if (!server.getBlockState(worldPosition.above()).is(TTBlocks.ARCANE_WORKBENCH_CHARGER.get())) {
             return AuraHelper.drainVis(server, worldPosition, amount, false);
         }
-        int chunks = (CHARGER_REACH * 2 + 1) * (CHARGER_REACH * 2 + 1);
-        float remaining = amount;
-        for (int dx = -CHARGER_REACH; dx <= CHARGER_REACH && remaining > 0.0F; dx++) {
-            for (int dz = -CHARGER_REACH; dz <= CHARGER_REACH && remaining > 0.0F; dz++) {
-                remaining -= AuraHelper.drainVis(
-                        server,
-                        worldPosition.offset(dx * CHUNK, 0, dz * CHUNK),
-                        Math.min(amount / chunks, remaining),
-                        false);
+        BlockPos home = LevelSpaces.worldBlock(server, worldPosition);
+        ChunkPos center = new ChunkPos(home);
+        List<BlockPos> anchors = new ArrayList<>((CHARGER_REACH * 2 + 1) * (CHARGER_REACH * 2 + 1));
+        for (int dx = -CHARGER_REACH; dx <= CHARGER_REACH; dx++) {
+            for (int dz = -CHARGER_REACH; dz <= CHARGER_REACH; dz++) {
+                ChunkPos chunk = new ChunkPos(center.x + dx, center.z + dz);
+                BlockPos anchor = chunk.getMiddleBlockPosition(home.getY());
+                if (server.hasChunkAt(anchor)) {
+                    anchors.add(anchor);
+                }
             }
         }
-        return amount - remaining;
+        return (float) AuraVisDrain.acrossAnchors(
+                amount, anchors, (anchor, request) -> AuraHelper.drainVis(server, anchor, request, false));
     }
 
     private void finish(ServerLevel server) {
