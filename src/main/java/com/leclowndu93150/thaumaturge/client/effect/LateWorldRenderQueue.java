@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
@@ -42,8 +43,16 @@ public final class LateWorldRenderQueue {
         QUEUE.add(new Entry(origin, draw));
     }
 
-    public static void enqueueAfterLevel(PoseStack poseStack, RenderType type, SubmitNodeCollector.CustomGeometryRenderer renderer) {
+    private static void enqueueAfterLevel(PoseStack poseStack, RenderType type, SubmitNodeCollector.CustomGeometryRenderer renderer) {
         AFTER_LEVEL.add(new Geometry(poseStack.last().copy(), type, renderer));
+    }
+
+    public static void submitOwnShader(PoseStack poseStack, SubmitNodeCollector collector, RenderType type, SubmitNodeCollector.CustomGeometryRenderer renderer) {
+        if (!IrisCompat.shaderPackInUse()) {
+            collector.submitCustomGeometry(poseStack, type, renderer);
+        } else if (!IrisCompat.isShadowPass()) {
+            enqueueAfterLevel(poseStack, type, renderer);
+        }
     }
 
     @SubscribeEvent

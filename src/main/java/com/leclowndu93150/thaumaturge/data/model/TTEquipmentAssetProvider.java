@@ -13,6 +13,7 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 
 public final class TTEquipmentAssetProvider extends EquipmentAssetProvider {
     private static final int ROBE_UNDYED_COLOR = 0x6A3880;
+    private static final String CLOTH_SUFFIX = "_cloth";
 
     public TTEquipmentAssetProvider(PackOutput output) {
         super(output);
@@ -24,12 +25,12 @@ public final class TTEquipmentAssetProvider extends EquipmentAssetProvider {
         output.accept(TTMaterials.ASSET_TRAVELLER, armor("traveller"));
         output.accept(TTMaterials.ASSET_VOID, armor("void"));
         output.accept(TTMaterials.ASSET_FORTRESS, armor("fortress"));
-        output.accept(TTMaterials.ASSET_CULTIST_PLATE, armor("cultist_plate"));
-        output.accept(TTMaterials.ASSET_CULTIST_RANGER, armor("cultist_ranger"));
-        output.accept(TTMaterials.ASSET_CULTIST_CAPTAIN, humanoidOnly("cultist_captain"));
+        output.accept(TTMaterials.ASSET_CULTIST_PLATE, dyeableCloth("cultist_plate"));
+        output.accept(TTMaterials.ASSET_CULTIST_RANGER, dyeableCloth("cultist_ranger"));
+        output.accept(TTMaterials.ASSET_CULTIST_CAPTAIN, humanoidLayers(plain("cultist_captain"), dyedCloth("cultist_captain")));
         output.accept(TTMaterials.ASSET_ZOMBIE_PLATE, armor("zombie_plate"));
-        output.accept(TTMaterials.ASSET_CULTIST_ROBE, armor("cultist_robe"));
-        output.accept(TTMaterials.ASSET_CULTIST_LEADER, armor("cultist_leader"));
+        output.accept(TTMaterials.ASSET_CULTIST_ROBE, dyeableCloth("cultist_robe"));
+        output.accept(TTMaterials.ASSET_CULTIST_LEADER, dyeableCloth("cultist_leader"));
         output.accept(TTMaterials.ASSET_CULTIST_BOOTS, humanoidOnly("cultist_boots"));
         output.accept(TTMaterials.ASSET_THAUMOSTATIC_HARNESS, humanoidOnly("thaumostatic_harness"));
         output.accept(TTItems.GOGGLES_REVEALING_ASSET, humanoidOnly("goggles_revealing"));
@@ -45,8 +46,20 @@ public final class TTEquipmentAssetProvider extends EquipmentAssetProvider {
         return new EquipmentClientInfo.Layer(TTIds.rl(texture), Optional.of(new EquipmentClientInfo.Dyeable(Optional.of(ROBE_UNDYED_COLOR))), false);
     }
 
+    private static EquipmentClientInfo.Layer dyedCloth(String texture) {
+        return new EquipmentClientInfo.Layer(TTIds.rl(texture + CLOTH_SUFFIX), Optional.of(new EquipmentClientInfo.Dyeable(Optional.empty())), false);
+    }
+
     private static EquipmentClientInfo humanoidOnly(String texture) {
-        return EquipmentClientInfo.builder().addLayers(EquipmentClientInfo.LayerType.HUMANOID, plain(texture)).build();
+        return humanoidLayers(plain(texture));
+    }
+
+    private static EquipmentClientInfo humanoidLayers(EquipmentClientInfo.Layer... layers) {
+        return EquipmentClientInfo.builder().addLayers(EquipmentClientInfo.LayerType.HUMANOID, layers).build();
+    }
+
+    private static EquipmentClientInfo dyeableCloth(String texture) {
+        return armorLayers(plain(texture), dyedCloth(texture));
     }
 
     private static EquipmentClientInfo armor(String texture) {

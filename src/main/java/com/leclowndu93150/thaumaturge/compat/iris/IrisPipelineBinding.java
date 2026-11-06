@@ -13,7 +13,8 @@ import org.jspecify.annotations.Nullable;
 
 public final class IrisPipelineBinding {
     private static final String EMISSIVE_DEFINE = "EMISSIVE";
-    private static final Set<RenderPipeline> OWN_SHADER = Set.of(TTRenderPipelines.PORTAL_SURFACE);
+    private static final Set<RenderPipeline> OWN_SHADER = Set.of(TTRenderPipelines.PORTAL_SURFACE, TTRenderPipelines.RIFT_GLOW, TTRenderPipelines.RIFT_GLOW_NO_DEPTH, TTRenderPipelines.RIFT_SOLID,
+            TTRenderPipelines.HOLE_SURFACE);
 
     private IrisPipelineBinding() {}
 

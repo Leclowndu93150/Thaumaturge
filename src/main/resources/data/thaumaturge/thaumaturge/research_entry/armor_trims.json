@@ -1,0 +1,50 @@
+{
+  "category": "thaumaturge:alchemy",
+  "name": "research.thaumaturge.armor_trims.title",
+  "parents": [
+    "thaumaturge:metallurgy@2"
+  ],
+  "column": 4,
+  "row": 4,
+  "icons": [
+    "thaumaturge:arcane_armor_trim_smithing_template"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.armor_trims.stage_0",
+      "obtain": [
+        {
+          "items": [
+            "thaumaturge:arcane_armor_trim_smithing_template",
+            "thaumaturge:occult_armor_trim_smithing_template"
+          ],
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.armor_trims.stage_1",
+      "recipes": [
+        "thaumaturge:smithing/arcane_armor_trim",
+        "thaumaturge:smithing/occult_armor_trim",
+        "thaumaturge:arcane_armor_trim_smithing_template",
+        "thaumaturge:occult_armor_trim_smithing_template"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:metallum",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:fabrico",
+      "amount": 2
+    },
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 2
+    }
+  ],
+  "complexity": 1
+}

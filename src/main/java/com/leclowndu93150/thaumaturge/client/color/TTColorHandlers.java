@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTColorHandlers {
+    public static final Identifier ARMOR_TRIM_TINT_ID = TTIds.rl("armor_trim");
     public static final Identifier ASPECT_COLOR_TINT_ID = TTIds.rl("aspect_color");
     public static final Identifier CRYSTAL_ASPECT_TINT_ID = TTIds.rl("crystal_aspect");
     public static final Identifier FOCUS_COLOR_TINT_ID = TTIds.rl("focus_color");
@@ -19,6 +20,7 @@ public final class TTColorHandlers {
 
     @SubscribeEvent
     public static void onRegisterItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(ARMOR_TRIM_TINT_ID, ArmorTrimTint.MAP_CODEC);
         event.register(ASPECT_COLOR_TINT_ID, AspectColorTint.MAP_CODEC);
         event.register(CRYSTAL_ASPECT_TINT_ID, CrystalAspectTint.MAP_CODEC);
         event.register(FOCUS_COLOR_TINT_ID, FocusColorTint.MAP_CODEC);

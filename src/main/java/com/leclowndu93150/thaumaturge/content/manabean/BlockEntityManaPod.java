@@ -34,6 +34,7 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     public static final int MAX_AGE = 7;
     private static final String ASPECT_KEY = "Aspect";
+    private static final String SHOWCASE_KEY = "Showcase";
     private static final int MIX_STAGE = 3;
     private static final int WILD_HERBA_ROLL_BOUND = 8;
     private static final int COMPOUND_ORDERED_PAIR_WEIGHT = 2;
@@ -42,6 +43,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     private static final int BASE_WEIGHT = 1;
 
     private @Nullable ResourceKey<IAspect> aspectKey;
+    private boolean showcase;
 
     public BlockEntityManaPod(BlockPos pos, BlockState state) {
         super(TTBlockEntities.MANA_POD.get(), pos, state);
@@ -56,6 +58,15 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
             return null;
         }
         return Aspects.resolve(level, aspectKey);
+    }
+
+    public boolean isShowcase() {
+        return showcase;
+    }
+
+    public void setShowcase() {
+        showcase = true;
+        setChanged();
     }
 
     public void setAspect(@Nullable ResourceKey<IAspect> key) {
@@ -152,6 +163,9 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         Optional.ofNullable(aspectKey).ifPresent(key -> output.store(ASPECT_KEY, LegacyIds.ASPECT_KEY_CODEC, key));
+        if (showcase) {
+            output.putBoolean(SHOWCASE_KEY, true);
+        }
         super.saveAdditional(output);
     }
 
@@ -161,6 +175,7 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
         super.loadAdditional(input);
         ResourceKey<IAspect> previous = aspectKey;
         aspectKey = stored.orElse(null);
+        showcase = input.getBooleanOr(SHOWCASE_KEY, false);
         Level current = level;
         if (current != null && current.isClientSide() && !Objects.equals(previous, aspectKey)) {
             current.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_IMMEDIATE);

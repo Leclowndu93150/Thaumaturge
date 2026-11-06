@@ -22,6 +22,11 @@ import com.leclowndu93150.thaumaturge.data.datamap.InfusionModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.SmelterStatsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.EntityAspectsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.FocusTierProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.CrystalTrimMaterialProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.TrimMaterialBonusProvider;
+import com.leclowndu93150.thaumaturge.data.trim.TTTrimBootstrap;
+import com.leclowndu93150.thaumaturge.data.trade.TTVillagerTradeBootstrap;
+import com.leclowndu93150.thaumaturge.data.tag.TTVillagerTradeTagsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.FuelValuesProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.GolemAccessoryItemProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.InfernalBonusProvider;
@@ -95,7 +100,9 @@ public final class TTDataGenerators {
                 .add(SpellPart.REGISTRY_KEY, SpellPartBootstrap::bootstrap).add(AspectAffinity.REGISTRY_KEY, AffinityBootstrap::bootstrap)
                 .add(Registries.PROCESSOR_LIST, LabyrinthProcessorBootstrap::bootstrap).add(RoomType.REGISTRY_KEY, LabyrinthRoomBootstrap::bootstrap)
                 .add(LabyrinthEncounter.REGISTRY_KEY, LabyrinthEncounterBootstrap::bootstrap).add(LabyrinthDefinition.REGISTRY_KEY, LabyrinthDefinitionBootstrap::bootstrap)
-                .add(ObeliskSite.REGISTRY_KEY, ObeliskSiteBootstrap::bootstrap).add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap);
+                .add(ObeliskSite.REGISTRY_KEY, ObeliskSiteBootstrap::bootstrap).add(InstabilityOutcome.REGISTRY_KEY, InstabilityOutcomeBootstrap::bootstrap)
+                .add(Registries.TRIM_MATERIAL, TTTrimBootstrap::materials).add(Registries.TRIM_PATTERN, TTTrimBootstrap::patterns)
+                .add(Registries.VILLAGER_TRADE, TTVillagerTradeBootstrap::bootstrap);
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TTEnglishProvider::new);
@@ -117,6 +124,8 @@ public final class TTDataGenerators {
         event.createProvider(TTCurioProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
         event.createProvider(FocusTierProvider::new);
+        event.createProvider(TrimMaterialBonusProvider::new);
+        event.createProvider(CrystalTrimMaterialProvider::new);
         event.createProvider(LabyrinthRoomProvider::new);
         event.createProvider(SparseTemplateProvider::new);
 
@@ -128,6 +137,7 @@ public final class TTDataGenerators {
         event.createProvider(TTFluidTagsProvider::new);
         event.createProvider(TTEntityTypeTagsProvider::new);
         event.createProvider(TTLabyrinthRoomTagsProvider::new);
+        event.createProvider(TTVillagerTradeTagsProvider::new);
 
         event.createProvider((output, lookupProvider) -> new LootTableProvider(output, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(TTBlockLootSubProvider::new, LootContextParamSets.BLOCK),

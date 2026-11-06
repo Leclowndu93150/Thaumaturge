@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.TTFXRenderTypes;
 import com.leclowndu93150.thaumaturge.content.spell.block.BlockEntityHole;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -52,7 +53,7 @@ public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole, 
         if (!state.anyWall) {
             return;
         }
-        collector.submitCustomGeometry(poseStack, SURFACE, (pose, buffer) -> {
+        LateWorldRenderQueue.submitOwnShader(poseStack, collector, SURFACE, (pose, buffer) -> {
             for (Direction direction : Direction.values()) {
                 if (state.walls[direction.ordinal()]) {
                     renderWall(pose, buffer, direction);

@@ -57,6 +57,8 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private static final float CRAB_PEARL_LOOTING_BONUS = 0.25F;
     private static final float CURIO_CHANCE = 0.0125F;
     private static final float CURIO_LOOTING_BONUS = 0.01F;
+    private static final float OCCULT_TEMPLATE_CHANCE = 0.01F;
+    private static final float OCCULT_TEMPLATE_LOOTING_BONUS = 0.005F;
     private static final float CAPTAIN_RITES_CHANCE = 0.1F;
     private static final byte CULT_MAP_ZOOM = 2;
     private static final String CULT_MAP_NAME = "filled_map.thaumaturge.cult";
@@ -71,7 +73,8 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
         add(TTEntities.ELDRITCH_HIEROPHANT.get(), LootTable.lootTable());
         add(TTEntities.BRAINY_ZOMBIE.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
         add(TTEntities.BRAINY_DROWNED.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
-        add(TTEntities.BRAINY_HUSK.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
+        add(TTEntities.BRAINY_HUSK.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool())
+                .withPool(playerKillPool(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_CHANCE, OCCULT_TEMPLATE_LOOTING_BONUS)));
         add(TTEntities.MIND_SPIDER.get(), LootTable.lootTable());
         add(TTEntities.FIRE_BAT.get(), LootTable.lootTable());
         add(TTEntities.GIANT_BRAINY_ZOMBIE.get(),

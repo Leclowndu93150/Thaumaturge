@@ -95,6 +95,7 @@ import net.minecraft.client.renderer.special.ChestSpecialRenderer;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.WeightedList;
@@ -396,12 +397,25 @@ public final class TTModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new FocusColorTint()));
     }
 
-    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name) {
+    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name, Identifier slotTrimPrefix) {
         Identifier itemModelId = TTIds.rl("item/" + name);
         Material baseTex = new Material(TTIds.rl("item/" + name));
         Material overTex = new Material(TTIds.rl("item/" + name + "_over"));
         ModelTemplates.TWO_LAYERED_ITEM.create(itemModelId, TextureMapping.layered(baseTex, overTex), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
+        itemModels.generateDynamicTrimmableItem(item, itemModelId, slotTrimPrefix, ROBES_UNDYED_ARGB);
+    }
+
+    private static void registerDyeableCrimsonArmor(ItemModelGenerators itemModels, Item item) {
+        Identifier plainModel = ModelTemplates.FLAT_ITEM.create(item, TextureMapping.layer0(item), itemModels.modelOutput);
+        Identifier dyedModel = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(item, "_dyed"),
+                TextureMapping.layered(TextureMapping.getItemTexture(item), TextureMapping.getItemTexture(item, "_cloth")), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(ItemModelUtils.hasComponent(DataComponents.DYED_COLOR),
+                ItemModelUtils.tintedModel(dyedModel, new Constant(-1), new Dye(0)), ItemModelUtils.plainModel(plainModel)));
+    }
+
+    private static void registerTrimmableArmor(ItemModelGenerators itemModels, Item item, Identifier slotTrimPrefix) {
+        Identifier itemModelId = ModelTemplates.FLAT_ITEM.create(item, TextureMapping.layer0(item), itemModels.modelOutput);
+        itemModels.generateDynamicTrimmableItem(item, itemModelId, slotTrimPrefix);
     }
 
     private static void registerMirrorItem(ItemModelGenerators itemModels, Item item, String frameTexture) {
@@ -792,17 +806,17 @@ public final class TTModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TTItems.PECH_WAND.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(TTItems.CRIMSON_BLADE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(TTItems.CRIMSON_PLATE_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_PLATE_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_PLATE_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_RANGER_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_RANGER_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_RANGER_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_CAPTAIN_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_CAPTAIN_CHEST.get(), ModelTemplates.FLAT_ITEM);
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_PLATE_CHEST.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_PLATE_LEGS.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_RANGER_HELM.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_RANGER_CHEST.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_RANGER_LEGS.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_CAPTAIN_HELM.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_CAPTAIN_CHEST.get());
         itemModels.generateFlatItem(TTItems.CRIMSON_BOOTS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_ROBE_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_ROBE_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_ROBE_LEGS.get(), ModelTemplates.FLAT_ITEM);
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_ROBE_HELM.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_ROBE_CHEST.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_ROBE_LEGS.get());
         itemModels.generateFlatItem(TTItems.TUBE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.TUBE_VALVE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.TUBE_RESTRICT.get(), ModelTemplates.FLAT_ITEM);
@@ -884,17 +898,19 @@ public final class TTModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TTItems.PRIMAL_CRUSHER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(TTItems.TRAVELLER_BOOTS.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.THAUMOSTATIC_HARNESS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.THAUMIUM_BOOTS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_LEGS.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.VOID_BOOTS.get(), ModelTemplates.FLAT_ITEM);
-        registerRobeItem(itemModels, TTItems.CLOTH_CHEST.get(), "cloth_chest");
-        registerRobeItem(itemModels, TTItems.CLOTH_LEGS.get(), "cloth_legs");
-        registerRobeItem(itemModels, TTItems.CLOTH_BOOTS.get(), "cloth_boots");
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_HELM.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_CHEST.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_LEGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerTrimmableArmor(itemModels, TTItems.THAUMIUM_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        registerTrimmableArmor(itemModels, TTItems.VOID_HELM.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
+        registerTrimmableArmor(itemModels, TTItems.VOID_CHEST.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerTrimmableArmor(itemModels, TTItems.VOID_LEGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerTrimmableArmor(itemModels, TTItems.VOID_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        registerRobeItem(itemModels, TTItems.CLOTH_CHEST.get(), "cloth_chest", ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        registerRobeItem(itemModels, TTItems.CLOTH_LEGS.get(), "cloth_legs", ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        registerRobeItem(itemModels, TTItems.CLOTH_BOOTS.get(), "cloth_boots", ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        itemModels.generateFlatItem(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
         registerSpa(blockModels, itemModels);
         registerCasters(itemModels);
         registerGolemancy(blockModels, itemModels);
@@ -1046,8 +1062,8 @@ public final class TTModelProvider extends ModelProvider {
         registerMirrorItem(itemModels, TTItems.MIRROR.get(), "mirrorframe");
         registerMirrorItem(itemModels, TTItems.MIRROR_ESSENTIA.get(), "mirrorframe2");
         itemModels.generateFlatItem(TTItems.CRIMSON_PRAETOR_HELM.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_PRAETOR_CHEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TTItems.CRIMSON_PRAETOR_LEGS.get(), ModelTemplates.FLAT_ITEM);
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_PRAETOR_CHEST.get());
+        registerDyeableCrimsonArmor(itemModels, TTItems.CRIMSON_PRAETOR_LEGS.get());
         itemModels.generateFlatItem(TTItems.FORTRESS_HELM.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.FORTRESS_CHEST.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TTItems.FORTRESS_LEGS.get(), ModelTemplates.FLAT_ITEM);

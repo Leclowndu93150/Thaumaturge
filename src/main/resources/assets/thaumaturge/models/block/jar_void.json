@@ -4,7 +4,8 @@
   "textures": {
     "side": "thaumaturge:block/jar_side_void",
     "bottom": "thaumaturge:block/jar_bottom",
-    "top": "thaumaturge:block/jar_top_void",
+    "top": "thaumaturge:block/jar_top",
+    "lid": "thaumaturge:block/jar_top_void",
     "particle": "thaumaturge:block/jar_side_void",
     "fluid": "thaumaturge:block/animatedglow"
   },
@@ -55,10 +56,10 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top"
+          "texture": "#lid"
         },
         "down": {
-          "texture": "#top"
+          "texture": "#lid"
         },
         "west": {
           "texture": "#side"

@@ -32,6 +32,9 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockFamilies;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.api.items.trim.TTTrimPatterns;
+import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
+import net.minecraft.world.item.equipment.trim.TrimPattern;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.util.List;
@@ -194,6 +197,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         buildElementalToolRecipes();
         buildEssentiaReservoirRecipe();
         buildTravellerBootsRecipe();
+        buildArmorTrimRecipes();
         buildThaumostaticHarnessRecipe();
         buildRechargePedestalRecipe();
         buildFocalManipulatorRecipe();
@@ -573,6 +577,18 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TTItems.VIS_RESONATOR)));
     }
 
+    private void buildArmorTrimRecipes() {
+        armorTrim(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.ARCANE, TTBlocks.STONE_ARCANE.get());
+        armorTrim(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE.get(), TTTrimPatterns.OCCULT, TTBlocks.STONE_ANCIENT.get());
+    }
+
+    private void armorTrim(Item template, ResourceKey<TrimPattern> pattern, ItemLike duplicationBase) {
+        Holder.Reference<TrimPattern> trimPattern = registries.lookupOrThrow(Registries.TRIM_PATTERN).getOrThrow(pattern);
+        SmithingTrimRecipeBuilder.smithingTrim(Ingredient.of(template), tag(TTItemTags.TRIMMABLE_ARMOR), tag(TTItemTags.TRIM_MATERIALS), trimPattern, RecipeCategory.MISC)
+                .unlocks("has_smithing_trim_template", has(template)).save(output, recipeId("smithing/" + pattern.identifier().getPath() + "_armor_trim"));
+        copySmithingTemplate(template, duplicationBase);
+    }
+
     private void buildTravellerBootsRecipe() {
         commit(priced(parts(infusion(RecipeCategory.COMBAT, new ItemStackTemplate(TTItems.TRAVELLER_BOOTS.get()), single(Items.LEATHER_BOOTS)), crystal(TTAspects.AER), crystal(TTAspects.AER),
                 single(TTItems.FABRIC.get()), single(TTItems.FABRIC.get()), tagged(Tags.Items.FEATHERS), tagged(ItemTags.FISHES)), cost(TTAspects.VOLATUS, 100), cost(TTAspects.MOTUS, 100))
@@ -647,18 +663,32 @@ public final class TTRecipeProvider extends RecipeProvider {
                 TTItems.VOID_SPEAR.get());
         armorRecipes(TTItemTags.INGOTS_THAUMIUM, TTItems.THAUMIUM_HELM.get(), TTItems.THAUMIUM_CHEST.get(), TTItems.THAUMIUM_LEGS.get(), TTItems.THAUMIUM_BOOTS.get());
         armorRecipes(TTItemTags.INGOTS_VOID_METAL, TTItems.VOID_HELM.get(), TTItems.VOID_CHEST.get(), TTItems.VOID_LEGS.get(), TTItems.VOID_BOOTS.get());
-        robeDyeRecipe(TTItems.CLOTH_CHEST.get());
-        robeDyeRecipe(TTItems.CLOTH_LEGS.get());
-        robeDyeRecipe(TTItems.CLOTH_BOOTS.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_HELM.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_CHEST.get());
-        robeDyeRecipe(TTItems.VOID_ROBE_LEGS.get());
+        dyeRecipe(TTItems.CLOTH_CHEST.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CLOTH_LEGS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CLOTH_BOOTS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_HELM.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_CHEST.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.VOID_ROBE_LEGS.get(), ROBE_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PLATE_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_RANGER_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_CAPTAIN_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_CAPTAIN_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_ROBE_LEGS.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_HELM.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_CHEST.get(), CRIMSON_DYE_GROUP);
+        dyeRecipe(TTItems.CRIMSON_PRAETOR_LEGS.get(), CRIMSON_DYE_GROUP);
     }
 
-    private void robeDyeRecipe(Item target) {
+    private void dyeRecipe(Item target, String group) {
         CustomCraftingRecipeBuilder
                 .customCrafting(RecipeCategory.MISC, (commonInfo, bookInfo) -> new DyeRecipe(commonInfo, bookInfo, single(target), tag(ItemTags.DYES), new ItemStackTemplate(target)))
-                .unlockedBy(getHasName(target), has(target)).group("cloth_robes").save(output, TTIds.MODID + ":" + BuiltInRegistries.ITEM.getKey(target).getPath() + "_dyed");
+                .unlockedBy(getHasName(target), has(target)).group(group).save(output, TTIds.MODID + ":" + BuiltInRegistries.ITEM.getKey(target).getPath() + "_dyed");
     }
 
     private void toolRecipes(TagKey<Item> ingot, Item... tools) {
@@ -1260,6 +1290,8 @@ public final class TTRecipeProvider extends RecipeProvider {
     private static final TagKey<Item> NUGGETS_SILVER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "nuggets/silver"));
     private static final float AMBER_FROM_RESIN_XP = 0.2F;
     private static final String NITOR_DYE_GROUP = TTIds.rl("nitor_dye").toString();
+    private static final String ROBE_DYE_GROUP = "cloth_robes";
+    private static final String CRIMSON_DYE_GROUP = "crimson_armor";
     private static final int AMBER_FROM_RESIN_TIME = 100;
     private static final int WAND_CAP_GOLD_VIS = 9;
     private static final int WAND_CAP_COPPER_VIS = 6;

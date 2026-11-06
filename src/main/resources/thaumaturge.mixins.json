@@ -15,6 +15,7 @@
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
+    "world.item.crafting.SmithingTrimRecipeMixin",
     "world.level.block.FireBlockMixin",
     "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
     "world.level.block.piston.PistonBaseBlockMixin"
@@ -29,12 +30,14 @@
     "client.renderer.rendertype.RenderSetupMixin",
     "client.renderer.entity.LivingEntityRenderStateMixin",
     "client.renderer.entity.LivingEntityRendererMixin",
+    "client.renderer.entity.layers.EquipmentLayerRendererMixin",
     "client.renderer.entity.layers.HumanoidArmorLayerAccessor",
     "client.renderer.item.ItemStackRenderStateAccessor",
     "iris.pathways.HandRendererMixin",
     "jei.gui.ingredients.IngredientFilterAccessor",
     "jei.gui.ingredients.IngredientFilterApiAccessor",
-    "jei.gui.search.ElementSearchAccessor"
+    "jei.gui.search.ElementSearchAccessor",
+    "neoforge.client.model.item.TrimmedArmorModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

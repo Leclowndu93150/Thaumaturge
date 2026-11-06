@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SmithingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import org.jspecify.annotations.Nullable;
 
@@ -140,6 +141,9 @@ public final class RecipeDisplayWidget {
         }
         if (display instanceof ShapelessCraftingRecipeDisplay shapeless) {
             return new GridRecipePanel(GridRecipePanel.Kind.WORKBENCH_SHAPELESS, 0, 0, shapeless.ingredients(), shapeless.result(), List.of(), 0);
+        }
+        if (display instanceof SmithingRecipeDisplay smithing) {
+            return new SmithingRecipePanel(smithing.template(), smithing.base(), smithing.addition(), smithing.result());
         }
         return new PlainRecipePanel(display);
     }
