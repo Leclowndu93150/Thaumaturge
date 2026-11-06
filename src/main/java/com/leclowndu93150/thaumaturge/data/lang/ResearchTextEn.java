@@ -1189,7 +1189,7 @@ public final class ResearchTextEn {
         add.accept(
                 "book.thaumaturge.start.3",
                 "\"I wonder, should I do what the dream showed?\n\nI have the impression the dust was going to reveal something wondrous, but dangerous.\"");
-        add.accept("message.thaumaturge.research.addendum_added", "§aAddendum added to %1$s§r");
+        add.accept("message.thaumaturge.research.addendum_added", "Addendum added to %1$s");
         add.accept("research.thaumaturge.gotdream.title", "Strange Dreams");
         add.accept("research.thaumaturge.gotthaumonomicon.title", "The Thaumonomicon");
     }

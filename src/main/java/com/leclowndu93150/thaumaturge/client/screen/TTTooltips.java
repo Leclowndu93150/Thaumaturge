@@ -78,11 +78,12 @@ public final class TTTooltips {
     }
 
     public static Component researchNew() {
-        return Component.translatable("tooltip.thaumaturge.research.new_research");
+        return Component.translatable("tooltip.thaumaturge.research.new_research")
+                .withStyle(ChatFormatting.GOLD);
     }
 
     public static Component pageNew() {
-        return Component.translatable("tooltip.thaumaturge.research.new_page");
+        return Component.translatable("tooltip.thaumaturge.research.new_page").withStyle(ChatFormatting.GREEN);
     }
 
     public static MutableComponent entryNameGold(Component name) {
