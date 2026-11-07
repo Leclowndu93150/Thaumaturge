@@ -37,6 +37,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -91,6 +92,15 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     public ItemStack catalystStack() {
         return catalyst.getStackInSlot(CATALYST_SLOT).copy();
+    }
+
+    public void dropContents() {
+        if (level instanceof ServerLevel server) {
+            BlockPos pos = worldPosition;
+            Containers.dropItemStack(
+                    server, pos.getX(), pos.getY(), pos.getZ(), catalyst.getStackInSlot(CATALYST_SLOT));
+            catalyst.setStackInSlot(CATALYST_SLOT, ItemStack.EMPTY);
+        }
     }
 
     public void toggleRecipe(ServerLevel level, Player player, ResourceLocation recipeId) {
