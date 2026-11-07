@@ -24,8 +24,7 @@ public final class TTVillagerTradeBootstrap {
     private TTVillagerTradeBootstrap() {}
 
     public static void bootstrap(BootstrapContext<VillagerTrade> context) {
-        context.register(WANDERING_TRADER_ARCANE_TRIM,
-                new VillagerTrade(new TradeCost(Items.EMERALD, ARCANE_TRIM_EMERALDS), new ItemStackTemplate(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get()), ARCANE_TRIM_MAX_USES,
-                        ARCANE_TRIM_XP, ARCANE_TRIM_REPUTATION_DISCOUNT, Optional.empty(), List.of()));
+        context.register(WANDERING_TRADER_ARCANE_TRIM, new VillagerTrade(new TradeCost(Items.EMERALD, ARCANE_TRIM_EMERALDS), new ItemStackTemplate(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE.get()),
+                ARCANE_TRIM_MAX_USES, ARCANE_TRIM_XP, ARCANE_TRIM_REPUTATION_DISCOUNT, Optional.empty(), List.of()));
     }
 }
