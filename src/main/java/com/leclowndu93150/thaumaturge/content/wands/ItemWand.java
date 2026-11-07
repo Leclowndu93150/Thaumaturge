@@ -427,7 +427,10 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
         if (amounts != null) {
             builder.add(amounts);
         }
-        builder.add(WandTooltips.costSummary(registries, pctByPrimal));
+        Component discount = WandTooltips.costSummary(registries, pctByPrimal);
+        if (discount != null) {
+            builder.add(discount);
+        }
         ItemStack focusStack = socketedFocus(stack);
         if (FocusItems.isFocus(focusStack)) {
             builder.add(focusStack

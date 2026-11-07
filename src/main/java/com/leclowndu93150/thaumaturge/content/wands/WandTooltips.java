@@ -3,9 +3,7 @@ package com.leclowndu93150.thaumaturge.content.wands;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -38,45 +36,51 @@ public final class WandTooltips {
                 .withStyle(primalColor(registries, primal));
     }
 
-    public static Component costSummary(
+    public static @Nullable Component costSummary(
             HolderLookup.@Nullable Provider registries, Map<ResourceKey<IAspect>, Integer> pctByPrimal) {
-        Map<Integer, List<ResourceKey<IAspect>>> groups = new LinkedHashMap<>();
-        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : pctByPrimal.entrySet()) {
-            groups.computeIfAbsent(entry.getValue(), pct -> new ArrayList<>()).add(entry.getKey());
+        if (pctByPrimal.isEmpty()) {
+            return null;
         }
-        int basePct = 100;
-        int baseSize = -1;
-        for (Map.Entry<Integer, List<ResourceKey<IAspect>>> group : groups.entrySet()) {
-            if (group.getValue().size() > baseSize) {
-                baseSize = group.getValue().size();
-                basePct = group.getKey();
+        int firstDiscount = 100 - pctByPrimal.values().iterator().next();
+        boolean uniform = true;
+        for (int costPercent : pctByPrimal.values()) {
+            if (100 - costPercent != firstDiscount) {
+                uniform = false;
+                break;
             }
         }
-        MutableComponent exceptions = null;
-        for (Map.Entry<Integer, List<ResourceKey<IAspect>>> group : groups.entrySet()) {
-            if (group.getKey() == basePct) {
+        if (uniform) {
+            return firstDiscount == 0
+                    ? null
+                    : Component.translatable("tooltip.thaumaturge.wand.discount", firstDiscount)
+                            .withStyle(ChatFormatting.GOLD);
+        }
+        MutableComponent discounts = Component.empty();
+        boolean hasDiscount = false;
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : pctByPrimal.entrySet()) {
+            int discount = 100 - entry.getValue();
+            if (discount == 0) {
                 continue;
             }
-            MutableComponent names = null;
-            for (ResourceKey<IAspect> primal : group.getValue()) {
-                Component name = primalName(registries, primal);
-                names = names == null ? name.copy() : Component.translatable("tooltip.thaumaturge.list", names, name);
+            if (hasDiscount) {
+                discounts.append(Component.literal(", ").withStyle(ChatFormatting.GOLD));
             }
-            MutableComponent entry =
-                    Component.translatable("tooltip.thaumaturge.wand.cost.group", names, group.getKey());
-            exceptions = exceptions == null
-                    ? entry
-                    : Component.translatable("tooltip.thaumaturge.wand.cost.groups", exceptions, entry);
+            ChatFormatting color = primalColor(registries, entry.getKey());
+            if (color == ChatFormatting.DARK_GREEN) {
+                color = ChatFormatting.GREEN;
+            }
+            Component name = primalName(registries, entry.getKey()).copy().withStyle(color);
+            discounts.append(Component.translatable("tooltip.thaumaturge.wand.discount.aspect", name, discount)
+                    .withStyle(color));
+            hasDiscount = true;
         }
-        if (exceptions == null) {
-            return Component.translatable("tooltip.thaumaturge.wand.cost", basePct)
-                    .withStyle(ChatFormatting.GRAY);
-        }
-        return Component.translatable("tooltip.thaumaturge.wand.cost.except", basePct, exceptions)
-                .withStyle(ChatFormatting.GRAY);
+        return hasDiscount
+                ? Component.translatable("tooltip.thaumaturge.wand.discount.aspects", discounts)
+                        .withStyle(ChatFormatting.GOLD)
+                : null;
     }
 
-    public static Component capCostSummary(HolderLookup.@Nullable Provider registries, WandCap cap) {
+    public static @Nullable Component capCostSummary(HolderLookup.@Nullable Provider registries, WandCap cap) {
         Map<ResourceKey<IAspect>, Integer> pctByPrimal = new LinkedHashMap<>();
         for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             pctByPrimal.put(primal, Math.round(cap.costModifier(primal) * 100.0F));
