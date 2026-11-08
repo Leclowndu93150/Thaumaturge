@@ -1,0 +1,39 @@
+{
+	"format_version": "26.3",
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"ambientocclusion": false,
+	"texture_size": [32, 32],
+	"textures": {
+		"particle": "thaumaturge:block/bellows",
+		"main": "thaumaturge:block/bellows"
+	},
+	"elements": [
+		{
+			"name": "plank",
+			"from": [2, 12, 2],
+			"to": [14, 14, 14],
+			"faces": {
+				"north": {"uv": [6, 0, 12, 1], "texture": "#main"},
+				"east": {"uv": [6, 0, 12, 1], "texture": "#main"},
+				"south": {"uv": [6, 0, 12, 1], "texture": "#main"},
+				"west": {"uv": [6, 0, 12, 1], "texture": "#main"},
+				"up": {"uv": [0, 0, 6, 6], "texture": "#main"},
+				"down": {"uv": [0, 6, 6, 0], "texture": "#main"}
+			}
+		},
+		{
+			"name": "crystal",
+			"from": [6, 13.5, 6],
+			"to": [10, 14.5, 10],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6, 13.5, 6]},
+			"faces": {
+				"north": {"uv": [6, 8, 8, 8.5], "texture": "#main"},
+				"east": {"uv": [7.5, 10, 8, 8], "rotation": 270, "texture": "#main"},
+				"south": {"uv": [6, 9.5, 8, 10], "texture": "#main"},
+				"west": {"uv": [6, 10, 6.5, 8], "rotation": 90, "texture": "#main"},
+				"up": {"uv": [6, 8, 8, 10], "texture": "#main"}
+			}
+		}
+	]
+}
