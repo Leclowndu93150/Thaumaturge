@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -41,6 +42,8 @@ public final class SealWorldRenderer {
     private static final float RING_ALPHA = 0.8F;
     private static final float CORNER_ALPHA = 0.7F;
     private static final RenderType ICON_TYPE = TTRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
+    private static final MultiBufferSource.BufferSource SEAL_BUFFERS =
+            MultiBufferSource.immediate(new ByteBufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE));
 
     private static final Direction[][] ROT_FACES = {
         {Direction.DOWN, Direction.NORTH, Direction.WEST},
@@ -65,7 +68,8 @@ public final class SealWorldRenderer {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+        // Water writes depth during the translucent terrain pass, so draw seals before it.
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES || IrisCompat.isShadowPass()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -82,8 +86,7 @@ public final class SealWorldRenderer {
         }
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
-        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(SEAL_BUFFERS);
         float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
@@ -100,7 +103,7 @@ public final class SealWorldRenderer {
                 drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
             }
         }
-        buffers.endBatch();
+        SEAL_BUFFERS.endBatch();
     }
 
     private static void drawSealIcon(
