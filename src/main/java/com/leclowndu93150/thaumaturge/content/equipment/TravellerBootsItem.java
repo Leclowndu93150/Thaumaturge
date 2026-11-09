@@ -108,7 +108,10 @@ public final class TravellerBootsItem extends ArmorItem {
     }
 
     static boolean isActive(Player player, ItemStack boots) {
-        return RechargeAccess.storedVis(boots) > 0 && !player.getAbilities().flying && !player.isShiftKeyDown();
+        return RechargeAccess.storedVis(boots) > 0
+                && !player.getAbilities().flying
+                && !player.isFallFlying()
+                && !player.isShiftKeyDown();
     }
 
     static boolean isStepActive(Player player, ItemStack boots) {

@@ -70,6 +70,23 @@ class TravellerBootsMovementTest {
     }
 
     @Test
+    void elytraGlidingSuppressesBootsMovementBoost() {
+        ItemStack stack = new ItemStack(Items.LEATHER_BOOTS);
+        Player player = mock(Player.class);
+        player.zza = 1.0F;
+        when(player.getAbilities()).thenReturn(new Abilities());
+        when(player.isFallFlying()).thenReturn(true);
+
+        try (MockedStatic<RechargeAccess> rechargeAccess = mockStatic(RechargeAccess.class)) {
+            rechargeAccess.when(() -> RechargeAccess.storedVis(stack)).thenReturn(1);
+
+            TravellerBootsItem.clientMovementTick(player, stack);
+        }
+
+        verify(player, never()).moveRelative(anyFloat(), any(Vec3.class));
+    }
+
+    @Test
     void sneakingSuppressesBootsJumpAndStepEffects() {
         ItemStack stack = new ItemStack(Items.LEATHER_BOOTS);
         Player player = mock(Player.class);
