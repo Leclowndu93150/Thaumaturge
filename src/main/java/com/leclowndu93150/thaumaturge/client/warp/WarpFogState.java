@@ -1,39 +1,49 @@
 package com.leclowndu93150.thaumaturge.client.warp;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
+
 public final class WarpFogState {
     public static final int MIST_DURATION_TICKS = 2400;
     public static final int MIST_SHORT_DURATION_TICKS = 200;
 
-    private static int fogTicks;
+    private static int warpMistTicks;
+    private static int guardianMistTicks;
 
     private WarpFogState() {}
 
     public static void startMist() {
-        fogTicks = MIST_DURATION_TICKS;
+        warpMistTicks = MIST_DURATION_TICKS;
     }
 
     public static void startShortMist() {
-        fogTicks = Math.max(fogTicks, MIST_SHORT_DURATION_TICKS);
+        guardianMistTicks = Math.max(guardianMistTicks, MIST_SHORT_DURATION_TICKS);
     }
 
     public static void tick() {
-        if (fogTicks > 0) {
-            fogTicks--;
-        }
+        warpMistTicks = Math.max(0, warpMistTicks - 1);
+        guardianMistTicks = Math.max(0, guardianMistTicks - 1);
     }
 
-    public static boolean active() {
-        return fogTicks > 0;
+    public static float warpMistIntensity() {
+        return intensity(warpMistTicks);
     }
 
-    public static float intensity() {
-        if (fogTicks <= 0) {
-            return 0.0F;
-        }
-        return Math.min(1.0F, fogTicks / 100.0F);
+    public static float guardianMistIntensity() {
+        return intensity(guardianMistTicks);
+    }
+
+    public static float visibleIntensity() {
+        return Math.max(
+                ThaumaturgeClientConfig.warpMistFog() ? warpMistIntensity() : 0.0F,
+                ThaumaturgeClientConfig.eldritchGuardianFog() ? guardianMistIntensity() : 0.0F);
     }
 
     public static void reset() {
-        fogTicks = 0;
+        warpMistTicks = 0;
+        guardianMistTicks = 0;
+    }
+
+    private static float intensity(int ticks) {
+        return Math.min(1.0F, ticks / 100.0F);
     }
 }

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.dimension;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.world.phys.Vec3;
@@ -24,11 +25,11 @@ public final class OuterLandsDimensionEffects extends DimensionSpecialEffects {
 
     @Override
     public Vec3 getBrightnessDependentFogColor(Vec3 fogColor, float brightness) {
-        return FOG_COLOR;
+        return ThaumaturgeClientConfig.outerLandsFog() ? FOG_COLOR : fogColor;
     }
 
     @Override
     public boolean isFoggyAt(int x, int z) {
-        return true;
+        return ThaumaturgeClientConfig.outerLandsFog();
     }
 }

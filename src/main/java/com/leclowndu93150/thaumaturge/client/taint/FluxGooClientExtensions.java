@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
@@ -37,6 +38,9 @@ public final class FluxGooClientExtensions implements IClientFluidTypeExtensions
             int renderDistance,
             float darkenWorldAmount,
             Vector3f fluidFogColor) {
+        if (!ThaumaturgeClientConfig.fluxGooFog()) {
+            return fluidFogColor;
+        }
         return fluidFogColor.set(FOG_R, FOG_G, FOG_B);
     }
 
@@ -49,6 +53,9 @@ public final class FluxGooClientExtensions implements IClientFluidTypeExtensions
             float nearDistance,
             float farDistance,
             FogShape shape) {
+        if (!ThaumaturgeClientConfig.fluxGooFog()) {
+            return;
+        }
         RenderSystem.setShaderFogStart(FOG_START);
         RenderSystem.setShaderFogEnd(FOG_END);
         RenderSystem.setShaderFogShape(shape);

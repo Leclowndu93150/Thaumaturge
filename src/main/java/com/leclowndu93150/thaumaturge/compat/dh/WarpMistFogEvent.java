@@ -18,10 +18,8 @@ public final class WarpMistFogEvent extends DhApiBeforeFogRenderEvent {
 
     @Override
     public void beforeRender(DhApiCancelableEventParam<EventParam> event) {
-        if (!WarpFogState.active()) {
-            return;
-        }
-        float intensity = WarpFogState.intensity();
+        float intensity = WarpFogState.visibleIntensity();
+        if (intensity <= 0.0F) return;
         DhApiFogRenderParam original = event.value.getOriginalFogRenderParam();
         DhApiMutableFogRenderParam fog = event.value.getFogRenderParam();
         fog.setFarFogStartPercent(Mth.lerp(intensity, original.getFarFogStartPercent(), MIST_FOG_PERCENT));

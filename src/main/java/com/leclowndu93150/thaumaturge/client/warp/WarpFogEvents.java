@@ -34,10 +34,10 @@ public final class WarpFogEvents {
 
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
-        if (!WarpFogState.active()) {
+        float intensity = WarpFogState.visibleIntensity();
+        if (intensity <= 0.0F) {
             return;
         }
-        float intensity = WarpFogState.intensity();
         event.setFarPlaneDistance(
                 Mth.lerp(intensity, usablePlane(event.getFarPlaneDistance(), FALLBACK_FAR_PLANE), MIST_FAR_PLANE));
         event.setNearPlaneDistance(

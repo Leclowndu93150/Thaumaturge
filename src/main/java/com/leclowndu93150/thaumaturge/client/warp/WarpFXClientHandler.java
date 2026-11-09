@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warp;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -20,8 +21,12 @@ public final class WarpFXClientHandler {
                                 .play(SimpleSoundInstance.forUI(TTSounds.HEARTBEAT.get(), 1.0F, 1.0F));
                     }
                 }
-                case ClientboundWarpFXPayload.KIND_MIST -> WarpFogState.startMist();
-                case ClientboundWarpFXPayload.KIND_MIST_SHORT -> WarpFogState.startShortMist();
+                case ClientboundWarpFXPayload.KIND_MIST -> {
+                    if (ThaumaturgeClientConfig.warpMistFog()) WarpFogState.startMist();
+                }
+                case ClientboundWarpFXPayload.KIND_MIST_SHORT -> {
+                    if (ThaumaturgeClientConfig.eldritchGuardianFog()) WarpFogState.startShortMist();
+                }
                 default -> {}
             }
         });

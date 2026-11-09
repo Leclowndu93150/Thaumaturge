@@ -1,10 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,6 +21,7 @@ public final class TaintEnvironmentClientEvents {
     private static final float MAX_SANE_FOG_PLANE = 4096.0F;
     private static final float FALLBACK_FAR_PLANE = 512.0F;
     private static final float FALLBACK_NEAR_PLANE = 256.0F;
+    private static final int DEFAULT_WATER_FOG_COLOR = 0x050533;
 
     private TaintEnvironmentClientEvents() {}
 
@@ -40,6 +44,9 @@ public final class TaintEnvironmentClientEvents {
 
     @SubscribeEvent
     public static void onFog(ViewportEvent.RenderFog event) {
+        if (!ThaumaturgeClientConfig.taintEnvironmentFog()) {
+            return;
+        }
         float pressure = TaintEnvironmentClientState.pressure();
         if (pressure <= 0.0F) {
             return;
@@ -50,6 +57,25 @@ public final class TaintEnvironmentClientEvents {
         event.setNearPlaneDistance(
                 Mth.lerp(intensity, usablePlane(event.getNearPlaneDistance(), FALLBACK_NEAR_PLANE), 2.0F));
         event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onComputeFogColor(ViewportEvent.ComputeFogColor event) {
+        if (ThaumaturgeClientConfig.taintedLandsWaterFog()) {
+            return;
+        }
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null
+                || event.getCamera().getFluidInCamera() != FogType.WATER
+                || !minecraft
+                        .level
+                        .getBiome(event.getCamera().getBlockPosition())
+                        .is(TTBiomes.TAINTED_LANDS)) {
+            return;
+        }
+        event.setRed(((DEFAULT_WATER_FOG_COLOR >> 16) & 0xFF) / 255.0F);
+        event.setGreen(((DEFAULT_WATER_FOG_COLOR >> 8) & 0xFF) / 255.0F);
+        event.setBlue((DEFAULT_WATER_FOG_COLOR & 0xFF) / 255.0F);
     }
 
     private static float usablePlane(float plane, float fallback) {
