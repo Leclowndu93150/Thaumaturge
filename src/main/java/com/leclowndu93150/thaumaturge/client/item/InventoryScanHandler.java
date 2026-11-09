@@ -30,7 +30,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.ContainerScreenEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
@@ -58,11 +59,11 @@ public final class InventoryScanHandler {
     private InventoryScanHandler() {}
 
     @SubscribeEvent
-    public static void onScreenRender(ScreenEvent.Render.Post event) {
+    public static void onScreenRender(ContainerScreenEvent.Render.Foreground event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
+        AbstractContainerScreen<?> screen = event.getContainerScreen();
         if (player == null
-                || !(event.getScreen() instanceof AbstractContainerScreen<?> screen)
                 || screen instanceof CreativeModeInventoryScreen
                 || !(player.containerMenu.getCarried().getItem() instanceof ThaumometerItem)) {
             target = NO_TARGET;
@@ -75,30 +76,41 @@ public final class InventoryScanHandler {
             ticks = 0;
         }
         GuiGraphics graphics = event.getGuiGraphics();
+        graphics.flush();
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, 300.0F);
         Slot slot = hoveredSlot(player);
-        if (slot != null) {
-            graphics.renderTooltip(minecraft.font, slot.getItem(), event.getMouseX(), event.getMouseY());
-        }
-        int top = event.getMouseY() + CURSOR_TOP_OFFSET;
+        int mouseX = event.getMouseX() - screen.getGuiLeft();
+        int mouseY = event.getMouseY() - screen.getGuiTop();
+        int top = mouseY + CURSOR_TOP_OFFSET;
         if (ticks > 0) {
             Component progress = TTTooltips.scanning(ticks / (float) ServerboundScanSlotPayload.CHANNEL_TICKS);
             graphics.drawString(
-                    minecraft.font,
-                    progress,
-                    event.getMouseX() - minecraft.font.width(progress) / 2,
-                    top,
-                    PROGRESS_COLOR,
-                    true);
+                    minecraft.font, progress, mouseX - minecraft.font.width(progress) / 2, top, PROGRESS_COLOR, true);
+            graphics.pose().popPose();
+            graphics.flush();
             return;
         }
         if (slot != null) {
-            renderKnownAspects(
-                    graphics, minecraft, player, slot.getItem(), event.getMouseX(), event.getMouseY() + TAG_TOP_OFFSET);
+            renderKnownAspects(graphics, minecraft, player, slot.getItem(), mouseX, mouseY + TAG_TOP_OFFSET);
         }
         Component hint = studyHint(player, targetAspects(player));
         if (hint != null) {
-            graphics.drawString(
-                    minecraft.font, hint, event.getMouseX() - minecraft.font.width(hint) / 2, top, HINT_COLOR, true);
+            graphics.drawString(minecraft.font, hint, mouseX - minecraft.font.width(hint) / 2, top, HINT_COLOR, true);
+        }
+        graphics.pose().popPose();
+        graphics.flush();
+    }
+
+    @SubscribeEvent
+    public static void onTooltipRender(RenderTooltipEvent.Pre event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player != null
+                && minecraft.screen instanceof AbstractContainerScreen<?> screen
+                && !(screen instanceof CreativeModeInventoryScreen)
+                && player.containerMenu.getCarried().getItem() instanceof ThaumometerItem) {
+            event.setCanceled(true);
         }
     }
 
