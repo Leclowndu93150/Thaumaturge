@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.client.particle;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -27,7 +29,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -44,6 +48,24 @@ import org.joml.Quaternionf;
 import org.junit.jupiter.api.Test;
 
 final class ParticleBehaviorPortTest {
+    @Test
+    void nitorCoreDrawsBeforeFlamesWithoutMovingOtherLayers() {
+        ParticleRenderType core = TTParticleLayers.additive(TTParticleSheets.sheet("nitor_core"));
+        ParticleRenderType flame = TTParticleLayers.additiveSoft(TTParticleSheets.sheet("wisp_flame"));
+        ParticleRenderType other = TTParticleLayers.additive(TTParticleSheets.sheet("sparkle"));
+        Set<ParticleRenderType> layers = new LinkedHashSet<>(List.of(ParticleRenderType.CUSTOM, flame, other, core));
+
+        Set<ParticleRenderType> ordered = TTParticleLayers.orderNitorLayers(layers);
+
+        assertIterableEquals(List.of(ParticleRenderType.CUSTOM, core, flame, other), ordered);
+        assertSame(ordered, TTParticleLayers.orderNitorLayers(ordered));
+        Set<ParticleRenderType> withoutCore = Set.of(flame, other);
+        assertSame(withoutCore, TTParticleLayers.orderNitorLayers(withoutCore));
+        assertTrue(TTParticleLayers.usesNitorAdditiveBlend(core));
+        assertTrue(TTParticleLayers.usesNitorAdditiveBlend(flame));
+        assertFalse(TTParticleLayers.usesNitorAdditiveBlend(other));
+    }
+
     @Test
     void taintSwarmUsesOrbGlowFramesAndFullBrightLighting() throws Exception {
         TaintSwarmParticle particle = construct(

@@ -26,6 +26,7 @@
     "client.model.AgeableListModelMixin",
     "client.model.HierarchicalModelMixin",
     "client.model.ListModelMixin",
+    "client.particle.ItemPickupParticleMixin",
     "client.particle.ParticleEngineMixin",
     "client.renderer.ItemInHandRendererInvoker",
     "client.renderer.entity.LivingEntityRendererMixin",
