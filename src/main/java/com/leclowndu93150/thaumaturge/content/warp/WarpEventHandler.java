@@ -74,7 +74,7 @@ public final class WarpEventHandler {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        ItemWarp warp = event.getCrafting().getItem().builtInRegistryHolder().getData(TTDataMaps.ITEM_WARP);
+        ItemWarp warp = event.getCrafting().getItemHolder().getData(TTDataMaps.ITEM_WARP);
         if (warp != null) {
             WarpManager.addWarp(player, warp.amount(), WarpType.NORMAL);
         }

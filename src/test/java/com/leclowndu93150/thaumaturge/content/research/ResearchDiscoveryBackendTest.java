@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.research.scan.ScanBindings;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -58,8 +59,7 @@ public final class ResearchDiscoveryBackendTest {
         RegistryAccess registries = mock(RegistryAccess.class);
         when(player.registryAccess()).thenReturn(registries);
         PlayerKnowledge backend = new PlayerKnowledge();
-        ResourceLocation craftedKey = ResearchManager.craftedKey(
-                Items.DIAMOND.builtInRegistryHolder().unwrapKey().orElseThrow().location());
+        ResourceLocation craftedKey = ResearchManager.craftedKey(BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
         try (MockedStatic<PlayerResearchAccess> access = mockStatic(PlayerResearchAccess.class);
                 MockedStatic<CraftReferenceHolder> references = mockStatic(CraftReferenceHolder.class)) {

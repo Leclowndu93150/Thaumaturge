@@ -428,7 +428,7 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     private SmelterStats stats() {
-        SmelterStats stats = getBlockState().getBlock().builtInRegistryHolder().getData(SmelterDataMaps.SMELTER_STATS);
+        SmelterStats stats = getBlockState().getBlockHolder().getData(SmelterDataMaps.SMELTER_STATS);
         return stats == null ? SmelterStats.DEFAULT : stats;
     }
 

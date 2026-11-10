@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -39,6 +39,7 @@ class WarpManagerTest {
         when(gear.warp(stack, wearer)).thenReturn(2);
 
         assertEquals(5, WarpManager.getFinalWarp(stack, wearer));
-        verify(item, never()).builtInRegistryHolder();
+        verify(gear).warp(stack, wearer);
+        verifyNoMoreInteractions(item);
     }
 }

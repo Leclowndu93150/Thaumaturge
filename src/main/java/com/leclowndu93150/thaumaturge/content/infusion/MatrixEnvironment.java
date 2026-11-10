@@ -66,7 +66,7 @@ public record MatrixEnvironment(
     }
 
     private static @Nullable InfusionModifier modifier(BlockState state, DataMapType<Block, InfusionModifier> map) {
-        return state.getBlock().builtInRegistryHolder().getData(map);
+        return state.getBlockHolder().getData(map);
     }
 
     private static @Nullable Block matchingPillars(Level level, BlockPos matrixPos) {

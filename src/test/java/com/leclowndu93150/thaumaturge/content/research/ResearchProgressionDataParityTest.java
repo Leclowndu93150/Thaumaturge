@@ -85,8 +85,7 @@ final class ResearchProgressionDataParityTest {
                 .parse(JsonOps.INSTANCE, auromancyJson.getAsJsonArray("meta"))
                 .getOrThrow();
         assertTrue(auromancy.get(1).craft().stream()
-                .anyMatch(requirement ->
-                        requirement.items().contains(TTItems.WAND.get().builtInRegistryHolder())));
+                .anyMatch(requirement -> requirement.items().contains(TTItems.WAND.getDelegate())));
 
         JsonObject oreJson = loadResearch("ore");
         List<ResearchEntryMeta> oreMeta = ResearchEntryMeta.CODEC
@@ -117,7 +116,7 @@ final class ResearchProgressionDataParityTest {
                 ORE,
                 new ScanEntry(
                         ORE,
-                        Optional.of(HolderSet.direct(TTBlocks.ORE_AMBER.get().builtInRegistryHolder())),
+                        Optional.of(HolderSet.direct(TTBlocks.ORE_AMBER.getDelegate())),
                         Optional.empty(),
                         Optional.empty()));
         RegistryAccess registries = new RegistryAccess.ImmutableRegistryAccess(List.of(entries, scans));

@@ -56,7 +56,7 @@ public final class GolemAccessories {
      *         that is not registered
      */
     public static Optional<GolemAccessory> forItem(ItemStack stack) {
-        GolemAccessoryItem entry = stack.getItem().builtInRegistryHolder().getData(GolemAccessoryItem.DATA_MAP);
+        GolemAccessoryItem entry = stack.getItemHolder().getData(GolemAccessoryItem.DATA_MAP);
         return entry == null ? Optional.empty() : Optional.ofNullable(REGISTRY.get(entry.accessory()));
     }
 

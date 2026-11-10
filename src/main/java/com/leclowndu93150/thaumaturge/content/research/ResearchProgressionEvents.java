@@ -79,11 +79,8 @@ public final class ResearchProgressionEvents {
 
     public static void recordCrafted(ServerPlayer player, ItemStack crafted) {
         if (crafted.isEmpty()) return;
-        ResourceLocation itemId = crafted.getItem()
-                .builtInRegistryHolder()
-                .unwrapKey()
-                .map(ResourceKey::location)
-                .orElse(null);
+        ResourceLocation itemId =
+                crafted.getItemHolder().unwrapKey().map(ResourceKey::location).orElse(null);
         if (itemId == null) return;
         PlayerKnowledge knowledge = (PlayerKnowledge) PlayerResearchAccess.of(player);
         ResourceLocation craftedKey = ResearchManager.craftedKey(itemId);

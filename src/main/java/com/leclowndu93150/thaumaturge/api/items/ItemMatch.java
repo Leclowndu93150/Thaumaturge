@@ -43,7 +43,7 @@ public record ItemMatch(
         }
         if (sharedTag
                 && (reference.getItem() == candidate.getItem()
-                        || reference.getItem().builtInRegistryHolder().tags().anyMatch(candidate::is))) {
+                        || reference.getTags().anyMatch(candidate::is))) {
             return true;
         }
         if (reference.getItem() != candidate.getItem()) {

@@ -23,6 +23,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -49,7 +50,8 @@ class ThaumonomiconBrowserSearchComponentsTest {
     }
 
     private static ResearchRequirement requirement(DataComponentPatch components) {
-        return new ResearchRequirement(HolderSet.direct(Items.STONE.builtInRegistryHolder()), components, 1);
+        return new ResearchRequirement(
+                HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(Items.STONE)), components, 1);
     }
 
     private static List<String> recipeSearchResults(String query, ResearchRequirement requirement)

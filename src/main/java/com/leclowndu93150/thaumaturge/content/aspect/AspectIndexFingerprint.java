@@ -40,7 +40,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
         }
         List<String> base = lines.computeIfAbsent(BASE_ASPECTS, key -> new ArrayList<>());
         for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = item.builtInRegistryHolder().getData(AspectDataMaps.BASE_ASPECTS);
+            AspectList declared = BuiltInRegistries.ITEM.wrapAsHolder(item).getData(AspectDataMaps.BASE_ASPECTS);
             if (declared == null || declared.isEmpty()) {
                 continue;
             }

@@ -52,7 +52,7 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
      * @return {@code true} when the stack's item and components both satisfy the requirement
      */
     public boolean matches(ItemStack stack) {
-        return items.contains(stack.getItem().builtInRegistryHolder()) && matchesComponents(stack);
+        return stack.is(items) && matchesComponents(stack);
     }
 
     private boolean matchesComponents(ItemStack stack) {
