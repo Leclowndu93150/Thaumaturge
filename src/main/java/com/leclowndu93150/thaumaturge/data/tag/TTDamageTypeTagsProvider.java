@@ -13,13 +13,17 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public final class TTDamageTypeTagsProvider extends DamageTypeTagsProvider {
     public static final TagKey<DamageType> IS_MAGIC =
             TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "is_magic"));
 
-    public TTDamageTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, lookupProvider);
+    public TTDamageTypeTagsProvider(
+            PackOutput output,
+            CompletableFuture<HolderLookup.Provider> lookupProvider,
+            ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, TTIds.MODID, existingFileHelper);
     }
 
     @Override

@@ -145,12 +145,18 @@ public final class TTDataGenerators {
                         new TTBlockTagsProvider(output, lookupProvider, event.getExistingFileHelper()),
                 (output, lookupProvider, blockTags) ->
                         new TTItemTagsProvider(output, lookupProvider, blockTags, event.getExistingFileHelper()));
-        event.createProvider(TTDamageTypeTagsProvider::new);
-        event.createProvider(TTStructureTagsProvider::new);
-        event.createProvider(TTBiomeTagsProvider::new);
-        event.createProvider(TTEntityTypeTagsProvider::new);
-        event.createProvider(TTFluidTagsProvider::new);
-        event.createProvider(TTMobEffectTagsProvider::new);
+        event.createProvider((output, lookupProvider) ->
+                new TTDamageTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TTStructureTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TTBiomeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TTEntityTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TTFluidTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TTMobEffectTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
 
         event.createProvider((output, lookupProvider) -> new LootTableProvider(
                 output,

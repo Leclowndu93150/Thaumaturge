@@ -29,7 +29,8 @@ final class TTBiomeTagsProviderTest {
     void eldritchIsExcludedFromSilverwoodAndOverworldTags() throws ReflectiveOperationException {
         TTBiomeTagsProvider provider = new TTBiomeTagsProvider(
                 new PackOutput(Path.of("build/test-data")),
-                CompletableFuture.completedFuture(Mockito.mock(HolderLookup.Provider.class)));
+                CompletableFuture.completedFuture(Mockito.mock(HolderLookup.Provider.class)),
+                null);
         provider.addTags(null);
 
         TagBuilder silverwood = builder(provider, TTBiomeTags.HAS_SILVERWOOD);
