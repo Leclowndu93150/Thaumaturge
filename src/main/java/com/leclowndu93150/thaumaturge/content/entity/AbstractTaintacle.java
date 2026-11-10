@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -86,9 +87,11 @@ public abstract class AbstractTaintacle extends AbstractRootedTaint {
 
     private boolean onTaintedGround(ServerLevel server) {
         BlockPos pos = this.blockPosition();
-        return LevelSpaces.isPlot(server, pos)
-                ? TaintOrigins.isSustained(server, pos.below())
-                : server.getBiome(pos).is(TTBiomeTags.IS_TAINTED);
+        var biome = server.getBiome(pos);
+        return biome.is(TTBiomes.ELDRITCH)
+                || (LevelSpaces.isPlot(server, pos)
+                        ? TaintOrigins.isSustained(server, pos.below())
+                        : biome.is(TTBiomeTags.IS_TAINTED));
     }
 
     public float enrage() {
