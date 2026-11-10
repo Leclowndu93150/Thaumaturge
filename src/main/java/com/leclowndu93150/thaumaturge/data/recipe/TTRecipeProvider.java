@@ -1091,7 +1091,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         DataComponentPatch patch = DataComponentPatch.builder()
                 .set(TTDataComponents.INFUSION_ENCHANTMENTS.get(), new InfusionEnchantments(enchantments))
                 .build();
-        return new ItemStack(item.builtInRegistryHolder(), 1, patch);
+        return new ItemStack(BuiltInRegistries.ITEM.wrapAsHolder(item), 1, patch);
     }
 
     private void buildRunicAugmentRecipe() {
