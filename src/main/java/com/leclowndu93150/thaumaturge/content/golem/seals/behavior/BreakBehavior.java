@@ -64,7 +64,12 @@ public final class BreakBehavior extends CellWorkBehavior {
             task.setData(task.data() - strike);
             keepAlive(task);
             level.playSound(
-                    null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, STRIKE_VOLUME, STRIKE_PITCH);
+                    null,
+                    pos,
+                    state.getSoundType(level, pos, golem.asEntity()).getBreakSound(),
+                    SoundSource.BLOCKS,
+                    STRIKE_VOLUME,
+                    STRIKE_PITCH);
             level.destroyBlockProgress(crackId, pos, crackStage(workFor(level, pos, state), task.data()));
             return false;
         }

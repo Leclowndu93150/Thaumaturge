@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +32,11 @@ class BlockVisBatteryTest {
     @Test
     void usesGlassSounds() {
         assertEquals(
-                SoundType.GLASS, TTBlocks.VIS_BATTERY.get().defaultBlockState().getSoundType());
+                SoundType.GLASS,
+                TTBlocks.VIS_BATTERY
+                        .get()
+                        .defaultBlockState()
+                        .getSoundType(mock(LevelReader.class), BlockPos.ZERO, null));
     }
 
     @Test
