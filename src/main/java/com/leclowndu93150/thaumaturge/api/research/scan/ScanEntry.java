@@ -7,6 +7,7 @@ import java.util.Optional;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -76,8 +77,7 @@ public record ScanEntry(
         }
         Entity creature = target.creature();
         if (creature != null) {
-            return entities.isPresent()
-                    && entities.get().contains(creature.getType().builtInRegistryHolder());
+            return entities.isPresent() && creature.getType().is(entities.get());
         }
         ItemStack stack = target.carriedStack();
         if (stack.isEmpty()) {
@@ -88,6 +88,6 @@ public record ScanEntry(
         }
         return blocks.isPresent()
                 && stack.getItem() instanceof BlockItem blockItem
-                && blocks.get().contains(blockItem.getBlock().builtInRegistryHolder());
+                && blocks.get().contains(BuiltInRegistries.BLOCK.wrapAsHolder(blockItem.getBlock()));
     }
 }

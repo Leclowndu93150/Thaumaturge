@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -86,7 +87,7 @@ final class SplitConservation {
     }
 
     private static boolean raisesWhole(Split split, Set<Item> declared) {
-        if (split.whole().builtInRegistryHolder().is(Tags.Items.STORAGE_BLOCKS)) {
+        if (BuiltInRegistries.ITEM.wrapAsHolder(split.whole()).is(Tags.Items.STORAGE_BLOCKS)) {
             return true;
         }
         return !declared.contains(split.whole());

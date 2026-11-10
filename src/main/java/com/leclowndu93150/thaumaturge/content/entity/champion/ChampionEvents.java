@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -59,7 +60,8 @@ public final class ChampionEvents {
     }
 
     private static boolean winsRoll(Level level, Monster mob) {
-        Integer weight = mob.getType().builtInRegistryHolder().getData(ChampionDataMaps.CHAMPION_WHITELIST);
+        Integer weight =
+                BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(mob.getType()).getData(ChampionDataMaps.CHAMPION_WHITELIST);
         if (weight == null || mob.getAttributeBaseValue(Attributes.MAX_HEALTH) < MIN_CHAMPION_HEALTH) {
             return false;
         }
@@ -90,8 +92,7 @@ public final class ChampionEvents {
     }
 
     private static boolean isBoss(Monster mob) {
-        return mob instanceof EntityThaumaturgeBoss
-                || mob.getType().builtInRegistryHolder().is(Tags.EntityTypes.BOSSES);
+        return mob instanceof EntityThaumaturgeBoss || mob.getType().is(Tags.EntityTypes.BOSSES);
     }
 
     private static boolean isSpooky(Level level, Monster mob) {
