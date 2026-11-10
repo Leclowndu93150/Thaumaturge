@@ -63,8 +63,8 @@ final class LocateSubcommand implements AdminSubcommand {
         }
         BlockPos pos = result.get();
         String teleport = "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
-        Component coordinates = ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ())).withStyle(style -> style.withColor(ChatFormatting.GREEN)
-                .withClickEvent(new ClickEvent.SuggestCommand(teleport)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
+        Component coordinates = ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ())).withStyle(style -> style
+                .withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent.SuggestCommand(teleport)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
         int distance = (int) Math.round(Math.sqrt(pos.distSqr(origin)));
         source.sendSuccess(() -> Component.translatable("commands.thaumaturge.locate.node.found", nodeTypeName(type), coordinates, distance), false);
         return Command.SINGLE_SUCCESS;

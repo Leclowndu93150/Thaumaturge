@@ -72,8 +72,10 @@ public final class TTBannerModel extends Model<BannerRenderState> {
                         .texOffs(25, 40).addBox(4.0F, -1.5F, -0.5F, 1.0F, 3.0F, 3.5F, EnumSet.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN)),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
         PartDefinition upper = header.addOrReplaceChild("upper", CubeListBuilder.create().texOffs(64, 1).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 8.0F, 0.5F), PartPose.offset(0.0F, CLOTH_TOP_Y, CLOTH_TOP_Z));
-        PartDefinition middle = upper.addOrReplaceChild("middle", CubeListBuilder.create().texOffs(90, 1).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 8.0F, 0.5F), PartPose.offset(0.0F, CLOTH_SEGMENT_LENGTH, 0.0F));
-        PartDefinition lower = middle.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(1, 33).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 4.0F, 0.5F), PartPose.offset(0.0F, CLOTH_SEGMENT_LENGTH, 0.0F));
+        PartDefinition middle = upper.addOrReplaceChild("middle", CubeListBuilder.create().texOffs(90, 1).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 8.0F, 0.5F),
+                PartPose.offset(0.0F, CLOTH_SEGMENT_LENGTH, 0.0F));
+        PartDefinition lower = middle.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(1, 33).addBox(-6.0F, 0.0F, 0.0F, 12.0F, 4.0F, 0.5F),
+                PartPose.offset(0.0F, CLOTH_SEGMENT_LENGTH, 0.0F));
         PartDefinition tipUpper = lower.addOrReplaceChild("tip_upper", CubeListBuilder.create().texOffs(27, 33).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 3.0F, 0.5F), PartPose.offset(0.0F, 4.0F, 0.0F));
         tipUpper.addOrReplaceChild("tip_lower", CubeListBuilder.create().texOffs(45, 33).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 3.0F, 0.5F), PartPose.offset(0.0F, 3.0F, 0.0F));
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);

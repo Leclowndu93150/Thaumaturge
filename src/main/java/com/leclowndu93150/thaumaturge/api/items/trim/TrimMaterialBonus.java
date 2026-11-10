@@ -12,8 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @since 1.1.0
  */
 public record TrimMaterialBonus(int visDiscount, int warp) {
-    public static final Codec<TrimMaterialBonus> CODEC = RecordCodecBuilder.create(instance -> instance
-            .group(Codec.intRange(0, 100).optionalFieldOf("vis_discount", 0).forGetter(TrimMaterialBonus::visDiscount),
-                    Codec.intRange(0, 500).optionalFieldOf("warp", 0).forGetter(TrimMaterialBonus::warp))
-            .apply(instance, TrimMaterialBonus::new));
+    public static final Codec<TrimMaterialBonus> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(Codec.intRange(0, 100).optionalFieldOf("vis_discount", 0).forGetter(TrimMaterialBonus::visDiscount),
+                    Codec.intRange(0, 500).optionalFieldOf("warp", 0).forGetter(TrimMaterialBonus::warp)).apply(instance, TrimMaterialBonus::new));
 }

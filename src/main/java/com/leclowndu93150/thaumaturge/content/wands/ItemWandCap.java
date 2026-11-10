@@ -23,6 +23,9 @@ public final class ItemWandCap extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
-        builder.accept(WandTooltips.capCostSummary(context.registries(), cap.get()));
+        Component discount = WandTooltips.capCostSummary(context.registries(), cap.get());
+        if (discount != null) {
+            builder.accept(discount);
+        }
     }
 }

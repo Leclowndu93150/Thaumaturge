@@ -409,8 +409,8 @@ public final class TTModelProvider extends ModelProvider {
         Identifier plainModel = ModelTemplates.FLAT_ITEM.create(item, TextureMapping.layer0(item), itemModels.modelOutput);
         Identifier dyedModel = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(item, "_dyed"),
                 TextureMapping.layered(TextureMapping.getItemTexture(item), TextureMapping.getItemTexture(item, "_cloth")), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(ItemModelUtils.hasComponent(DataComponents.DYED_COLOR),
-                ItemModelUtils.tintedModel(dyedModel, new Constant(-1), new Dye(0)), ItemModelUtils.plainModel(plainModel)));
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(ItemModelUtils.hasComponent(DataComponents.DYED_COLOR), ItemModelUtils.tintedModel(dyedModel, new Constant(-1), new Dye(0)),
+                ItemModelUtils.plainModel(plainModel)));
     }
 
     private static void registerTrimmableArmor(ItemModelGenerators itemModels, Item item, Identifier slotTrimPrefix) {

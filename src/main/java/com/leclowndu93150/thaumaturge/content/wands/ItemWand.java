@@ -410,7 +410,10 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
         int wholeVisCapacity = WandVisHelper.capacityOf(stack) / WandEconomy.CENTIVIS_PER_VIS;
         builder.accept(Component.translatable(CAPACITY_KEY, wholeVisCapacity).withStyle(ChatFormatting.GOLD));
         Optional.ofNullable(visAmounts(stack, registries)).ifPresent(builder);
-        builder.accept(WandTooltips.costSummary(registries, costPercents(stack)));
+        Component discount = WandTooltips.costSummary(registries, costPercents(stack));
+        if (discount != null) {
+            builder.accept(discount);
+        }
         ItemStack socketed = getFocusStack(stack);
         if (socketed.isEmpty()) {
             return;

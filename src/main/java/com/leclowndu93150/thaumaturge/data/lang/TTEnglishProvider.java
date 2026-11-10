@@ -1092,8 +1092,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("message.thaumaturge.salis_mundus.no_research", "The dust sparkles with promise, but you lack the knowledge to direct it");
         add("message.thaumaturge.arcane_workbench.staff", "A staff is too unwieldy to use at the workbench");
         add("tooltip.thaumaturge.wand.capacity", "Capacity %s");
-        add("tooltip.thaumaturge.wand.cost", "Vis cost %s%%");
-        add("tooltip.thaumaturge.wand.cost.except", "Vis cost %1$s%% (%2$s)");
+        add("tooltip.thaumaturge.wand.discount", "Vis discount: %s%%");
+        add("tooltip.thaumaturge.wand.discount.aspects", "Vis discount: %s");
+        add("tooltip.thaumaturge.wand.discount.aspect", "%1$s: %2$s%%");
         add("item.thaumaturge.wand_cap_iron", "Iron Cap");
         add("item.thaumaturge.wand_cap_copper", "Copper Cap");
         add("item.thaumaturge.wand_cap_gold", "Gold Cap");
@@ -1380,8 +1381,6 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.focus.with_settings", "%s [%s]");
         add("tooltip.thaumaturge.focus.setting", "%s %s");
         add("tooltip.thaumaturge.list", "%s, %s");
-        add("tooltip.thaumaturge.wand.cost.group", "%s %s%%");
-        add("tooltip.thaumaturge.wand.cost.groups", "%s; %s");
         add("tooltip.thaumaturge.golem.rank", "%s %s");
         add("tooltip.thaumaturge.golem.rank_progress", "%s %s");
         add("tooltip.thaumaturge.golem.xp", "(%s/%s)");

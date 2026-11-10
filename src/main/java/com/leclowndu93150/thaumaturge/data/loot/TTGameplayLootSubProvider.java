@@ -64,8 +64,7 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
     @Override
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         output.accept(TTLootTables.LOOT_BAG_COMMON, bagTable(TreasureLootPools.COMMON).withPool(templatePool(TTItems.ARCANE_ARMOR_TRIM_SMITHING_TEMPLATE, ARCANE_TEMPLATE_COMMON_BAG_CHANCE)));
-        output.accept(TTLootTables.LOOT_BAG_UNCOMMON,
-                bagTable(TreasureLootPools.UNCOMMON).withPool(templatePool(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
+        output.accept(TTLootTables.LOOT_BAG_UNCOMMON, bagTable(TreasureLootPools.UNCOMMON).withPool(templatePool(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_UNCOMMON_BAG_CHANCE)));
         output.accept(TTLootTables.LOOT_BAG_RARE,
                 bagTable(TreasureLootPools.RARE).withPool(lorePool()).withPool(templatePool(TTItems.OCCULT_ARMOR_TRIM_SMITHING_TEMPLATE, OCCULT_TEMPLATE_RARE_BAG_CHANCE)));
 

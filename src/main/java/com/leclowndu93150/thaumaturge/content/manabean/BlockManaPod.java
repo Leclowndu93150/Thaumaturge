@@ -51,8 +51,8 @@ public final class BlockManaPod extends BaseEntityBlock {
     private static final VoxelShape POD = Shapes.or(box(4, 3.2, 4, 12, 11.2, 12), box(5, 2.2, 5, 11, 4.2, 11), box(5, 10.2, 5, 11, 12.2, 11));
     private static final double PIXELS_PER_BLOCK = 16.0;
     private static final VoxelShape MATURE = Shapes.or(MATURE_STEM, POD);
-    private static final VoxelShape[][] BODIES = lifted(new VoxelShape[] {SEED, BUD, POD, POD, POD, POD, POD, POD});
-    private static final VoxelShape[][] SHAPES = lifted(new VoxelShape[] {Shapes.or(SMALL_STEM, SEED), Shapes.or(SMALL_STEM, BUD), MATURE, MATURE, MATURE, MATURE, MATURE, MATURE});
+    private static final VoxelShape[][] BODIES = lifted(new VoxelShape[]{SEED, BUD, POD, POD, POD, POD, POD, POD});
+    private static final VoxelShape[][] SHAPES = lifted(new VoxelShape[]{Shapes.or(SMALL_STEM, SEED), Shapes.or(SMALL_STEM, BUD), MATURE, MATURE, MATURE, MATURE, MATURE, MATURE});
 
     public BlockManaPod(Properties properties) {
         super(properties);
