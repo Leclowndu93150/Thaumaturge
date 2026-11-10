@@ -13,9 +13,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 
 public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJarBrain> {
@@ -30,7 +30,7 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
     private static final float QUARTER_TURN = 90.0F;
     private static final int OUTLINE_NONE = 0;
     private static final int XP_GLOW_COLOR = 0xFF8CFF4A;
-    private static final RenderType XP_GLOW = RenderType.entityTranslucentEmissive(TextureAtlas.LOCATION_BLOCKS);
+    private static final RenderType XP_GLOW = RenderType.entityTranslucentEmissive(InventoryMenu.BLOCK_ATLAS);
 
     private final BrainModel brain;
     private final JarBrineModel brine;

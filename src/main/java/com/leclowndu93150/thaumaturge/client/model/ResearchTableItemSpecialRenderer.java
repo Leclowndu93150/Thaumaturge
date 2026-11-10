@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class ResearchTableItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
     private static final Direction ITEM_FACING = Direction.NORTH;
@@ -40,10 +41,24 @@ public final class ResearchTableItemSpecialRenderer extends BlockEntityWithoutLe
         poseStack.pushPose();
         poseStack.translate(ITEM_X, ITEM_Y, ITEM_Z);
         poseStack.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
-        dispatcher.renderSingleBlock(part(ResearchTablePart.MAIN, Direction.NORTH), poseStack, buffers, light, overlay);
+        dispatcher.renderSingleBlock(
+                part(ResearchTablePart.MAIN, Direction.NORTH),
+                poseStack,
+                buffers,
+                light,
+                overlay,
+                ModelData.EMPTY,
+                null);
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.0F, EXTENSION_OFFSET_Z);
-        dispatcher.renderSingleBlock(part(ResearchTablePart.EXT, Direction.SOUTH), poseStack, buffers, light, overlay);
+        dispatcher.renderSingleBlock(
+                part(ResearchTablePart.EXT, Direction.SOUTH),
+                poseStack,
+                buffers,
+                light,
+                overlay,
+                ModelData.EMPTY,
+                null);
         poseStack.popPose();
         poseStack.pushPose();
         ResearchTableTop.pose(poseStack, ITEM_FACING);

@@ -16,12 +16,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -108,10 +108,10 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                 time,
                 light);
         Function<ResourceLocation, TextureAtlasSprite> blocks =
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
+                Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         writePlate(
                 poseStack.last(),
-                buffers.getBuffer(RenderType.entityCutout(TextureAtlas.LOCATION_BLOCKS)),
+                buffers.getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS)),
                 hub,
                 facing,
                 light,

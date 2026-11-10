@@ -19,10 +19,10 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -92,7 +92,7 @@ public final class EldritchReliquaryRenderer implements BlockEntityRenderer<Bloc
                     poseStack,
                     collector,
                     Minecraft.getInstance()
-                            .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+                            .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                             .apply(GLOW_SPRITE),
                     BACK_Z);
         }
@@ -101,7 +101,7 @@ public final class EldritchReliquaryRenderer implements BlockEntityRenderer<Bloc
                     poseStack,
                     collector,
                     Minecraft.getInstance()
-                            .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+                            .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                             .apply(VEIL_SPRITE),
                     MOUTH_Z);
         }
