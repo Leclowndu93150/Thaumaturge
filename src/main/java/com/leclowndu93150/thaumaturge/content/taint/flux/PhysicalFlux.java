@@ -45,10 +45,13 @@ public final class PhysicalFlux {
         }
         int removed = Math.min(current, amount);
         int remaining = current - removed;
-        if (remaining <= 0) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-        } else {
-            level.setBlock(pos, flux.withFluxAmount(remaining), Block.UPDATE_CLIENTS);
+        boolean updated = remaining == 0
+                ? level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL)
+                : level.setBlock(pos, flux.withFluxAmount(remaining), Block.UPDATE_CLIENTS);
+        if (!updated) {
+            return 0;
+        }
+        if (remaining > 0) {
             flux.scheduleFluxTick(level, pos);
         }
         return removed;

@@ -32,6 +32,7 @@ public final class TaintBiomeManager {
     private static final int CLEAN_SEARCH_RADIUS = 256;
     private static final int CLEARED_SCAN_HEIGHT = 8;
     private static final int BLOCKS_PER_QUART = 4;
+    private static final int FRONTIER_ONE_IN = 10;
 
     private TaintBiomeManager() {}
 
@@ -58,6 +59,10 @@ public final class TaintBiomeManager {
             return false;
         }
         return LevelSpaces.isPlot(level, pos) || replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
+    }
+
+    public static boolean trySpreadColumn(ServerLevel level, BlockPos pos) {
+        return level.getRandom().nextInt(FRONTIER_ONE_IN) == 0 && taintColumn(level, pos);
     }
 
     public static boolean replaceColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> biomeKey) {

@@ -86,10 +86,11 @@ class AuraCompatibilityTest {
         return chunk;
     }
 
-    private void tick(float physicalFloor) {
+    private void tick(float convertedFlux) {
         try (MockedStatic<PhysicalFluxOutbreaks> outbreaks = mockStatic(PhysicalFluxOutbreaks.class);
                 MockedStatic<PhysicalFluxAuraFloor> floor = mockStatic(PhysicalFluxAuraFloor.class)) {
-            floor.when(() -> PhysicalFluxAuraFloor.target(any(), anyFloat())).thenReturn(physicalFloor);
+            floor.when(() -> PhysicalFluxAuraFloor.replenish(any(), any(), anyFloat(), anyFloat()))
+                    .thenReturn(convertedFlux);
             AuraTickHandler.onLevelTick(new LevelTickEvent.Post(() -> true, level));
         }
     }
@@ -399,15 +400,17 @@ class AuraCompatibilityTest {
     }
 
     @Test
-    void physicalFluxFloorRaisesOnlyHalfAPointPerSecond() {
+    void paidPhysicalFluxIsAddedToTickingChunkAura() {
         ChunkPos pos = new ChunkPos(0, 0);
         AuraData data = new AuraData((short) 100, 80, 0);
         attach(pos, data);
         AuraManager.onChunkLoaded(level, pos);
         when(level.getMoonPhase()).thenReturn(4);
-        tick(10);
+        tick(0.5F);
+        assertEquals(0.0F, data.getFlux());
+        when(level.isPositionEntityTicking(BlockPos.ZERO)).thenReturn(true);
+        tick(0.5F);
         assertEquals(0.5F, data.getFlux());
-        assertEquals(80.0F, data.getVis());
     }
 
     @Test
@@ -450,14 +453,52 @@ class AuraCompatibilityTest {
         attach(pos, data);
         AuraManager.onChunkLoaded(level, pos);
         try (MockedStatic<FluxPressureEvents> pressure = mockStatic(FluxPressureEvents.class)) {
+            when(random.nextFloat()).thenReturn(1.0F);
+            when(level.isPositionEntityTicking(BlockPos.ZERO)).thenReturn(true);
+            for (int second = 0; second < 89; second++) {
+                tick(0);
+                assertNull(AuraManager.pollRiftTrigger(level));
+            }
+            when(level.isPositionEntityTicking(BlockPos.ZERO)).thenReturn(false);
+            tick(0);
+            assertFalse(data.hasRiftPressure());
+            assertNull(AuraManager.pollRiftTrigger(level));
+
+            when(level.isPositionEntityTicking(BlockPos.ZERO)).thenReturn(true);
+            when(random.nextFloat()).thenReturn(0.0F);
             tick(0);
             assertEquals(BlockPos.ZERO, AuraManager.pollRiftTrigger(level));
             pressure.verifyNoInteractions();
+            assertTrue(AuraTickHandler.canSpawnRift(level, BlockPos.ZERO));
             when(random.nextFloat()).thenReturn(1.0F, 0.0F);
             tick(0);
             assertNull(AuraManager.pollRiftTrigger(level));
             pressure.verify(() -> FluxPressureEvents.queue(level, pos));
+
+            data.setFlux(0);
+            assertFalse(AuraTickHandler.canSpawnRift(level, BlockPos.ZERO));
+            tick(0);
+            assertFalse(data.hasRiftPressure());
         }
+    }
+
+    @Test
+    void riftPressureSurvivesSaveReloadAndDefaultsToZeroForOldChunks() {
+        JsonObject oldSave = new JsonObject();
+        oldSave.addProperty("base", 100);
+        oldSave.addProperty("flux", 100);
+        AuraData data = AuraData.CODEC.codec().parse(JsonOps.INSTANCE, oldSave).getOrThrow();
+        assertFalse(data.hasRiftPressure());
+        for (int second = 0; second < 89; second++) {
+            assertTrue(data.updateRiftPressure(true, true));
+        }
+        assertFalse(data.hasRiftPressure());
+        var saved = AuraData.CODEC.codec().encodeStart(JsonOps.INSTANCE, data).getOrThrow();
+        AuraData reloaded =
+                AuraData.CODEC.codec().parse(JsonOps.INSTANCE, saved).getOrThrow();
+        assertTrue(reloaded.updateRiftPressure(true, true));
+        assertTrue(reloaded.hasRiftPressure());
+        assertFalse(reloaded.updateRiftPressure(true, true));
     }
 
     @Test

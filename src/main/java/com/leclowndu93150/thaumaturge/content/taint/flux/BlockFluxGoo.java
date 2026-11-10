@@ -26,7 +26,7 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     private static final int REPLACEABLE_AMOUNT_THRESHOLD = 2;
     private static final float AURA_FLOOR_PER_QUANTUM = 0.5F;
     private static final float TAINT_WEIGHT_PER_QUANTUM = 1.0F;
-    private static final int OUTBREAK_COST = 0;
+    private static final int OUTBREAK_COST = 4;
     private static final int AMBIENT_FUME_DENOMINATOR = 44;
     private static final float FUME_R = 1.0F;
     private static final float FUME_G = 0.0F;

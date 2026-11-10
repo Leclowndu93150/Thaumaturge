@@ -17,7 +17,8 @@ public final class AuraData implements IAuraChunk {
                     Codec.SHORT.optionalFieldOf("base", (short) 0).forGetter(AuraData::getBase),
                     Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(AuraData::getVis),
                     Codec.FLOAT.optionalFieldOf("flux", 0.0F).forGetter(AuraData::getFlux),
-                    Codec.BOOL.optionalFieldOf("initialized", false).forGetter(AuraData::isInitialized))
+                    Codec.BOOL.optionalFieldOf("initialized", false).forGetter(AuraData::isInitialized),
+                    Codec.INT.optionalFieldOf("rift_pressure_seconds", 0).forGetter(data -> data.riftPressureSeconds))
             .apply(instance, AuraData::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AuraData> STREAM_CODEC = StreamCodec.composite(
@@ -32,6 +33,7 @@ public final class AuraData implements IAuraChunk {
             AuraData::new);
 
     private static final float MAX_POOL = 32766.0F;
+    private static final int RIFT_BUILDUP_SECONDS = 90;
     private static final int VIS_SLOT = 0;
     private static final int FLUX_SLOT = 1;
 
@@ -49,6 +51,7 @@ public final class AuraData implements IAuraChunk {
     private final float[] pools = new float[2];
     private short base;
     private boolean initialized;
+    private int riftPressureSeconds;
     private ChunkPos chunkPos = new ChunkPos(0, 0);
 
     public AuraData() {
@@ -60,10 +63,15 @@ public final class AuraData implements IAuraChunk {
     }
 
     private AuraData(short base, float vis, float flux, boolean initialized) {
+        this(base, vis, flux, initialized, 0);
+    }
+
+    private AuraData(short base, float vis, float flux, boolean initialized, int riftPressureSeconds) {
         this.base = base;
         store(VIS_SLOT, vis);
         store(FLUX_SLOT, flux);
         this.initialized = initialized || base != 0;
+        this.riftPressureSeconds = Mth.clamp(riftPressureSeconds, 0, RIFT_BUILDUP_SECONDS);
     }
 
     private static float clampPool(float value) {
@@ -109,6 +117,20 @@ public final class AuraData implements IAuraChunk {
 
     public void setFlux(float flux) {
         store(FLUX_SLOT, flux);
+    }
+
+    boolean updateRiftPressure(boolean overloaded, boolean entityTicking) {
+        int previous = riftPressureSeconds;
+        if (!overloaded) {
+            riftPressureSeconds = 0;
+        } else if (entityTicking && !hasRiftPressure()) {
+            riftPressureSeconds++;
+        }
+        return riftPressureSeconds != previous;
+    }
+
+    boolean hasRiftPressure() {
+        return riftPressureSeconds == RIFT_BUILDUP_SECONDS;
     }
 
     @Override

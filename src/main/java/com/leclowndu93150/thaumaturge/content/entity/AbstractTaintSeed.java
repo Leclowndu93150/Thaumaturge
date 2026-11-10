@@ -100,13 +100,15 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
                     .send();
         }
         BlockPos pos = this.blockPosition();
-        TaintEcology.touchActiveSeed(server, pos);
-        TaintBiomeManager.taintColumn(server, pos);
         TaintFeeding.feed(server, pos, this, SPREAD_INTERVAL / TICKS_PER_SECOND);
         if (TaintFeeding.isDormant(this) || TaintBlooms.isProtected(server, pos)) {
             starve(server);
         } else {
             this.starveTicks = 0;
+            TaintEcology.touchActiveSeed(server, pos);
+            if (!TaintBiomeManager.isTainted(server, pos)) {
+                TaintBiomeManager.trySpreadColumn(server, pos);
+            }
             spreadFibres(server, pos);
         }
         if (!this.isAlive()) {

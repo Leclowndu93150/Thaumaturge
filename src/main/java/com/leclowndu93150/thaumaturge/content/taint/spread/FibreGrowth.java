@@ -141,7 +141,7 @@ public final class FibreGrowth {
     }
 
     private static boolean columnReady(ServerLevel level, BlockPos pos) {
-        return TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.taintColumn(level, pos);
+        return TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.trySpreadColumn(level, pos);
     }
 
     private static boolean growInOpenSpace(ServerLevel level, BlockPos target) {

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -77,11 +78,15 @@ public final class TaintGrazeGoal extends Goal {
     }
 
     private void infect(ServerLevel level, BlockPos pos) {
-        TaintBiomeManager.taintColumn(level, pos);
+        sheep.ate();
+        if (!TaintBiomeManager.isTainted(level, pos)
+                && (TaintOrigins.payingOrigin(level, pos, TaintOrigins.growthCost()) == null
+                        || !TaintBiomeManager.trySpreadColumn(level, pos))) {
+            return;
+        }
         BlockState here = level.getBlockState(pos);
         if (here.canBeReplaced() && here.getFluidState().isEmpty() && BlockTaintFibre.hasSolidAttachment(level, pos)) {
             level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
         }
-        sheep.ate();
     }
 }

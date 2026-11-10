@@ -36,7 +36,6 @@ public final class AuraTickHandler {
         new MoonProfile(0.10F, 0.15F, 1.00F),
         new MoonProfile(0.15F, 0.10F, 1.05F)
     };
-    private static final float FLOOR_RAISE_PER_SECOND = 0.5F;
     private static final float TRANSFER_PER_SECOND = 1.0F;
     private static final float VIS_TRANSFER_RATIO = 0.75F;
     private static final float FLUX_TRANSFER_DIVISOR = 1.75F;
@@ -63,8 +62,7 @@ public final class AuraTickHandler {
                 || !level.tickRateManager().runsNormally()) {
             return;
         }
-        int phase = level.getMoonPhase();
-        MoonProfile profile = MOON_PROFILES[Math.floorMod(phase, MOON_PROFILES.length)];
+        MoonProfile profile = moonProfile(level);
         RandomSource random = level.getRandom();
         for (ChunkPos pos : AuraManager.loadedChunksSnapshot(level)) {
             LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
@@ -74,6 +72,10 @@ public final class AuraTickHandler {
         }
     }
 
+    private static MoonProfile moonProfile(ServerLevel level) {
+        return MOON_PROFILES[Math.floorMod(level.getMoonPhase(), MOON_PROFILES.length)];
+    }
+
     private static void balanceChunk(
             ServerLevel level, LevelChunk chunk, ChunkPos pos, MoonProfile profile, RandomSource random) {
         AuraData data = chunk.getData(TTAttachments.AURA.get());
@@ -81,6 +83,9 @@ public final class AuraTickHandler {
         PhysicalFluxOutbreaks.tryOutbreak(level, chunk, random);
         data.setChunkPos(pos);
         if (data.getBase() == 0) {
+            if (data.updateRiftPressure(false, false)) {
+                chunk.setUnsaved(true);
+            }
             return;
         }
         List<AuraData> neighbours = adjacentAuras(level, pos);
@@ -92,9 +97,10 @@ public final class AuraTickHandler {
         Balance balance = new Balance(originalVis, originalFlux);
         float scaledBase = data.getBase() * profile.capacity();
 
-        float floor = PhysicalFluxAuraFloor.target(chunk, data.getBase());
-        if (balance.flux < floor) {
-            balance.flux += Math.min(FLOOR_RAISE_PER_SECOND, floor - balance.flux);
+        BlockPos origin = new BlockPos(pos.getMinBlockX(), 0, pos.getMinBlockZ());
+        boolean entityTicking = level.isPositionEntityTicking(origin);
+        if (entityTicking) {
+            balance.flux += PhysicalFluxAuraFloor.replenish(level, chunk, data.getBase(), balance.flux);
         }
         if (visReceiver != null) {
             shareVis(level, balance, visReceiver);
@@ -106,10 +112,14 @@ public final class AuraTickHandler {
 
         data.setVis(balance.vis);
         data.setFlux(balance.flux);
-        if (data.getVis() != originalVis || data.getFlux() != originalFlux) {
+        boolean overloaded = isOverloaded(data.getFlux(), scaledBase);
+        boolean pressureChanged = data.updateRiftPressure(overloaded, entityTicking);
+        if (pressureChanged || data.getVis() != originalVis || data.getFlux() != originalFlux) {
             chunk.setUnsaved(true);
         }
-        rollEvents(level, pos, data.getFlux(), scaledBase, random);
+        if (overloaded) {
+            rollEvents(level, origin, data, scaledBase, entityTicking, random);
+        }
     }
 
     private static void shareVis(ServerLevel level, Balance balance, AuraData receiver) {
@@ -161,16 +171,36 @@ public final class AuraTickHandler {
                 .collect(Collectors.toCollection(() -> new ArrayList<>(NEIGHBOUR_COUNT)));
     }
 
-    private static void rollEvents(ServerLevel level, ChunkPos pos, float flux, float scaledBase, RandomSource random) {
-        if (flux <= EVENT_FLUX_RATIO * scaledBase) {
-            return;
+    static boolean canSpawnRift(ServerLevel level, BlockPos origin) {
+        if (!level.isPositionEntityTicking(origin)) {
+            return false;
         }
-        if (random.nextFloat() < flux / RIFT_CHANCE_DIVISOR) {
-            AuraManager.queueRiftTrigger(level, new BlockPos(pos.getMinBlockX(), 0, pos.getMinBlockZ()));
+        AuraData data = AuraManager.chunkAt(level, origin);
+        return data != null
+                && data.getBase() > 0
+                && data.hasRiftPressure()
+                && isOverloaded(
+                        data.getFlux(), data.getBase() * moonProfile(level).capacity());
+    }
+
+    private static boolean isOverloaded(float flux, float scaledBase) {
+        return flux > EVENT_FLUX_RATIO * scaledBase;
+    }
+
+    private static void rollEvents(
+            ServerLevel level,
+            BlockPos origin,
+            AuraData data,
+            float scaledBase,
+            boolean entityTicking,
+            RandomSource random) {
+        float flux = data.getFlux();
+        if (entityTicking && data.hasRiftPressure() && random.nextFloat() < flux / RIFT_CHANCE_DIVISOR) {
+            AuraManager.queueRiftTrigger(level, origin);
             return;
         }
         if (random.nextFloat() < flux / (PRESSURE_CHANCE_DIVISOR * Math.max(1.0F, scaledBase))) {
-            FluxPressureEvents.queue(level, pos);
+            FluxPressureEvents.queue(level, data.getChunkPos());
         }
     }
 

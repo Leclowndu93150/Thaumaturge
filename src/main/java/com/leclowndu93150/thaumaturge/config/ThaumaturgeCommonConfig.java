@@ -84,14 +84,14 @@ public final class ThaumaturgeCommonConfig {
                 .defineInRange("taintStarveTicks", 12000, 20, 1000000);
         TAINTED_LANDS_STARTING_FLUX = builder.comment(
                         "Flux a freshly generated Tainted Lands chunk starts with, as a multiple of its base aura. The tainted nodes and seeds there feed on it. 0 leaves Tainted Lands dormant until flux reaches them.")
-                .defineInRange("taintedLandsStartingFlux", 1.0, 0.0, 10.0);
+                .defineInRange("taintedLandsStartingFlux", 0.35, 0.0, 10.0);
         TAINT_FROM_FLUX = builder.comment("Allows deep, exposed Flux Goo to fester into a taint seed.")
                 .define("taintFromFlux", true);
         PHYSICAL_FLUX_AURA_FLOOR = builder.comment(
-                        "Allows physical Flux Goo and Gas to sustain a capped minimum Aura Flux in their chunk. Disabling this does not remove physical Flux.")
+                        "Allows physical Flux Goo and Gas to slowly turn into Aura Flux below a cap in their chunk, consuming the converted waste.")
                 .define("physicalFluxAuraFloor", true);
         PHYSICAL_FLUX_TAINT_OUTBREAKS = builder.comment(
-                        "Allows large accumulations of Flux Goo and Gas to sprout a taint seed independently of individual Goo blocks.")
+                        "Allows large accumulations of Flux Goo and Gas to consume part of a pocket to sprout a taint seed.")
                 .define("physicalFluxTaintOutbreaks", true);
         FLUX_PRESSURE_EVENTS = builder.comment(
                         "Allows high Aura Flux to trigger Flux-pressure events. Disabling this does not affect Flux Rifts.")

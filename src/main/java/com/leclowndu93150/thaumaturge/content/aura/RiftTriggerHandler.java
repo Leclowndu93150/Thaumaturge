@@ -21,7 +21,10 @@ public final class RiftTriggerHandler {
             return;
         }
         BlockPos trigger = AuraManager.pollRiftTrigger(level);
-        if (trigger != null && !ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+        if (trigger != null
+                && level.tickRateManager().runsNormally()
+                && !ThaumaturgeCommonConfig.WUSS_MODE.get()
+                && AuraTickHandler.canSpawnRift(level, trigger)) {
             EntityFluxRift.spawnNear(level, trigger);
         }
     }
