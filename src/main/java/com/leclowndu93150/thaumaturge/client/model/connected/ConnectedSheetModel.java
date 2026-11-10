@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
 import org.joml.Vector3f;
@@ -95,15 +96,15 @@ public record ConnectedSheetModel(
                     context.getTransforms(),
                     RenderType.solid());
         }
-        BakedModel part = models.bake(model.get(), BlockModelRotation.X0_Y0);
+        BakedModel part = models.bake(model.get(), BlockModelRotation.X0_Y0, models.getModelTextureGetter());
         ConnectedQuads.Builder fixed = new ConnectedQuads.Builder();
         for (Direction face : DIRECTIONS) {
             insets[face.ordinal()] = BLOCK_PIXELS;
-            for (BakedQuad quad : part.getQuads(null, face, RandomSource.create(0))) {
+            for (BakedQuad quad : part.getQuads(null, face, RandomSource.create(0), ModelData.EMPTY, null)) {
                 keepOrMeasure(quad, insets, fixed, face);
             }
         }
-        for (BakedQuad quad : part.getQuads(null, null, RandomSource.create(0))) {
+        for (BakedQuad quad : part.getQuads(null, null, RandomSource.create(0), ModelData.EMPTY, null)) {
             keepOrMeasure(quad, insets, fixed, null);
         }
         for (Direction face : DIRECTIONS) {
@@ -114,7 +115,7 @@ public record ConnectedSheetModel(
         return new ConnectedBlockStateModel(
                 SheetFaceQuads.bake(baker, faces, insets),
                 fixed.build(),
-                part.getParticleIcon(),
+                part.getParticleIcon(ModelData.EMPTY),
                 part.useAmbientOcclusion(),
                 group.orElse(null),
                 context.getTransforms(),
