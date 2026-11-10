@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -203,7 +204,7 @@ public final class BlockEntityPotionSprayer extends AbstractSyncedBlockEntity im
     }
 
     private boolean pullFrom(ServerLevel serverLevel, BlockPos sourcePos, Direction face, Holder<IAspect> aspect) {
-        if (!serverLevel.hasChunkAt(sourcePos)) {
+        if (!LoadedChunks.contains(serverLevel, sourcePos)) {
             return false;
         }
         IEssentiaConduit source = EssentiaAccess.conduit(serverLevel, sourcePos, face);

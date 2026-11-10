@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.mojang.serialization.MapCodec;
@@ -206,7 +207,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         int total = amount;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos target = pos.relative(direction);
-            if (!level.hasChunkAt(target)) {
+            if (!LoadedChunks.contains(level, target)) {
                 continue;
             }
             int neighbour = room(level, target);

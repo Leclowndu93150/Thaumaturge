@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -20,7 +21,8 @@ final class FluxPocketScatter {
             int dy = offset(random);
             int dx = offset(random);
             spot.setWithOffset(origin, dx, dy, dz);
-            if (!level.hasChunkAt(spot) || !level.getBlockState(spot).isAir()) {
+            if (!LoadedChunks.contains(level, spot)
+                    || !level.getBlockState(spot).isAir()) {
                 continue;
             }
             BlockPos target = spot.immutable();

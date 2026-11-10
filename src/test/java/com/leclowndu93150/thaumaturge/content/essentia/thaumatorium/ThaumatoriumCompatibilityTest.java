@@ -77,7 +77,7 @@ class ThaumatoriumCompatibilityTest {
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRecipeManager()).thenReturn(recipes);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         BlockState heat = mock(BlockState.class);
         when(heat.is(TTBlockTags.CRUCIBLE_HEAT_SOURCES)).thenReturn(true);
@@ -185,7 +185,7 @@ class ThaumatoriumCompatibilityTest {
         BrainBoxScanner scanner = new BrainBoxScanner();
         assertEquals(2, scanner.count(level, BlockPos.ZERO, Direction.NORTH));
         clearInvocations(level);
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertEquals(0, scanner.count(level, BlockPos.ZERO, Direction.NORTH));
         verify(level, never()).getBlockState(any());
     }
@@ -200,7 +200,7 @@ class ThaumatoriumCompatibilityTest {
         verify(refusing).extract(order, 1, Direction.NORTH, false);
         verify(source).extract(order, 1, Direction.EAST, false);
         clearInvocations(level);
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertEquals(0, puller.drawOne(level, BlockPos.ZERO, Direction.NORTH, order));
         verify(level, never())
                 .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));

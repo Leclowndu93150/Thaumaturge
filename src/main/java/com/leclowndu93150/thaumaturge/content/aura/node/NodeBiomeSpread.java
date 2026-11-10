@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.Optional;
@@ -56,7 +57,7 @@ final class NodeBiomeSpread {
                     quartZ <= QuartPos.fromBlock(origin.getZ() + reach);
                     quartZ++) {
                 column.set(QuartPos.toBlock(quartX), origin.getY(), QuartPos.toBlock(quartZ));
-                if (level.hasChunkAt(column)) {
+                if (LoadedChunks.contains(level, column)) {
                     TaintBiomeManager.revertColumn(level, column, painted);
                 }
             }
@@ -76,13 +77,13 @@ final class NodeBiomeSpread {
     }
 
     private static void eerie(ServerLevel level, BlockPos sample) {
-        if (level.hasChunkAt(sample) && !level.getBiome(sample).is(TTBiomes.EERIE)) {
+        if (LoadedChunks.contains(level, sample) && !level.getBiome(sample).is(TTBiomes.EERIE)) {
             TaintBiomeManager.replaceColumn(level, sample, TTBiomes.EERIE);
         }
     }
 
     private static void purify(ServerLevel level, BlockPos origin, BlockPos sample) {
-        if (!level.hasChunkAt(sample)) {
+        if (!LoadedChunks.contains(level, sample)) {
             return;
         }
         if (TaintBiomeManager.isTainted(level, sample) || silverwoodNearby(level, origin)) {
@@ -94,7 +95,7 @@ final class NodeBiomeSpread {
         for (BlockPos cell : BlockPos.betweenClosed(
                 origin.offset(-SILVERWOOD_RADIUS, -SILVERWOOD_RADIUS, -SILVERWOOD_RADIUS),
                 origin.offset(SILVERWOOD_RADIUS, SILVERWOOD_RADIUS, SILVERWOOD_RADIUS))) {
-            if (level.hasChunkAt(cell) && level.getBlockState(cell).is(TTBlockTags.SILVERWOOD_LOGS)) {
+            if (LoadedChunks.contains(level, cell) && level.getBlockState(cell).is(TTBlockTags.SILVERWOOD_LOGS)) {
                 return true;
             }
         }

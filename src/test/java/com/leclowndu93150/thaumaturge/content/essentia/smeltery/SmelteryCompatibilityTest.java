@@ -51,7 +51,7 @@ class SmelteryCompatibilityTest {
                 .freeze();
         level = mock(ServerLevel.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
     }
@@ -119,7 +119,7 @@ class SmelteryCompatibilityTest {
 
     @Test
     void columnDoesNotReadAnUnloadedChunk() {
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertFalse(BlockEntityAlembic.feedColumn(level, BlockPos.ZERO, order));
         verify(level, never()).getBlockEntity(any());
     }
@@ -231,7 +231,7 @@ class SmelteryCompatibilityTest {
         when(level.getBlockEntity(BlockPos.ZERO.above(2))).thenReturn(active);
         assertEquals(1, BellowsHelper.countBellows(level, BlockPos.ZERO, new Direction[] {Direction.UP}, 2));
         clearInvocations(level);
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertEquals(0, BellowsHelper.countBellows(level, BlockPos.ZERO, Direction.values()));
         verify(level, never()).getBlockEntity(any());
         assertEquals(0, BellowsHelper.countBellows(null, BlockPos.ZERO, Direction.values()));

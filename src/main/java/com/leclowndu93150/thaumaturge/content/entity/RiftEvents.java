@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
@@ -74,7 +75,7 @@ final class RiftEvents {
                 rift.getZ() + random.nextGaussian() * WISP_SPREAD,
                 0.0F,
                 0.0F);
-        if (!level.hasChunkAt(wisp.blockPosition())) {
+        if (!LoadedChunks.contains(level, wisp.blockPosition())) {
             wisp.discard();
             return false;
         }
@@ -100,7 +101,7 @@ final class RiftEvents {
                 (int) (rift.getZ() + random.nextGaussian() * SEED_SPREAD) + SEED_CENTER,
                 random.nextInt(FULL_TURN_DEGREES),
                 0.0F);
-        if (!level.hasChunkAt(seed.blockPosition())) {
+        if (!LoadedChunks.contains(level, seed.blockPosition())) {
             seed.discard();
             return false;
         }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -62,7 +63,7 @@ final class ScanInventories {
         IItemHandler handler =
                 switch (target) {
                     case ScannedBlock(var pos) ->
-                        player.level().hasChunkAt(pos)
+                        LoadedChunks.contains(player.level(), pos)
                                 ? player.level().getCapability(Capabilities.ItemHandler.BLOCK, pos, side)
                                 : null;
                     case ScannedEntity(var entity) ->
@@ -78,7 +79,9 @@ final class ScanInventories {
         Object candidate =
                 switch (target) {
                     case ScannedBlock(var pos) ->
-                        player.level().hasChunkAt(pos) ? player.level().getBlockEntity(pos) : null;
+                        LoadedChunks.contains(player.level(), pos)
+                                ? player.level().getBlockEntity(pos)
+                                : null;
                     case ScannedEntity(var entity) -> entity;
                     default -> null;
                 };

@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -199,7 +200,7 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
             for (int dz = -CHARGER_REACH; dz <= CHARGER_REACH; dz++) {
                 ChunkPos chunk = new ChunkPos(center.x + dx, center.z + dz);
                 BlockPos anchor = chunk.getMiddleBlockPosition(home.getY());
-                if (server.hasChunkAt(anchor)) {
+                if (LoadedChunks.contains(server, anchor)) {
                     anchors.add(anchor);
                 }
             }

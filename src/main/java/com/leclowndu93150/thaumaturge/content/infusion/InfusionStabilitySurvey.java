@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.infusion.AltarStabiliser;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public final class InfusionStabilitySurvey {
     }
 
     public static boolean isStabiliser(Level level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return false;
         }
         BlockState state = level.getBlockState(pos);
@@ -87,7 +88,7 @@ public final class InfusionStabilitySurvey {
     }
 
     private static Profile profile(Level level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return new Profile(Blocks.AIR, AltarStabiliser.STANDARD_PAIR_VALUE, false, null);
         }
         Block block = level.getBlockState(pos).getBlock();

@@ -48,7 +48,7 @@ class TubeCompatibilityTest {
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(Level.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any(BlockPos.class))).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
                 .thenAnswer(call -> peers.get(call.getArgument(1)));
@@ -251,7 +251,7 @@ class TubeCompatibilityTest {
 
     @Test
     void unloadedNeighbourDoesNotQueryCapabilities() {
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertNull(EssentiaFlowHandler.conduit(level, new BlockPos(32, 10, 32), Direction.UP));
         verify(level, never())
                 .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));

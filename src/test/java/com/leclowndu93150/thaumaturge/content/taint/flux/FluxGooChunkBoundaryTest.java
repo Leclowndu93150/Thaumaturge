@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,15 +24,13 @@ class FluxGooChunkBoundaryTest {
         ServerLevel level = mock(ServerLevel.class);
         BlockPos origin = new BlockPos(0, 64, 0);
         when(level.getMinBuildHeight()).thenReturn(0);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         invokeSpread(goo, level, origin, FluxGooFluid.gooBlockState(4).getFluidState());
 
-        verify(level).hasChunkAt(origin.below());
-        verify(level).hasChunkAt(origin.north());
-        verify(level).hasChunkAt(origin.south());
-        verify(level).hasChunkAt(origin.west());
-        verify(level).hasChunkAt(origin.east());
+        verify(level, times(3)).hasChunk(0, 0);
+        verify(level).hasChunk(0, -1);
+        verify(level).hasChunk(-1, 0);
         verify(level, never()).getBlockState(any(BlockPos.class));
         verify(level, never()).getFluidState(any(BlockPos.class));
         verify(level, never()).setBlock(any(BlockPos.class), any(), anyInt());
@@ -49,8 +48,8 @@ class FluxGooChunkBoundaryTest {
         when(level.getMinBuildHeight()).thenReturn(0);
         when(level.getRandom()).thenReturn(random);
         when(random.nextInt(2)).thenReturn(1);
-        when(level.hasChunkAt(below)).thenReturn(false);
-        when(level.hasChunkAt(north)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(false);
+        when(level.hasChunk(0, -1)).thenReturn(true);
         when(level.getBlockState(origin)).thenReturn(FluxGooFluid.gooBlockState(4));
         when(level.getBlockState(north)).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getFluidState(origin)).thenReturn(twoQuanta);

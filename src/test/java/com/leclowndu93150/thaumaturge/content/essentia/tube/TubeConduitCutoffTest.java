@@ -47,7 +47,7 @@ class TubeConduitCutoffTest {
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(Level.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getRandom()).thenReturn(RandomSource.create(0));
         when(level.getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class)))
@@ -93,7 +93,7 @@ class TubeConduitCutoffTest {
     @Test
     @SuppressWarnings("removal")
     void unloadedLookupNeverQueriesEitherCapability() {
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         assertNull(EssentiaFlowHandler.conduit(level, BlockPos.ZERO.above(), Direction.DOWN));
         verify(level, never())
                 .getCapability(eq(EssentiaCapabilities.CONDUIT), any(BlockPos.class), any(Direction.class));

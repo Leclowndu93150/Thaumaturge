@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.network.ClientboundTaintEnvironmentPayload;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
@@ -75,7 +76,7 @@ public final class TaintEnvironmentEvents {
                     center.getX() + offset[0] * BIOME_BLEND_RADIUS,
                     center.getY(),
                     center.getZ() + offset[1] * BIOME_BLEND_RADIUS);
-            if (!level.hasChunkAt(sample)) {
+            if (!LoadedChunks.contains(level, sample)) {
                 continue;
             }
             int weight = offset[0] == 0 && offset[1] == 0 ? BIOME_CENTER_WEIGHT : 1;
@@ -122,7 +123,7 @@ public final class TaintEnvironmentEvents {
                         random.nextInt(CRAWLER_RANGE) - CRAWLER_RANGE / 2,
                         0,
                         random.nextInt(CRAWLER_RANGE) - CRAWLER_RANGE / 2);
-        if (!level.hasChunkAt(sample)) {
+        if (!LoadedChunks.contains(level, sample)) {
             return;
         }
         BlockPos spawn = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sample);

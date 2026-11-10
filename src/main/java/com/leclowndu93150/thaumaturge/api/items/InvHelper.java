@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.api.items;
 import com.leclowndu93150.thaumaturge.api.transaction.SnapshotJournal;
 import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -848,7 +849,7 @@ public final class InvHelper {
                 continue;
             }
             BlockPos neighbour = pos.relative(face);
-            if (!level.hasChunkAt(neighbour)) {
+            if (!LoadedChunks.contains(level, neighbour)) {
                 continue;
             }
             IItemHandler handler = handlerAt(level, neighbour, face.getOpposite());

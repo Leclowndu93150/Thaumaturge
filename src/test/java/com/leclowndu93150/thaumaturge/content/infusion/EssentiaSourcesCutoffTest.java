@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +35,7 @@ class EssentiaSourcesCutoffTest {
     private Holder<IAspect> aspect;
     private Holder<IAspect> other;
     private final Map<BlockPos, IAspectSource> sources = new HashMap<>();
-    private final Set<BlockPos> unloaded = new HashSet<>();
+    private final Set<ChunkPos> unloaded = new HashSet<>();
     private MockedStatic<EffectDispatch> effects;
     private long time;
 
@@ -46,7 +47,8 @@ class EssentiaSourcesCutoffTest {
         when(aspect.value().color()).thenReturn(0x123456);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
         when(level.getGameTime()).thenAnswer(call -> time);
-        when(level.hasChunkAt(any())).thenAnswer(call -> !unloaded.contains(call.getArgument(0)));
+        when(level.hasChunk(anyInt(), anyInt()))
+                .thenAnswer(call -> !unloaded.contains(new ChunkPos(call.getArgument(0), call.getArgument(1))));
         when(level.getCapability(eq(AspectCapabilities.CONTAINER), any(BlockPos.class), isNull()))
                 .thenAnswer(call -> sources.get(call.getArgument(1)));
         effects = mockStatic(EffectDispatch.class);
@@ -207,7 +209,7 @@ class EssentiaSourcesCutoffTest {
         when(east.getSourcePriority()).thenReturn(2);
         assertTrue(search.drain(level, aspect, 10));
         verify(east).drain(aspect, 1);
-        unloaded.add(BlockPos.ZERO.east());
+        unloaded.add(new ChunkPos(BlockPos.ZERO.east()));
         clearInvocations(level, west, east);
         assertTrue(search.drain(level, aspect, 10));
         verify(west).drain(aspect, 1);
@@ -241,7 +243,7 @@ class EssentiaSourcesCutoffTest {
         var available = source(BlockPos.ZERO.east(), 0, false, 0);
         var entity = mock(BlockEntity.class);
         when(level.getBlockEntity(BlockPos.ZERO.west())).thenReturn(entity);
-        unloaded.add(BlockPos.ZERO.north());
+        unloaded.add(new ChunkPos(BlockPos.ZERO.north()));
         assertTrue(new EssentiaSources(BlockPos.ZERO, 1)
                 .ignoring(be -> be == entity)
                 .drain(level, aspect, 10));

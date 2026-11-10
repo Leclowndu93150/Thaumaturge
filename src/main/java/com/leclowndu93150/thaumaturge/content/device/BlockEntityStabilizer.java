@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -99,7 +100,7 @@ public final class BlockEntityStabilizer extends AbstractSyncedBlockEntity {
     private void refreshInlays(Level level) {
         for (Direction side : Direction.Plane.HORIZONTAL) {
             BlockPos neighbour = worldPosition.relative(side);
-            if (level.hasChunkAt(neighbour) && BlockInlay.chargeAt(level, neighbour) >= 0) {
+            if (LoadedChunks.contains(level, neighbour) && BlockInlay.chargeAt(level, neighbour) >= 0) {
                 BlockInlay.updateNetwork(level, neighbour);
             }
         }

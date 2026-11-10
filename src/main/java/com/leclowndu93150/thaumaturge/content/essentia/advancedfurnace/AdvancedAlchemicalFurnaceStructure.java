@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,7 +19,8 @@ public final class AdvancedAlchemicalFurnaceStructure {
     private AdvancedAlchemicalFurnaceStructure() {}
 
     public static boolean isLoaded(Level level, BlockPos controller) {
-        return level.hasChunksAt(
+        return LoadedChunks.containsArea(
+                level,
                 controller.getX() - RADIUS,
                 controller.getZ() - RADIUS,
                 controller.getX() + RADIUS,

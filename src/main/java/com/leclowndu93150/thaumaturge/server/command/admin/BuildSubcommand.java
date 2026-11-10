@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -31,7 +32,7 @@ final class BuildSubcommand implements AdminSubcommand {
             return 0;
         }
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-3, 0, -3), center.offset(3, 2, 3))) {
-            if (!level.hasChunkAt(pos)) {
+            if (!LoadedChunks.contains(level, pos)) {
                 source.sendFailure(Component.translatable("commands.thaumaturge.build.infusion_altar.unloaded"));
                 return 0;
             }

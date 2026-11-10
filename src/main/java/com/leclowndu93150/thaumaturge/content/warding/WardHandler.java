@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -66,7 +67,7 @@ public final class WardHandler {
     }
 
     public static boolean ward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!level.hasChunkAt(pos) || !canWard(level, pos) || isWarded(level, pos)) {
+        if (!LoadedChunks.contains(level, pos) || !canWard(level, pos) || isWarded(level, pos)) {
             return false;
         }
         LevelChunk chunk = level.getChunkAt(pos);
@@ -78,7 +79,7 @@ public final class WardHandler {
     }
 
     public static boolean unward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return false;
         }
         WardChunkData data = existing(level, pos);
@@ -94,7 +95,7 @@ public final class WardHandler {
 
     public static void carry(ServerLevel fromLevel, BlockPos from, ServerLevel toLevel, BlockPos to) {
         WardChunkData data = existing(fromLevel, from);
-        if (data == null || !data.contains(from) || !toLevel.hasChunkAt(to)) {
+        if (data == null || !data.contains(from) || !LoadedChunks.contains(toLevel, to)) {
             return;
         }
         WardAccess ward = data.take(from);
@@ -132,7 +133,7 @@ public final class WardHandler {
     }
 
     private static @Nullable WardChunkData existing(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return null;
         }
         LevelChunk chunk = level.getChunkAt(pos);

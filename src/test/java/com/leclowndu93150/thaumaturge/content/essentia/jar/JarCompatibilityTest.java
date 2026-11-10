@@ -52,7 +52,7 @@ class JarCompatibilityTest {
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(Level.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
     }
 
     private BlockEntityJar jar() {
@@ -157,7 +157,7 @@ class JarCompatibilityTest {
 
     @Test
     void jarNeverQueriesAnUnloadedSourceChunk() {
-        when(level.hasChunkAt(BlockPos.ZERO.above())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         BlockEntityJar jar = jar();
         for (int i = 0; i < 5; i++) BlockEntityJar.serverTick(level, BlockPos.ZERO, jar.getBlockState(), jar);
         verify(level, never())

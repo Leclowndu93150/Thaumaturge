@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
@@ -74,7 +75,7 @@ public final class FibreGrowth {
 
     private static boolean grow(ServerLevel level, BlockPos origin, boolean force, @Nullable ITaintOrigin payer) {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()
-                || !level.hasChunkAt(origin)
+                || !LoadedChunks.contains(level, origin)
                 || TaintBlooms.isProtected(level, origin)) {
             return false;
         }
@@ -83,7 +84,7 @@ public final class FibreGrowth {
             return false;
         }
         BlockPos target = pickTarget(origin, random);
-        if (!level.hasChunkAt(target) || TaintBlooms.isProtected(level, target)) {
+        if (!LoadedChunks.contains(level, target) || TaintBlooms.isProtected(level, target)) {
             return false;
         }
         BlockState state = level.getBlockState(target);

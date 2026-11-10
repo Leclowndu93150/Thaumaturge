@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.debug;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.debug.network.ClientboundRaycastDebugPayload;
 import java.util.Set;
 import java.util.UUID;
@@ -34,8 +35,8 @@ public class TTDebugEvents {
     public static void playerTick(PlayerTickEvent.Post event) {
         if (event.getEntity().level().isClientSide()) return;
         Player player = event.getEntity();
-        if (!RAYCAST_DEBUG_PLAYERS.contains(player.getUUID()) || !player.level().hasChunkAt(player.blockPosition()))
-            return;
+        if (!RAYCAST_DEBUG_PLAYERS.contains(player.getUUID())
+                || !LoadedChunks.contains(player.level(), player.blockPosition())) return;
         HitResult hitResult = ScanRaycastHelper.performRaycast(player);
         PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundRaycastDebugPayload(hitResult));
     }

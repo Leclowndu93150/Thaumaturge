@@ -25,14 +25,13 @@ class BlockFluxGasSpreadTest {
         BlockFluxGas gas = (BlockFluxGas) BlockFluxGas.gasBlockState(1).getBlock();
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         invokeSpread(gas, level, BlockPos.ZERO, 4, random);
 
-        verify(level).hasChunkAt(BlockPos.ZERO.north());
-        verify(level).hasChunkAt(BlockPos.ZERO.south());
-        verify(level).hasChunkAt(BlockPos.ZERO.west());
-        verify(level).hasChunkAt(BlockPos.ZERO.east());
+        verify(level).hasChunk(0, -1);
+        verify(level).hasChunk(-1, 0);
+        verify(level, times(2)).hasChunk(0, 0);
         verify(level, never()).getBlockState(any(BlockPos.class));
         verify(level, never()).setBlock(any(BlockPos.class), any(), anyInt());
         verify(random, never()).nextInt(anyInt());
@@ -44,7 +43,7 @@ class BlockFluxGasSpreadTest {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = BlockPos.ZERO.north();
-        when(level.hasChunkAt(target)).thenReturn(true);
+        when(level.hasChunk(0, -1)).thenReturn(true);
         when(level.getBlockState(target)).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(Blocks.AIR.defaultBlockState());
 
@@ -65,7 +64,7 @@ class BlockFluxGasSpreadTest {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = BlockPos.ZERO.north();
-        when(level.hasChunkAt(target)).thenReturn(true);
+        when(level.hasChunk(0, -1)).thenReturn(true);
         when(level.getBlockState(target)).thenReturn(Blocks.WATER.defaultBlockState());
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(BlockFluxGas.gasBlockState(8));
 
@@ -99,7 +98,7 @@ class BlockFluxGasSpreadTest {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = BlockPos.ZERO.north();
-        when(level.hasChunkAt(target)).thenReturn(true);
+        when(level.hasChunk(0, -1)).thenReturn(true);
         when(level.getBlockState(target)).thenReturn(BlockFluxGas.gasBlockState(1));
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(BlockFluxGas.gasBlockState(4));
 
@@ -115,7 +114,7 @@ class BlockFluxGasSpreadTest {
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = BlockPos.ZERO.north();
-        when(level.hasChunkAt(target)).thenReturn(true);
+        when(level.hasChunk(0, -1)).thenReturn(true);
         when(level.getBlockState(target)).thenReturn(BlockFluxGas.gasBlockState(1));
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(BlockFluxGas.gasBlockState(4));
         when(random.nextInt(2)).thenReturn(1);
@@ -135,8 +134,9 @@ class BlockFluxGasSpreadTest {
         RandomSource random = mock(RandomSource.class);
         BlockPos north = BlockPos.ZERO.north();
         BlockPos south = BlockPos.ZERO.south();
-        when(level.hasChunkAt(north)).thenReturn(true);
-        when(level.hasChunkAt(south)).thenReturn(true);
+        when(level.hasChunk(0, -1)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
+        when(level.getBlockState(BlockPos.ZERO.east())).thenReturn(Blocks.STONE.defaultBlockState());
         when(level.getBlockState(north)).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getBlockState(south)).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(BlockFluxGas.gasBlockState(5));

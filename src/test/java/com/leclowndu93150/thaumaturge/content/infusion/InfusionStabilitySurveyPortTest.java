@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -28,7 +29,7 @@ final class InfusionStabilitySurveyPortTest {
         BlockPos matrix = new BlockPos(0, 64, 0);
         BlockPos near = matrix.east();
         BlockPos mirror = matrix.west();
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         doReturn(Blocks.AIR.defaultBlockState()).when(level).getBlockState(any(BlockPos.class));
         doReturn(TTBlocks.INLAY.get().defaultBlockState()).when(level).getBlockState(near);
         doReturn(TTBlocks.INLAY.get().defaultBlockState()).when(level).getBlockState(mirror);
@@ -45,8 +46,8 @@ final class InfusionStabilitySurveyPortTest {
         BlockPos matrix = new BlockPos(0, 64, 0);
         BlockPos near = matrix.east();
         BlockPos mirror = matrix.west();
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
-        when(level.hasChunkAt(mirror)).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
+        when(level.hasChunk(-1, 0)).thenReturn(false);
         doReturn(Blocks.AIR.defaultBlockState()).when(level).getBlockState(any(BlockPos.class));
         doReturn(TTBlocks.INLAY.get().defaultBlockState()).when(level).getBlockState(near);
 
@@ -61,7 +62,7 @@ final class InfusionStabilitySurveyPortTest {
     void directStabiliserCheckSkipsUnloadedPositions() {
         Level level = mock(Level.class);
         BlockPos pos = new BlockPos(80, 64, 0);
-        when(level.hasChunkAt(pos)).thenReturn(false);
+        when(level.hasChunk(5, 0)).thenReturn(false);
 
         assertFalse(InfusionStabilitySurvey.isStabiliser(level, pos));
         verify(level, never()).getBlockState(pos);
@@ -78,7 +79,7 @@ final class InfusionStabilitySurveyPortTest {
         BlockState stabiliserState = mock(BlockState.class);
         when(stabiliserState.getBlock()).thenReturn(modernBlock);
         when(stabiliserState.is(TTBlockTags.INFUSION_STABILISERS)).thenReturn(false);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         doReturn(Blocks.AIR.defaultBlockState()).when(level).getBlockState(any(BlockPos.class));
         doReturn(stabiliserState).when(level).getBlockState(west);
         doReturn(stabiliserState).when(level).getBlockState(east);
@@ -110,7 +111,7 @@ final class InfusionStabilitySurveyPortTest {
         BlockState state = mock(BlockState.class);
         when(state.getBlock()).thenReturn(stabiliserBlock);
         when(state.is(TTBlockTags.INFUSION_STABILISERS)).thenReturn(false);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         doReturn(Blocks.AIR.defaultBlockState()).when(level).getBlockState(any(BlockPos.class));
         doReturn(state).when(level).getBlockState(west);
         doReturn(state).when(level).getBlockState(east);

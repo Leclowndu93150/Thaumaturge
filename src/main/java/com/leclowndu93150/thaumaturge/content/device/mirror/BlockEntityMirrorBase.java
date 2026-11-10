@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
@@ -98,7 +99,7 @@ public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
 
     public void invalidateLink() {
         ServerLevel targetLevel = targetLevel();
-        if (targetLevel == null || link == null || !targetLevel.hasChunkAt(link.pos())) {
+        if (targetLevel == null || link == null || !LoadedChunks.contains(targetLevel, link.pos())) {
             return;
         }
         BlockEntityMirrorBase target = target();

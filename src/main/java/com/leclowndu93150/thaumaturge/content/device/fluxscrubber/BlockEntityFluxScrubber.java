@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
@@ -233,7 +234,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
 
     private boolean scrubAt(ServerLevel level, BlockPos center, int dx, int dy, int dz, RandomSource random) {
         cursor.setWithOffset(center, dx, dy, dz);
-        if (!level.hasChunkAt(cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
+        if (!LoadedChunks.contains(level, cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
             return false;
         }
         if (PhysicalFlux.reduce(level, cursor, REMOVAL_AMOUNT) > 0) {

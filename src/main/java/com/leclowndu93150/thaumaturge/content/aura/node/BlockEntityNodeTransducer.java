@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
@@ -192,7 +193,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
                     random.nextInt(8) - random.nextInt(8),
                     random.nextInt(8) - random.nextInt(8),
                     random.nextInt(8) - random.nextInt(8));
-            if (!level.hasChunkAt(target)) {
+            if (!LoadedChunks.contains(level, target)) {
                 continue;
             }
             if (target.getY() < nodePos.getY()) {

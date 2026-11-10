@@ -77,7 +77,7 @@ class GolemBuilderCutoffTest {
         player = mock(Player.class);
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getRandom()).thenReturn(random);
         when(random.nextFloat()).thenReturn(0.5F);
@@ -283,7 +283,7 @@ class GolemBuilderCutoffTest {
         int before = builder.cost();
         IEssentiaConduit down = source(Direction.DOWN, true);
         IEssentiaConduit north = source(Direction.NORTH, true);
-        when(level.hasChunkAt(BlockPos.ZERO.below())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         when(north.pull(Direction.SOUTH)).thenReturn(EssentiaPull.of(machina, 128));
         tick(builder, 1);
         assertEquals(before, builder.cost());

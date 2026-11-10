@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFollowingItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -366,7 +367,7 @@ public final class InfusionEnchantmentEvents {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (Direction direction : Direction.values()) {
             cursor.setWithOffset(pos, direction);
-            if (level.hasChunkAt(cursor)) {
+            if (LoadedChunks.contains(level, cursor)) {
                 light = Math.max(light, level.getRawBrightness(cursor, 0) - 1);
             }
         }

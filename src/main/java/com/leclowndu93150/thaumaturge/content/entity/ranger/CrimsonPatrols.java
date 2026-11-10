@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity.ranger;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -81,7 +82,8 @@ public final class CrimsonPatrols {
             return;
         }
         BlockPos.MutableBlockPos spot = player.blockPosition().mutable().move(offset(random), 0, offset(random));
-        if (!level.hasChunksAt(
+        if (!LoadedChunks.containsArea(
+                        level,
                         spot.getX() - CHUNK_MARGIN,
                         spot.getZ() - CHUNK_MARGIN,
                         spot.getX() + CHUNK_MARGIN,

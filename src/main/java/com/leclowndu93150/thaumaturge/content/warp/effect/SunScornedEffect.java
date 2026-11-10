@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp.effect;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -44,7 +45,7 @@ public final class SunScornedEffect extends MobEffect {
     }
 
     private static float brightness(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return 0.0F;
         }
         float light = level.getMaxLocalRawBrightness(pos) / 15.0F;

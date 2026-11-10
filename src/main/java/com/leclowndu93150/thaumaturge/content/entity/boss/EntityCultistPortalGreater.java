@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
 import com.leclowndu93150.thaumaturge.content.entity.portal.CultistPortals;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -169,7 +170,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         int dx = offsetFromRoll(this.random.nextInt(CRATE_RADIUS * 2 + 1));
         int dz = offsetFromRoll(this.random.nextInt(CRATE_RADIUS * 2 + 1));
         BlockPos pos = this.blockPosition().offset(dx, 0, dz);
-        if (dx == 0 || dz == 0 || !server.hasChunkAt(pos) || !server.isEmptyBlock(pos)) {
+        if (dx == 0 || dz == 0 || !LoadedChunks.contains(server, pos) || !server.isEmptyBlock(pos)) {
             return;
         }
         this.level().broadcastEntityEvent(this, CultistPortals.PULSE_EVENT);

@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -151,7 +152,7 @@ public final class EssentiaSources {
         }
         List<Candidate> candidates = new ArrayList<>(cache.size());
         for (BlockPos pos : cache) {
-            if (level.hasChunkAt(pos)
+            if (LoadedChunks.contains(level, pos)
                     && LevelSpaces.withinCube(level, owner, pos, range)
                     && level.getCapability(AspectCapabilities.CONTAINER, pos, null) instanceof IAspectSource source) {
                 candidates.add(new Candidate(
@@ -221,7 +222,7 @@ public final class EssentiaSources {
     }
 
     private boolean isSource(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos)
+        return LoadedChunks.contains(level, pos)
                 && level.getCapability(AspectCapabilities.CONTAINER, pos, null) instanceof IAspectSource
                 && !rejected(level, pos);
     }

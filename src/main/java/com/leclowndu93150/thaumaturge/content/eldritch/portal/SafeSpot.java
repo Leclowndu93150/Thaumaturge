@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.portal;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,7 +34,7 @@ public final class SafeSpot {
 
     public static Optional<BlockPos> surface(ServerLevel level, int x, int z) {
         BlockPos column = new BlockPos(x, level.getMinBuildHeight(), z);
-        if (!level.hasChunkAt(column)) {
+        if (!LoadedChunks.contains(level, column)) {
             return Optional.empty();
         }
         BlockPos feet = column.atY(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z));
@@ -49,7 +50,7 @@ public final class SafeSpot {
         candidates.sort(Comparator.comparingDouble((BlockPos pos) -> pos.distSqr(center))
                 .thenComparingLong(BlockPos::asLong));
         for (BlockPos pos : candidates) {
-            if (level.hasChunkAt(pos) && standable(level, pos)) {
+            if (LoadedChunks.contains(level, pos) && standable(level, pos)) {
                 return Optional.of(pos);
             }
         }

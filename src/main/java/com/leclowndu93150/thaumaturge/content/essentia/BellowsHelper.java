@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -30,7 +31,7 @@ public final class BellowsHelper {
     }
 
     private static boolean blowsToward(Level level, BlockPos source, Direction from) {
-        if (!level.hasChunkAt(source)) {
+        if (!LoadedChunks.contains(level, source)) {
             return false;
         }
         if (!(level.getBlockEntity(source) instanceof IBellowsPower bellows)) {

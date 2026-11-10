@@ -93,7 +93,7 @@ class JadeMultiblockIconTest {
             this.block = block;
             when(controller.getBlockPos()).thenReturn(CONTROLLER);
             when(controller.getBlockState()).thenReturn(block.defaultBlockState());
-            when(level.hasChunkAt(any())).thenReturn(true);
+            when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
             when(level.getBlockEntity(any()))
                     .thenAnswer(call -> CONTROLLER.equals(call.getArgument(0)) ? controller : null);
             when(builder.build()).thenReturn(remapped);

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.research.table;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,6 +27,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,7 +42,7 @@ final class ResearchTableBonusesPortTest {
     private Holder<IAspect> ignis;
     private Holder<IAspect> ordo;
     private final Map<BlockPos, BlockState> states = new HashMap<>();
-    private final List<BlockPos> checkedChunks = new ArrayList<>();
+    private final List<ChunkPos> checkedChunks = new ArrayList<>();
     private final List<BlockPos> readPositions = new ArrayList<>();
 
     @BeforeEach
@@ -58,9 +60,8 @@ final class ResearchTableBonusesPortTest {
         when(level.canSeeSky(any(BlockPos.class))).thenReturn(true);
         when(level.getHeight()).thenReturn(256);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any(BlockPos.class))).thenAnswer(call -> {
-            BlockPos position = ((BlockPos) call.getArgument(0)).immutable();
-            checkedChunks.add(position);
+        when(level.hasChunk(anyInt(), anyInt())).thenAnswer(call -> {
+            checkedChunks.add(new ChunkPos(call.getArgument(0), call.getArgument(1)));
             return true;
         });
         when(level.getBlockState(any(BlockPos.class))).thenAnswer(call -> {
@@ -111,13 +112,13 @@ final class ResearchTableBonusesPortTest {
         AspectList result = ResearchTableBonuses.recalculate(level, BlockPos.ZERO, current, random);
 
         assertEquals(AspectList.of(new AspectInstance(aqua, 1), new AspectInstance(ignis, 1)), result);
-        assertTrue(checkedChunks.contains(second));
+        assertTrue(checkedChunks.contains(new ChunkPos(second)));
         assertTrue(readPositions.contains(second));
     }
 
     @Test
     void unloadedScanPositionsAreNeverRead() {
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         AspectList result = ResearchTableBonuses.recalculate(level, BlockPos.ZERO, AspectList.EMPTY, random);
 

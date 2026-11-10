@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTube;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -29,7 +30,7 @@ public final class EssentiaFlowHandler {
     private EssentiaFlowHandler() {}
 
     public static @Nullable IEssentiaConduit conduit(Level level, BlockPos pos, Direction face) {
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return null;
         }
         return EssentiaAccess.conduit(level, pos, face);

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -177,7 +178,9 @@ public final class EntityTaintSwarm extends Monster {
     }
 
     private static boolean isValidFlightTarget(ServerLevel level, BlockPos pos) {
-        if (pos == null || !level.hasChunkAt(pos) || !level.getBlockState(pos).isAir()) {
+        if (pos == null
+                || !LoadedChunks.contains(level, pos)
+                || !level.getBlockState(pos).isAir()) {
             return false;
         }
         if (pos.getY() < level.getMinBuildHeight() + 1

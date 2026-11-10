@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +15,7 @@ public final class BrainBoxScanner {
         int found = 0;
         for (int slot = 0; slot < ring.slots(); slot++) {
             if (ring.aim(origin, front, slot)
-                    && level.hasChunkAt(ring.pos())
+                    && LoadedChunks.contains(level, ring.pos())
                     && isBrainBoxFacing(level.getBlockState(ring.pos()), ring.side())) {
                 found++;
             }

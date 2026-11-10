@@ -37,11 +37,11 @@ class FibreGrowthCompatibilityTest {
     void growthDoesNotSampleRandomnessOrReadBlocksWhenOriginChunkIsNotLoaded() {
         ServerLevel level = mock(ServerLevel.class);
         BlockPos origin = new BlockPos(32, 72, -48);
-        when(level.hasChunkAt(origin)).thenReturn(false);
+        when(level.hasChunk(2, -3)).thenReturn(false);
 
         TaintHelper.attemptFibreGrowth(level, origin, true);
 
-        verify(level).hasChunkAt(origin);
+        verify(level).hasChunk(2, -3);
         verify(level, never()).getRandom();
         verify(level, never()).getBlockState(origin);
     }

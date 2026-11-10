@@ -54,7 +54,7 @@ class CondenserConduitCutoffTest {
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);
         when(random.nextInt(anyInt())).thenReturn(1);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any()))
                 .thenAnswer(call -> blocks.getOrDefault(call.getArgument(0), Blocks.AIR.defaultBlockState()));
         when(level.setBlock(any(), any(), anyInt())).thenAnswer(call -> {
@@ -183,9 +183,11 @@ class CondenserConduitCutoffTest {
     @Test
     void scansLoadedCellsOnlyAndVitiumOfferClogsWithoutExtraction() {
         var machine = machine();
-        lattice(BlockPos.ZERO.above(), BlockPos.ZERO.above(2));
-        when(level.hasChunkAt(BlockPos.ZERO.above(2))).thenReturn(false);
+        BlockPos unloaded = BlockPos.ZERO.above().west();
+        lattice(BlockPos.ZERO.above(), unloaded);
+        when(level.hasChunk(-1, 0)).thenReturn(false);
         machine.triggerCheck();
+        verify(level, never()).getBlockState(unloaded);
         assertEquals(587, machine.interval());
         var source = mock(IEssentiaConduit.class);
         when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.north(), Direction.SOUTH))

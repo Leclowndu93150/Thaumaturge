@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.LabelledVesselActions;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
@@ -126,7 +127,7 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
 
     private static boolean connectsTo(Level level, BlockPos pos, Direction side) {
         BlockPos neighborPos = pos.relative(side);
-        if (!level.hasChunkAt(neighborPos)) {
+        if (!LoadedChunks.contains(level, neighborPos)) {
             return false;
         }
         IEssentiaConduit node = EssentiaAccess.conduit(level, neighborPos, side.getOpposite());

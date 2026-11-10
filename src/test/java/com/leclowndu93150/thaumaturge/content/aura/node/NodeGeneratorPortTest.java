@@ -188,10 +188,10 @@ class NodeGeneratorPortTest {
     @Test
     void terrainSurveySkipsUnloadedColumnsAtChunkBoundaries() throws Exception {
         ServerLevelAccessor level = mock(ServerLevelAccessor.class);
-        when(level.hasChunkAt(anyInt(), anyInt())).thenAnswer(invocation -> {
+        when(level.hasChunk(anyInt(), anyInt())).thenAnswer(invocation -> {
             int x = invocation.getArgument(0);
             int z = invocation.getArgument(1);
-            return x < 16 && z < 16;
+            return x < 1 && z < 1;
         });
         when(level.getBlockState(any(BlockPos.class))).thenAnswer(invocation -> {
             BlockPos pos = invocation.getArgument(0);
@@ -239,7 +239,7 @@ class NodeGeneratorPortTest {
         survey.setAccessible(true);
         survey.invoke(null, context, draft);
 
-        verify(level, times(121)).hasChunkAt(anyInt(), anyInt());
+        verify(level, times(121)).hasChunk(anyInt(), anyInt());
         verify(level, times(396)).getBlockState(any(BlockPos.class));
     }
 

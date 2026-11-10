@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -102,11 +103,11 @@ class FluxRiftPortTest {
         EntityFluxRift rift = rift();
         rift.resize(6);
         ServerLevel level = mock(ServerLevel.class);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         new RiftSegmentSweep().tick(level, rift);
 
-        verify(level).hasChunkAt(any(BlockPos.class));
+        verify(level).hasChunk(anyInt(), anyInt());
         verify(level, never()).clip(any(ClipContext.class));
         verify(level, never()).getEntities(any(EntityFluxRift.class), any(AABB.class));
     }
@@ -116,7 +117,7 @@ class FluxRiftPortTest {
         EntityFluxRift rift = rift();
         rift.resize(6);
         ServerLevel level = mock(ServerLevel.class);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.damageSources()).thenReturn(mock(DamageSources.class));
         when(level.getEntities(eq(rift), any(AABB.class))).thenReturn(List.of());
         BlockState shortGrass = Blocks.SHORT_GRASS.defaultBlockState();

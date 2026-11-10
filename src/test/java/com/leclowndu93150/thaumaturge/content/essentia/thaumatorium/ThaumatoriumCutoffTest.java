@@ -75,7 +75,7 @@ class ThaumatoriumCutoffTest {
         recipes = mock(RecipeManager.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRecipeManager()).thenReturn(recipes);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         BlockState heat = mock(BlockState.class);
         when(heat.is(TTBlockTags.CRUCIBLE_HEAT_SOURCES)).thenReturn(true);

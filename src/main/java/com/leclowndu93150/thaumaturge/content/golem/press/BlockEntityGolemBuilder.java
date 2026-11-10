@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -227,7 +228,7 @@ public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity imp
 
     private @Nullable IEssentiaConduit drainSource(Level level, Direction side) {
         BlockPos neighbour = worldPosition.relative(side);
-        if (!connectsOn(side) || !level.hasChunkAt(neighbour)) {
+        if (!connectsOn(side) || !LoadedChunks.contains(level, neighbour)) {
             return null;
         }
         Direction facing = side.getOpposite();

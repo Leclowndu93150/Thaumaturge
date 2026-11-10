@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -32,7 +33,7 @@ abstract class CellWorkBehavior implements ISealBehavior {
             claimed.dropFinished(level);
         }
         BlockPos cell = SealArea.cell(seal, step);
-        if (!level.hasChunkAt(cell)) {
+        if (!LoadedChunks.contains(level, cell)) {
             return;
         }
         if (!claimed.tracks(cell.asLong()) && isWorkable(level, seal, cell)) {

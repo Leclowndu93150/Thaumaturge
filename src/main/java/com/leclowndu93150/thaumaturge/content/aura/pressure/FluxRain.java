@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -64,7 +65,7 @@ public final class FluxRain {
                 center.getX() + random.nextInt(RADIUS * 2 + 1) - RADIUS,
                 center.getY(),
                 center.getZ() + random.nextInt(RADIUS * 2 + 1) - RADIUS);
-        if (!level.hasChunkAt(cursor)) {
+        if (!LoadedChunks.contains(level, cursor)) {
             return;
         }
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, cursor);

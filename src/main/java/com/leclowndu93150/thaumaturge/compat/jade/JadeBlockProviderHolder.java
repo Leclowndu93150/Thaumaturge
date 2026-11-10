@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInferna
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
 import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ final class JadeBlockProviderHolder {
     static @Nullable BlockEntity resolve(BlockAccessor accessor) {
         if (accessor.getBlockState().getBlock() instanceof BlockEldritchObelisk) {
             BlockPos basePos = BlockEldritchObelisk.basePos(accessor.getBlockState(), accessor.getPosition());
-            if (!accessor.getLevel().hasChunkAt(basePos)) return null;
+            if (!LoadedChunks.contains(accessor.getLevel(), basePos)) return null;
             BlockEntity base = accessor.getLevel().getBlockEntity(basePos);
             if (base instanceof BlockEntityEldritchObelisk) return base;
         }
@@ -134,7 +135,7 @@ final class JadeBlockProviderHolder {
         if (type == null) return null;
         BlockPos origin = accessor.getPosition();
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-1, -1, -1), origin.offset(1, 1, 1))) {
-            if (!accessor.getLevel().hasChunkAt(pos)) continue;
+            if (!LoadedChunks.contains(accessor.getLevel(), pos)) continue;
             BlockEntity entity = accessor.getLevel().getBlockEntity(pos);
             if (type.isInstance(entity)) return entity;
         }
@@ -152,7 +153,7 @@ final class JadeBlockProviderHolder {
         } else {
             return null;
         }
-        if (!accessor.getLevel().hasChunkAt(controller)) return null;
+        if (!LoadedChunks.contains(accessor.getLevel(), controller)) return null;
         return accessor.getLevel().getBlockEntity(controller) instanceof BlockEntityThaumatorium machine
                 ? machine
                 : null;

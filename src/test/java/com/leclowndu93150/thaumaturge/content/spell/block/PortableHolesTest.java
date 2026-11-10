@@ -16,7 +16,7 @@ class PortableHolesTest {
     @Test
     void cannotInspectAnUnloadedChunk() {
         Level level = mock(Level.class);
-        when(level.hasChunkAt(BlockPos.ZERO)).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
 
         assertFalse(PortableHoles.canOpen(level, BlockPos.ZERO));
         verify(level, never()).getBlockState(BlockPos.ZERO);
@@ -25,7 +25,7 @@ class PortableHolesTest {
     @Test
     void canOpenAirWithoutTreatingItAsAnUnbreakableBlock() {
         Level level = mock(Level.class);
-        when(level.hasChunkAt(BlockPos.ZERO)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getBlockState(BlockPos.ZERO)).thenReturn(Blocks.AIR.defaultBlockState());
 
         assertTrue(PortableHoles.canOpen(level, BlockPos.ZERO));

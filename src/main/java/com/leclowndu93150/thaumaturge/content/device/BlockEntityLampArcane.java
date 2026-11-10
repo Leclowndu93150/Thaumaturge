@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -50,7 +51,7 @@ public final class BlockEntityLampArcane extends BlockEntity {
 
     private void tryPlaceGlimmer(Level level, BlockPos origin, RandomSource random) {
         target.set(origin.getX() + spread(random), origin.getY() + spread(random), origin.getZ() + spread(random));
-        if (!level.hasChunkAt(target)) {
+        if (!LoadedChunks.contains(level, target)) {
             return;
         }
         adjustHeight(level);
@@ -104,7 +105,7 @@ public final class BlockEntityLampArcane extends BlockEntity {
         for (int dx = -LIGHT_RADIUS; dx <= LIGHT_RADIUS; dx++) {
             for (int dz = -LIGHT_RADIUS; dz <= LIGHT_RADIUS; dz++) {
                 target.set(origin.getX() + dx, origin.getY(), origin.getZ() + dz);
-                if (!level.hasChunkAt(target)) {
+                if (!LoadedChunks.contains(level, target)) {
                     continue;
                 }
                 for (int dy = -LIGHT_RADIUS; dy <= LIGHT_RADIUS; dy++) {

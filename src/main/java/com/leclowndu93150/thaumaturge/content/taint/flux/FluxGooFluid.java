@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
@@ -167,7 +168,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         int total = quantaRemaining;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighbour = pos.relative(direction);
-            if (!level.hasChunkAt(neighbour)) {
+            if (!LoadedChunks.contains(level, neighbour)) {
                 continue;
             }
             int quanta = getQuantaValueBelow(level, neighbour, lowerThan);
@@ -210,7 +211,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return 0;
         }
 
-        if (!level.hasChunkAt(other)) {
+        if (!LoadedChunks.contains(level, other)) {
             return amtToInput;
         }
         int amt = getQuantaValueBelow(level, other, PhysicalFlux.MAX_QUANTA);

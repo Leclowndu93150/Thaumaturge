@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,7 +20,7 @@ class CellWorkBehaviorPortTest {
     @Test
     void doesNotInspectOrPostWorkInAnUnloadedChunk() {
         ServerLevel level = mock(ServerLevel.class);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         ISealEntity seal = mock(ISealEntity.class);
         BlockPos sealBlock = new BlockPos(8, 64, 8);
         when(seal.pos()).thenReturn(new SealPos(sealBlock, Direction.NORTH));
@@ -30,7 +30,7 @@ class CellWorkBehaviorPortTest {
         behavior.tick(level, seal);
 
         assertFalse(behavior.inspectedCell);
-        verify(level).hasChunkAt(new BlockPos(8, 64, 7));
+        verify(level).hasChunk(0, 0);
     }
 
     private static final class ProbeBehavior extends CellWorkBehavior {

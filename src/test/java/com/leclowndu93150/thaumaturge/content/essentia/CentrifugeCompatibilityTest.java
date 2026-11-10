@@ -57,7 +57,7 @@ class CentrifugeCompatibilityTest {
         random = mock(RandomSource.class);
         when(level.getRandom()).thenReturn(random);
         when(level.getGameTime()).thenAnswer(invocation -> gameTime);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
     }
 
     private BlockEntityCentrifuge machine() {
@@ -130,10 +130,10 @@ class CentrifugeCompatibilityTest {
         when(source.extract(compound, 1, Direction.UP, false)).thenReturn(1);
         tick(machine, 4);
         verifyNoInteractions(source);
-        when(level.hasChunkAt(BlockPos.ZERO.below())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         tick(machine, 1);
         verifyNoInteractions(source);
-        when(level.hasChunkAt(BlockPos.ZERO.below())).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(source.pull(Direction.UP)).thenReturn(EssentiaPull.any(128));
         tick(machine, 5);
         verify(source, never()).extract(any(), anyInt(), any(), anyBoolean());

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -35,7 +36,8 @@ final class RiftSegmentSweep {
         Vec3 origin = rift.position();
         Vec3 start = origin.add(outline.get(index));
         Vec3 end = origin.add(outline.get(index + 1));
-        boolean loaded = level.hasChunkAt(BlockPos.containing(start)) && level.hasChunkAt(BlockPos.containing(end));
+        boolean loaded = LoadedChunks.contains(level, BlockPos.containing(start))
+                && LoadedChunks.contains(level, BlockPos.containing(end));
         if (!loaded) {
             return;
         }

@@ -30,10 +30,7 @@ class InfusionEnchantmentLightSafetyTest {
             }
             return queried.equals(loadedNeighbor) ? 9 : 0;
         });
-        when(level.hasChunkAt(any(BlockPos.class))).thenAnswer(invocation -> {
-            BlockPos queried = invocation.getArgument(0);
-            return queried.equals(loadedNeighbor);
-        });
+        when(level.hasChunk(0, 0)).thenReturn(true);
 
         assertEquals(8, InfusionEnchantmentEvents.settledLight(level, center));
         assertFalse(queriedPositions.contains(unloadedNeighbor));

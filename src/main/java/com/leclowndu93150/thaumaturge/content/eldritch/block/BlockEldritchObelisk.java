@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
@@ -91,7 +92,7 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
         }
         for (int part = 1; part < PART_COUNT; part++) {
             BlockPos partPos = basePos.above(part);
-            if (!level.hasChunkAt(partPos)) {
+            if (!LoadedChunks.contains(level, partPos)) {
                 continue;
             }
             BlockState current = level.getBlockState(partPos);
@@ -148,7 +149,7 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
             if (part == 0) {
                 for (int childPart = 1; childPart < PART_COUNT; childPart++) {
                     BlockPos childPos = pos.above(childPart);
-                    if (!level.hasChunkAt(childPos)) {
+                    if (!LoadedChunks.contains(level, childPos)) {
                         continue;
                     }
                     BlockState childState = level.getBlockState(childPos);
@@ -158,7 +159,7 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
                 }
             } else {
                 BlockPos basePos = pos.below(part);
-                if (level.hasChunkAt(basePos)) {
+                if (LoadedChunks.contains(level, basePos)) {
                     BlockState baseState = level.getBlockState(basePos);
                     if (baseState.is(this) && baseState.getValue(PART) == 0) {
                         level.setBlock(basePos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);

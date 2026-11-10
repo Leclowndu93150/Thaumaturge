@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -230,7 +231,8 @@ public final class BlockEntityLevitator extends AbstractSyncedBlockEntity {
         for (int distance = 1; distance <= range; distance++) {
             probe.setWithOffset(
                     pos, facing.getStepX() * distance, facing.getStepY() * distance, facing.getStepZ() * distance);
-            if (!level.hasChunkAt(probe) || level.getBlockState(probe).isSolidRender(level, probe)) {
+            if (!LoadedChunks.contains(level, probe)
+                    || level.getBlockState(probe).isSolidRender(level, probe)) {
                 return distance;
             }
         }

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -84,7 +85,7 @@ final class ResearchTableBonuses {
             for (int dy = -RADIUS; dy <= RADIUS; dy++) {
                 for (int dz = -RADIUS; dz <= RADIUS; dz++) {
                     cursor.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
-                    if (!level.hasChunkAt(cursor)) {
+                    if (!LoadedChunks.contains(level, cursor)) {
                         continue;
                     }
                     successes.clear();

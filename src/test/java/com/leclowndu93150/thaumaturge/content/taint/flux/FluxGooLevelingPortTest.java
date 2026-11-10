@@ -46,7 +46,7 @@ class FluxGooLevelingPortTest {
         states.put(origin.above(), Blocks.STONE.defaultBlockState());
 
         when(level.getMinBuildHeight()).thenReturn(0);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getRandom()).thenReturn(worldRandom);
         when(worldRandom.nextInt(5)).thenReturn(1);
         when(worldRandom.nextInt(4)).thenReturn(3);

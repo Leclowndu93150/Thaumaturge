@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -48,7 +49,7 @@ class LatticeAnchorCutoffTest {
     private BlockCondenserLattice clean;
     private BlockCondenserLattice dirty;
     private final Map<BlockPos, BlockState> blocks = new HashMap<>();
-    private Predicate<BlockPos> loaded = pos -> true;
+    private Predicate<ChunkPos> loaded = pos -> true;
 
     @BeforeEach
     void setUp() {
@@ -57,10 +58,11 @@ class LatticeAnchorCutoffTest {
         clean = (BlockCondenserLattice) TTBlocks.CONDENSER_LATTICE.get();
         dirty = (BlockCondenserLattice) TTBlocks.CONDENSER_LATTICE_DIRTY.get();
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any(BlockPos.class))).thenAnswer(call -> loaded.test(call.getArgument(0)));
+        when(level.hasChunk(anyInt(), anyInt()))
+                .thenAnswer(call -> loaded.test(new ChunkPos(call.getArgument(0), call.getArgument(1))));
         when(level.getBlockState(any(BlockPos.class))).thenAnswer(call -> {
             BlockPos pos = call.getArgument(0);
-            assertTrue(loaded.test(pos), "Read from an unknown chunk at " + pos);
+            assertTrue(loaded.test(new ChunkPos(pos)), "Read from an unknown chunk at " + pos);
             return blocks.getOrDefault(pos, Blocks.AIR.defaultBlockState());
         });
     }
@@ -188,7 +190,7 @@ class LatticeAnchorCutoffTest {
     void unknownChunkFrontierStopsDestructionAndIsNeverRead() {
         BlockPos pos = new BlockPos(15, 1, 0);
         blocks.put(pos, clean.defaultBlockState());
-        loaded = candidate -> candidate.getX() < 16;
+        loaded = chunk -> chunk.x < 1;
         LatticeAnchor.settle(level, pos);
         verify(level, never()).getBlockState(argThat(candidate -> candidate.getX() >= 16));
         verify(level, never()).destroyBlock(any(), anyBoolean());
@@ -201,7 +203,7 @@ class LatticeAnchorCutoffTest {
         BlockEntityCondenser entity = anchor(condenser);
         BlockPos pos = condenser.above();
         blocks.put(pos, clean.defaultBlockState());
-        loaded = candidate -> candidate.getX() < 16;
+        loaded = chunk -> chunk.x < 1;
         LatticeAnchor.settle(level, pos);
         verify(entity).triggerCheck();
         verify(level, never()).destroyBlock(any(), anyBoolean());
@@ -211,7 +213,7 @@ class LatticeAnchorCutoffTest {
     @Test
     void aScheduledTickForAnAlreadyReplacedCellDoesNothing() {
         LatticeAnchor.settle(level, BlockPos.ZERO);
-        verify(level, never()).hasChunkAt(any());
+        verify(level, never()).hasChunk(anyInt(), anyInt());
         verify(level, never()).destroyBlock(any(), anyBoolean());
         verify(level, never()).getBlockEntity(any());
     }

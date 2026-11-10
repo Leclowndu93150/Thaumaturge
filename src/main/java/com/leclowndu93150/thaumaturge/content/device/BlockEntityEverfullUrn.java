@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -93,7 +94,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
             return;
         }
         BlockPos candidate = positionOf(cell);
-        if (targets.contains(cell) || !level.hasChunkAt(candidate) || !acceptsWater(level, candidate)) {
+        if (targets.contains(cell) || !LoadedChunks.contains(level, candidate) || !acceptsWater(level, candidate)) {
             return;
         }
         targets.add(cell);
@@ -120,7 +121,7 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         Iterator<Integer> walk = targets.iterator();
         while (walk.hasNext() && waterAmount() >= PUSH_AMOUNT) {
             BlockPos target = positionOf(walk.next());
-            if (!level.hasChunkAt(target)) {
+            if (!LoadedChunks.contains(level, target)) {
                 continue;
             }
             BlockState state = level.getBlockState(target);

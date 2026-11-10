@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -30,7 +30,7 @@ class NodeDevicePortTest {
         when(level.getBlockState(nodePos)).thenReturn(hostState);
         RandomSource random = mock(RandomSource.class);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         Method catastrophe = BlockEntityNodeTransducer.class.getDeclaredMethod(
                 "catastrophicFailure", ServerLevel.class, BlockPos.class);

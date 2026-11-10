@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Lifecycle;
@@ -53,7 +54,7 @@ class FluxScrubberConduitCutoffTest {
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(random.nextInt(CELLS)).thenReturn(CENTER);
     }
@@ -169,7 +170,7 @@ class FluxScrubberConduitCutoffTest {
                 var flux = mockStatic(PhysicalFlux.class)) {
             tick(insufficient, 1);
             flux.verifyNoInteractions();
-            verify(level, never()).hasChunkAt(any());
+            verify(level, never()).hasChunk(anyInt(), anyInt());
         }
     }
 
@@ -178,13 +179,16 @@ class FluxScrubberConduitCutoffTest {
         var machine = machine(0, 0, 5);
         when(random.nextInt(CELLS - 1)).thenReturn(2, 0);
         Set<BlockPos> visited = new HashSet<>();
-        when(level.hasChunkAt(any())).thenAnswer(call -> {
-            BlockPos pos = call.getArgument(0);
-            assertTrue(visited.add(pos.immutable()));
-            assertTrue(pos.distSqr(BlockPos.ZERO) < 16 * 16);
-            return false;
-        });
-        try (var flux = mockStatic(PhysicalFlux.class)) {
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
+        try (var flux = mockStatic(PhysicalFlux.class);
+                var chunks = mockStatic(LoadedChunks.class, CALLS_REAL_METHODS)) {
+            chunks.when(() -> LoadedChunks.contains(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> {
+                        BlockPos pos = call.getArgument(1);
+                        assertTrue(visited.add(pos.immutable()));
+                        assertTrue(pos.distSqr(BlockPos.ZERO) < 16 * 16);
+                        return call.callRealMethod();
+                    });
             tick(machine, 1);
             flux.verifyNoInteractions();
         }
@@ -212,7 +216,7 @@ class FluxScrubberConduitCutoffTest {
             assertEquals(0, machine.power());
             assertEquals(0, machine.charges());
             assertEquals(Math.min(capacity, yield), machine.storedEssentia());
-            verify(level, times(1)).hasChunkAt(any());
+            verify(level, times(1)).hasChunk(anyInt(), anyInt());
             verify(sparkle).color(0xDD / 255.0F, 0.0F, 1.0F);
             verify(sparkle).scale(0.8F);
             verify(sparkle).send();

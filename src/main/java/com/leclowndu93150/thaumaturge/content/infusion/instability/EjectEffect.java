@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTInstabilityEffects;
 import com.mojang.serialization.Codec;
@@ -103,7 +104,7 @@ public record EjectEffect(
         RandomSource random = context.random();
         List<BlockEntityPedestal> stocked = new ArrayList<>();
         for (BlockPos pos : context.pedestals()) {
-            if (level.hasChunkAt(pos)
+            if (LoadedChunks.contains(level, pos)
                     && level.getBlockEntity(pos) instanceof BlockEntityPedestal pedestal
                     && !pedestal.getItem().isEmpty()) {
                 stocked.add(pedestal);
@@ -117,7 +118,7 @@ public record EjectEffect(
         BlockPos target = pedestal.getBlockPos();
         BlockPos stabilizerPos = pedestal.findInstabilityMitigator();
         if (stabilizerPos != null
-                && level.hasChunkAt(stabilizerPos)
+                && LoadedChunks.contains(level, stabilizerPos)
                 && level.getBlockEntity(stabilizerPos) instanceof BlockEntityStabilizer stabilizer
                 && stabilizer.spendForShield(mitigation.sample(random))) {
             flashWard(context, target);

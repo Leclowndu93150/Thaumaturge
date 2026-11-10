@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +24,7 @@ public final class WispPressureEvent extends AbstractFluxPressureEvent {
     public boolean fire(ServerLevel level, BlockPos origin, FluxPressureState state) {
         BlockPos spawn =
                 level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, origin).above(HEIGHT_ABOVE_SURFACE);
-        if (spawn.getY() >= level.getMaxBuildHeight() - 1 || !level.hasChunkAt(spawn)) {
+        if (spawn.getY() >= level.getMaxBuildHeight() - 1 || !LoadedChunks.contains(level, spawn)) {
             return false;
         }
         WispEntity wisp = TTEntities.WISP.get().create(level);

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
@@ -486,7 +487,7 @@ public final class NodeGenerator {
             for (int dz = -SURVEY_RADIUS; dz <= SURVEY_RADIUS; dz++) {
                 int x = origin.getX() + dx;
                 int z = origin.getZ() + dz;
-                if (!level.hasChunkAt(x, z)) {
+                if (!LoadedChunks.contains(level, x, z)) {
                     continue;
                 }
                 for (int dy = -SURVEY_RADIUS; dy <= SURVEY_RADIUS; dy++) {

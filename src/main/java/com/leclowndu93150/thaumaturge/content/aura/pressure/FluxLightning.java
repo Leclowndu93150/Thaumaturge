@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -102,7 +103,7 @@ public final class FluxLightning {
     }
 
     private static void placeGoo(ServerLevel level, BlockPos target) {
-        if (!level.hasChunkAt(target)) {
+        if (!LoadedChunks.contains(level, target)) {
             return;
         }
         BlockPos placedAt = target;

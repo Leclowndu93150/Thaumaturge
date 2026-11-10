@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import java.util.ArrayList;
@@ -204,7 +205,7 @@ final class NodeHunger {
         SpaceFrame frame = LevelSpaces.frameOf(level, pos);
         Vec3 to = frame.toWorld(Vec3.atCenterOf(aim));
         if (aim.equals(pos)
-                || !level.hasChunkAt(BlockPos.containing(to))
+                || !LoadedChunks.contains(level, BlockPos.containing(to))
                 || (frame.isWorld()
                         && aim.getY() >= level.getHeight(Heightmap.Types.WORLD_SURFACE, aim.getX(), aim.getZ()))) {
             return null;

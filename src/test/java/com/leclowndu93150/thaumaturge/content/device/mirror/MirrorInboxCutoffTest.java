@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +59,7 @@ class MirrorInboxCutoffTest {
         when(level.dimension()).thenReturn(Level.OVERWORLD);
         when(level.getServer()).thenReturn(server);
         when(server.getLevel(Level.OVERWORLD)).thenReturn(level);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockEntity(any())).thenAnswer(call -> blockEntities.get(call.getArgument(0)));
     }
 

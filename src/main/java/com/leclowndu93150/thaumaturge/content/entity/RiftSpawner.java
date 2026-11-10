@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +32,7 @@ final class RiftSpawner {
         int z = origin.getZ() + random.nextInt(PLACEMENT_SPREAD);
         int x = origin.getX() + random.nextInt(PLACEMENT_SPREAD);
         BlockPos column = new BlockPos(x, origin.getY(), z);
-        if (!level.hasChunkAt(column)) {
+        if (!LoadedChunks.contains(level, column)) {
             return;
         }
         int ceiling = level.getMaxBuildHeight();

@@ -178,7 +178,7 @@ class FluxGooVerticalFlowPortTest {
             states.put(origin.south(), Blocks.STONE.defaultBlockState());
             states.put(origin.west(), Blocks.STONE.defaultBlockState());
             when(level.getMinBuildHeight()).thenReturn(0);
-            when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
+            when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
             when(level.getRandom()).thenReturn(random);
             when(level.getBlockState(any(BlockPos.class))).thenAnswer(invocation -> {
                 BlockPos queried = invocation.getArgument(0);

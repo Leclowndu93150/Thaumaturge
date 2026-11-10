@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayDeque;
@@ -233,7 +234,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
 
     private @Nullable IEssentiaConduit neighbour(Level level, Direction side) {
         BlockPos pos = worldPosition.relative(side);
-        if (!level.hasChunkAt(pos)) {
+        if (!LoadedChunks.contains(level, pos)) {
             return null;
         }
         return EssentiaAccess.conduit(level, pos, side.getOpposite());
@@ -330,7 +331,8 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
     }
 
     private static boolean isLattice(Level level, BlockPos pos) {
-        return level.hasChunkAt(pos) && level.getBlockState(pos).getBlock() instanceof BlockCondenserLattice;
+        return LoadedChunks.contains(level, pos)
+                && level.getBlockState(pos).getBlock() instanceof BlockCondenserLattice;
     }
 
     private static boolean isClean(Level level, BlockPos pos) {

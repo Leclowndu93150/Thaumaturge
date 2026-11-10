@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -88,7 +89,7 @@ public final class SealHandler {
             return;
         }
         seal.behavior().onRemoved(level, seal);
-        if (level.hasChunkAt(pos.pos())) {
+        if (LoadedChunks.contains(level, pos.pos())) {
             LevelChunk chunk = level.getChunkAt(pos.pos());
             chunk.getData(TTAttachments.SEALS).seals().remove(seal);
             chunk.setUnsaved(true);
@@ -132,7 +133,7 @@ public final class SealHandler {
     public static void tickSealEntities(ServerLevel level) {
         boolean validate = level.getGameTime() % 20 == 0;
         for (SealEntity seal : index(level).seals().values()) {
-            if (!level.hasChunkAt(seal.pos().pos())) {
+            if (!LoadedChunks.contains(level, seal.pos().pos())) {
                 continue;
             }
             try {
@@ -153,7 +154,7 @@ public final class SealHandler {
     }
 
     public static void markDirty(ServerLevel level, BlockPos pos) {
-        if (level.hasChunkAt(pos)) {
+        if (LoadedChunks.contains(level, pos)) {
             level.getChunkAt(pos).setUnsaved(true);
         }
     }

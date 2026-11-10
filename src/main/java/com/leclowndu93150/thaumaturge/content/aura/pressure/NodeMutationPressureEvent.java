@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.pressure;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +27,7 @@ public final class NodeMutationPressureEvent extends AbstractFluxPressureEvent {
     public boolean fire(ServerLevel level, BlockPos origin, FluxPressureState state) {
         Optional<BlockPos> nearest = NodeLocationIndex.get(level).findNearestAny(origin, RANGE);
         if (nearest.isEmpty()
-                || !level.hasChunkAt(nearest.get())
+                || !LoadedChunks.contains(level, nearest.get())
                 || !(level.getBlockEntity(nearest.get()) instanceof BlockEntityNode node)) {
             return false;
         }

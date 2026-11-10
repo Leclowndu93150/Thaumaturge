@@ -29,7 +29,7 @@ class HungryNodeWardTest {
         BlockPos target = new BlockPos(1, 0, 0);
         AtomicInteger offset = new AtomicInteger();
         when(random.nextInt(anyInt())).thenAnswer(invocation -> offset.getAndIncrement() % 6 == 0 ? 1 : 0);
-        when(level.hasChunkAt(target)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getHeight(eq(Heightmap.Types.WORLD_SURFACE), anyInt(), anyInt()))
                 .thenReturn(10);
         when(level.clip(any(ClipContext.class)))

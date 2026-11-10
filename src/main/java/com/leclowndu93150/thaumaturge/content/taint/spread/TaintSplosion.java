@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.spread;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -33,7 +34,7 @@ public final class TaintSplosion {
             }
             int y = onSurface ? level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) : center.getY();
             BlockPos column = new BlockPos(x, y, z);
-            if (!level.hasChunkAt(column) || !TaintBiomeManager.taintColumn(level, column)) {
+            if (!LoadedChunks.contains(level, column) || !TaintBiomeManager.taintColumn(level, column)) {
                 continue;
             }
             if (level.getBlockState(column).canBeReplaced()

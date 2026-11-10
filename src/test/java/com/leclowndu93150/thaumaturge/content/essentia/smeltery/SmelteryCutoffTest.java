@@ -70,7 +70,7 @@ class SmelteryCutoffTest {
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(random.nextDouble()).thenReturn(0.5);
     }
@@ -386,7 +386,7 @@ class SmelteryCutoffTest {
         when(level.getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.east(), Direction.WEST))
                 .thenReturn(east);
         when(north.connectsOn(Direction.SOUTH)).thenReturn(true);
-        when(level.hasChunkAt(BlockPos.ZERO.west())).thenReturn(false);
+        when(level.hasChunk(-1, 0)).thenReturn(false);
         var state = block.getStateForPlacement(context);
         assertTrue(state.getValue(BlockAlembic.NORTH));
         assertFalse(state.getValue(BlockAlembic.EAST));

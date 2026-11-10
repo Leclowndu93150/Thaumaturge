@@ -13,6 +13,7 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectEssentiaHost;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectStorage;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -114,7 +115,8 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity
         }
         BlockEntityAlembic firstFree = null;
         BlockPos.MutableBlockPos cursor = start.mutable().move(Direction.UP);
-        while (level.hasChunkAt(cursor) && level.getBlockEntity(cursor) instanceof BlockEntityAlembic candidate) {
+        while (LoadedChunks.contains(level, cursor)
+                && level.getBlockEntity(cursor) instanceof BlockEntityAlembic candidate) {
             if (candidate.canStart(key)) {
                 if (candidate.amount > 0) {
                     return candidate.doAddToContainer(key, 1) == 0;

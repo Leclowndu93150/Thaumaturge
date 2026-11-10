@@ -69,7 +69,7 @@ class PotionSprayerConduitCutoffTest {
         random = mock(RandomSource.class);
         when(level.getRandom()).thenReturn(random);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
     }
 
     private BlockEntityPotionSprayer machine(Direction front) {
@@ -170,10 +170,10 @@ class PotionSprayerConduitCutoffTest {
         when(source.heldAspect(Direction.WEST)).thenReturn(other);
         when(source.pull(Direction.WEST)).thenReturn(EssentiaPull.NONE);
         when(source.extract(aspect, 1, Direction.WEST, false)).thenReturn(1);
-        when(level.hasChunkAt(sourcePos)).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         tick(machine, 5, true);
         verifyNoInteractions(source);
-        when(level.hasChunkAt(sourcePos)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         tick(machine, 5, true);
         verify(source, never()).extract(any(), anyInt(), any(), anyBoolean());
         when(source.heldAspect(Direction.WEST)).thenReturn(aspect);

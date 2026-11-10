@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.equipment.RefiningResults;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockSightline;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -135,7 +136,7 @@ public final class ArcaneBoreCore {
     private void dig(ArcaneBoreHost host, ServerLevel level) {
         BlockPos target = digTarget;
         digTarget = null;
-        if (target == null || !level.hasChunkAt(target)) {
+        if (target == null || !LoadedChunks.contains(level, target)) {
             return;
         }
         BlockState state = level.getBlockState(target);
@@ -245,7 +246,7 @@ public final class ArcaneBoreCore {
         int y = origin.getY() - (phase == 3 && facing.getStepY() == 0 ? TUNNEL_LIGHT_DROP : 0);
         int z = origin.getZ() + (facing.getStepX() != 0 ? sideways : 0);
         BlockPos target = LevelSpaces.worldBlock(level, new BlockPos(x, y, z));
-        if (level.hasChunkAt(target)
+        if (LoadedChunks.contains(level, target)
                 && level.getBlockState(target).isAir()
                 && level.getBrightness(LightLayer.BLOCK, target) < MAX_TUNNEL_LIGHT) {
             level.setBlock(target, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
@@ -256,7 +257,7 @@ public final class ArcaneBoreCore {
         BlockPos pos = host.borePos();
         for (Direction side : SIDES) {
             BlockPos lamp = pos.relative(side);
-            if (!level.hasChunkAt(lamp)) {
+            if (!LoadedChunks.contains(level, lamp)) {
                 continue;
             }
             BlockState state = level.getBlockState(lamp);

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
@@ -278,7 +279,7 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
             return;
         }
         BlockPos inventoryPos = worldPosition.relative(side, OUTPUT_INVENTORY_DISTANCE);
-        ItemStack remainder = serverLevel.hasChunkAt(inventoryPos)
+        ItemStack remainder = LoadedChunks.contains(serverLevel, inventoryPos)
                 ? InvHelper.insertAt(serverLevel, inventoryPos, side.getOpposite(), stack, false)
                 : stack;
         if (remainder.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
@@ -180,7 +181,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
             return null;
         }
         ServerLevel targetLevel = targetLevel();
-        if (targetLevel == null || !targetLevel.hasChunkAt(link.pos()) || !isLinkValidSimple()) {
+        if (targetLevel == null || !LoadedChunks.contains(targetLevel, link.pos()) || !isLinkValidSimple()) {
             return null;
         }
         return target() instanceof BlockEntityMirror mirror ? mirror : null;

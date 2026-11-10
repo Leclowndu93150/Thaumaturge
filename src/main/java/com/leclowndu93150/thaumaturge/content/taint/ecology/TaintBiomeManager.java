@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -37,7 +38,7 @@ public final class TaintBiomeManager {
     private TaintBiomeManager() {}
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos)
+        return LoadedChunks.contains(level, pos)
                 && level.getNoiseBiome(
                                 QuartPos.fromBlock(pos.getX()),
                                 QuartPos.fromBlock(pos.getY()),

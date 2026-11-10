@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -64,7 +65,7 @@ public final class TaintFeeding {
                         SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
                         at.getY(),
                         SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
-                if (!level.hasChunkAt(probe)) {
+                if (!LoadedChunks.contains(level, probe)) {
                     continue;
                 }
                 float flux = AuraHelper.getFlux(level, probe);

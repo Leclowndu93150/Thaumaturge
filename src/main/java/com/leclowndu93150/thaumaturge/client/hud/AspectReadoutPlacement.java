@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -12,7 +13,7 @@ final class AspectReadoutPlacement {
         Direction side = preferred.getAxis().isHorizontal() ? preferred : Direction.NORTH;
         for (int i = 0; i < 4; i++) {
             BlockPos neighborPos = pos.relative(side);
-            if (level.hasChunkAt(neighborPos)) {
+            if (LoadedChunks.contains(level, neighborPos)) {
                 BlockState neighbor = level.getBlockState(neighborPos);
                 if (neighbor.isAir() || !neighbor.isSolidRender(level, neighborPos)) {
                     return side;

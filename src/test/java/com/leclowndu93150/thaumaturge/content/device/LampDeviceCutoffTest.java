@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Lifecycle;
@@ -58,7 +59,7 @@ class LampDeviceCutoffTest {
         random = mock(RandomSource.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(random.nextInt(169)).thenReturn(84);
     }
@@ -139,11 +140,11 @@ class LampDeviceCutoffTest {
         var lamp = new BlockEntityLampArcane(BlockPos.ZERO, state);
         when(level.getGameTime()).thenReturn(0L);
         when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(false);
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         BlockEntityLampArcane.serverTick(level, BlockPos.ZERO, state, lamp);
 
-        verify(level).hasChunkAt(BlockPos.ZERO);
+        verify(level).hasChunk(0, 0);
         verify(level, never()).getHeight(Heightmap.Types.MOTION_BLOCKING, 0, 0);
         verify(level, never()).getBlockState(any());
     }
@@ -156,10 +157,8 @@ class LampDeviceCutoffTest {
         Set<BlockPos> visited = new HashSet<>();
         lamp.setLevel(level);
         when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(lamp);
-        when(level.hasChunkAt(any())).thenAnswer(call -> {
-            BlockPos column = call.getArgument(0);
-            return column.getX() == glimmer.getX() && column.getZ() == glimmer.getZ();
-        });
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getBlockState(any())).thenAnswer(call -> {
             BlockPos position = call.getArgument(0);
             visited.add(position.immutable());
@@ -344,34 +343,37 @@ class LampDeviceCutoffTest {
         when(level.getRandom()).thenReturn(RandomSource.create(125L));
         List<BlockPos> columns = new ArrayList<>();
         List<BlockPos> cells = new ArrayList<>();
-        when(level.hasChunkAt(any())).thenAnswer(call -> {
-            BlockPos cell = call.getArgument(0);
-            columns.add(cell.immutable());
-            return true;
-        });
         when(level.getBlockState(any())).thenAnswer(call -> {
             BlockPos cell = call.getArgument(0);
             cells.add(cell.immutable());
             return Blocks.AIR.defaultBlockState();
         });
-        tick(first, 169);
-        assertEquals(169, columns.size());
-        assertEquals(169, new HashSet<>(columns).size());
-        assertTrue(cells.stream().allMatch(cell -> cell.distSqr(BlockPos.ZERO) < 36));
-        assertEquals(1000, first.getUpdateTag(registries).getInt("charges"));
-        List<BlockPos> initialOrder = List.copyOf(columns);
-        columns.clear();
-        cells.clear();
-        var second = growth(1000, true);
-        when(level.getRandom()).thenReturn(RandomSource.create(125L));
-        tick(second, 169);
-        assertEquals(initialOrder, columns);
+        try (var chunks = mockStatic(LoadedChunks.class, CALLS_REAL_METHODS)) {
+            chunks.when(() -> LoadedChunks.contains(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> {
+                        BlockPos cell = call.getArgument(1);
+                        columns.add(cell.immutable());
+                        return call.callRealMethod();
+                    });
+            tick(first, 169);
+            assertEquals(169, columns.size());
+            assertEquals(169, new HashSet<>(columns).size());
+            assertTrue(cells.stream().allMatch(cell -> cell.distSqr(BlockPos.ZERO) < 36));
+            assertEquals(1000, first.getUpdateTag(registries).getInt("charges"));
+            List<BlockPos> initialOrder = List.copyOf(columns);
+            columns.clear();
+            cells.clear();
+            var second = growth(1000, true);
+            when(level.getRandom()).thenReturn(RandomSource.create(125L));
+            tick(second, 169);
+            assertEquals(initialOrder, columns);
+        }
     }
 
     @Test
     void growthNeverReadsAnUnloadedColumnOrSpendsItsCharges() {
         var lamp = growth(7, true);
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         tick(lamp, 1);
         verify(level, never()).getBlockState(any());
         assertEquals(7, lamp.getUpdateTag(registries).getInt("charges"));

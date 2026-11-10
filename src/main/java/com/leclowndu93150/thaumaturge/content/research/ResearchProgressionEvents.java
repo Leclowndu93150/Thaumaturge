@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.api.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
@@ -225,7 +226,7 @@ public final class ResearchProgressionEvents {
                     player.getY() > player.level().getMaxBuildHeight() * UP_HIGH_FRACTION);
         }
         if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0) return;
-        if (player.level().hasChunkAt(player.blockPosition())) {
+        if (LoadedChunks.contains(player.level(), player.blockPosition())) {
             Holder<Biome> biome = player.level().getBiome(player.blockPosition());
             milestone(
                     player,

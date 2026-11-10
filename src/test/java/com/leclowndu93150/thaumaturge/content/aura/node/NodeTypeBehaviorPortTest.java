@@ -76,7 +76,7 @@ class NodeTypeBehaviorPortTest {
         RandomSource random = mock(RandomSource.class);
         when(level.dimension()).thenReturn(Level.OVERWORLD);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(new BlockPos(2, 0, 2))).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(random.nextInt(8)).thenReturn(3, 1, 4, 2);
         try (MockedStatic<TaintBiomeManager> taint = mockStatic(TaintBiomeManager.class)) {
             taint.when(() -> TaintBiomeManager.isTainted(level, new BlockPos(2, 0, 2)))
@@ -95,7 +95,7 @@ class NodeTypeBehaviorPortTest {
         Holder<Biome> biome = Holder.Reference.createStandAlone(owner, TTBiomes.EERIE);
         when(level.dimension()).thenReturn(Level.OVERWORLD);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(BlockPos.ZERO)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getBiome(BlockPos.ZERO)).thenReturn(biome);
         when(random.nextInt(12)).thenReturn(0);
 
@@ -113,7 +113,7 @@ class NodeTypeBehaviorPortTest {
         Holder<Biome> biome = Holder.Reference.createStandAlone(owner, TTBiomes.MAGICAL_FOREST);
         when(level.dimension()).thenReturn(Level.OVERWORLD);
         when(level.getRandom()).thenReturn(random);
-        when(level.hasChunkAt(BlockPos.ZERO)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getBiome(BlockPos.ZERO)).thenReturn(biome);
         when(random.nextInt(12)).thenReturn(0);
 

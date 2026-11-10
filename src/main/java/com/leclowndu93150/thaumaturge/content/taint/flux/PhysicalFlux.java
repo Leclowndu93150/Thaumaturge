@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
@@ -77,7 +78,7 @@ public final class PhysicalFlux {
                 continue;
             }
             BlockPos target = origin.offset(dx, dy, dz);
-            if (level.hasChunkAt(target) && trySpillAt(level, target, random)) {
+            if (LoadedChunks.contains(level, target) && trySpillAt(level, target, random)) {
                 return true;
             }
         }

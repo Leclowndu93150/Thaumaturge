@@ -55,7 +55,7 @@ class ReservoirCompatibilityTest {
         registries = new RegistryAccess.ImmutableRegistryAccess(List.of(registry)).freeze();
         level = mock(ServerLevel.class);
         when(level.registryAccess()).thenReturn(registries);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getBlockState(any())).thenReturn(Blocks.AIR.defaultBlockState());
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
     }
@@ -130,11 +130,11 @@ class ReservoirCompatibilityTest {
         verifyNoInteractions(source);
         tick(reservoir, 1);
         assertEquals(1, reservoir.getStoredAmount());
-        when(level.hasChunkAt(BlockPos.ZERO.east())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         clearInvocations(source);
         tick(reservoir, 5);
         verifyNoInteractions(source);
-        when(level.hasChunkAt(BlockPos.ZERO.east())).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(source.connectsOn(Direction.WEST)).thenReturn(false);
         tick(reservoir, 5);
         verify(source, never()).extract(order, 1, Direction.WEST, false);
@@ -188,12 +188,12 @@ class ReservoirCompatibilityTest {
 
     @Test
     void pocketSearchNeverWritesToUnloadedChunks() {
-        when(level.hasChunkAt(any())).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
         try (var flux = mockStatic(PhysicalFlux.class)) {
             FluxPocketScatter.scatter(level, BlockPos.ZERO, 3);
             flux.verifyNoInteractions();
         }
-        verify(level, times(50)).hasChunkAt(any());
+        verify(level, times(50)).hasChunk(anyInt(), anyInt());
         verify(level, never()).getBlockState(any());
     }
 
@@ -272,7 +272,7 @@ class ReservoirCompatibilityTest {
             assertEquals(0, FluxPocketScatter.scatter(level, BlockPos.ZERO, 0));
             flux.verifyNoInteractions();
         }
-        verify(level, never()).hasChunkAt(any());
+        verify(level, never()).hasChunk(anyInt(), anyInt());
         verifyNoInteractions(level.getRandom());
     }
 }

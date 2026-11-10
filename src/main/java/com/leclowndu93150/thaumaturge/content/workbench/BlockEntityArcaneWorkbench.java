@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.transaction.Transaction;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
 import com.leclowndu93150.thaumaturge.content.aura.AuraVisDrain;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.nio.charset.StandardCharsets;
@@ -117,7 +118,7 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
             for (int z = -1; z <= 1; z++) {
                 ChunkPos current = new ChunkPos(chunkPos.x + x, chunkPos.z + z);
                 BlockPos anchor = current.getMiddleBlockPosition(home.getY());
-                if (level.hasChunkAt(anchor)) {
+                if (LoadedChunks.contains(level, anchor)) {
                     anchors.add(anchor);
                 }
             }

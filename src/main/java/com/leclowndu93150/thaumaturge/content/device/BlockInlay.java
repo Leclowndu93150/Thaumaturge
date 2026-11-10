@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.infusion.AltarStabiliser;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPedestal;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayDeque;
@@ -130,7 +131,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
 
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockPos neighbour = pos.relative(direction);
-                if (level.hasChunkAt(neighbour)
+                if (LoadedChunks.contains(level, neighbour)
                         && level.getBlockState(neighbour).is(this)) {
                     updateNetwork(level, neighbour);
                 }
@@ -180,7 +181,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
         while (!pending.isEmpty() && iterations++ < 4096) {
             BlockPos pos = pending.removeFirst();
             queued.remove(pos);
-            if (!level.hasChunkAt(pos)) {
+            if (!LoadedChunks.contains(level, pos)) {
                 continue;
             }
             BlockState state = level.getBlockState(pos);
@@ -198,7 +199,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
             int target = 0;
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockPos neighbourPos = pos.relative(direction);
-                if (!level.hasChunkAt(neighbourPos)) {
+                if (!LoadedChunks.contains(level, neighbourPos)) {
                     continue;
                 }
                 target = Math.max(target, sourceStrengthAt(level, neighbourPos));
@@ -209,7 +210,7 @@ public final class BlockInlay extends Block implements AltarStabiliser {
                 level.setBlock(pos, state.setValue(property, target), Block.UPDATE_CLIENTS);
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
                     BlockPos neighbourPos = pos.relative(direction);
-                    if (level.hasChunkAt(neighbourPos)
+                    if (LoadedChunks.contains(level, neighbourPos)
                             && chargeAt(level, neighbourPos) >= 0
                             && queued.add(neighbourPos)) {
                         pending.addLast(neighbourPos);

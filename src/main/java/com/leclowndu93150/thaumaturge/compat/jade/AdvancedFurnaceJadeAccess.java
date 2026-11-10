@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,7 +23,7 @@ final class AdvancedFurnaceJadeAccess {
             for (int x = -1; x <= 1; x++) {
                 for (int z = -1; z <= 1; z++) {
                     BlockPos candidate = origin.offset(x, y, z);
-                    if (!accessor.getLevel().hasChunkAt(candidate)) {
+                    if (!LoadedChunks.contains(accessor.getLevel(), candidate)) {
                         continue;
                     }
                     if (accessor.getLevel().getBlockEntity(candidate)

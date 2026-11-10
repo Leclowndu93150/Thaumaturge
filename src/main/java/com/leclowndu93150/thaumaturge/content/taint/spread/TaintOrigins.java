@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.spread;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -121,7 +122,7 @@ public final class TaintOrigins {
     }
 
     private static boolean isLoaded(ServerLevel level, BlockPos anchor) {
-        return level.hasChunkAt(anchor) && level.areEntitiesLoaded(ChunkPos.asLong(anchor));
+        return LoadedChunks.contains(level, anchor) && level.areEntitiesLoaded(ChunkPos.asLong(anchor));
     }
 
     private static @Nullable ITaintOrigin live(ServerLevel level, BlockPos anchor) {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ final class LatticeAnchor {
 
     static void released(ServerLevel level, BlockPos pos) {
         BlockPos below = pos.below();
-        if (level.hasChunkAt(below) && level.getBlockState(below).is(TTBlocks.CONDENSER.get())) {
+        if (LoadedChunks.contains(level, below) && level.getBlockState(below).is(TTBlocks.CONDENSER.get())) {
             recheck(level, below);
         }
     }
@@ -71,7 +72,7 @@ final class LatticeAnchor {
         boolean complete = walk.complete();
         for (BlockPos cell : walk.cells()) {
             BlockPos below = cell.below();
-            if (!level.hasChunkAt(below)) {
+            if (!LoadedChunks.contains(level, below)) {
                 complete = false;
             } else if (level.getBlockState(below).is(TTBlocks.CONDENSER.get())) {
                 condensers.add(below);
@@ -100,7 +101,7 @@ final class LatticeAnchor {
                 if (!bounds.test(next) || seen.contains(next)) {
                     continue;
                 }
-                if (!level.hasChunkAt(next)) {
+                if (!LoadedChunks.contains(level, next)) {
                     complete = false;
                 } else if (isLattice(level, next)) {
                     seen.add(next);

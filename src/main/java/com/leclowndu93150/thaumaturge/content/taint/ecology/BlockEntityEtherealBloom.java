@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -75,7 +76,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
                         SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
                         origin.getY(),
                         SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
-                if (level.hasChunkAt(cursor) && TaintEcology.getSaturation(level, cursor) > 0.0F) {
+                if (LoadedChunks.contains(level, cursor) && TaintEcology.getSaturation(level, cursor) > 0.0F) {
                     TaintEcology.clean(level, cursor, PRESSURE_CLEAN_AMOUNT);
                     worked = true;
                 }
@@ -108,7 +109,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
                         SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
                         origin.getY(),
                         SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
-                if (level.hasChunkAt(cursor)
+                if (LoadedChunks.contains(level, cursor)
                         && (TaintEcology.getSaturation(level, cursor) > 0.0F
                                 || TaintBiomeManager.isTainted(level, cursor))) {
                     return true;
@@ -128,7 +129,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
                 continue;
             }
             cursor.set(origin.getX() + x, origin.getY(), origin.getZ() + z);
-            if (!level.hasChunkAt(cursor)) {
+            if (!LoadedChunks.contains(level, cursor)) {
                 continue;
             }
             worked |= TaintBiomeManager.restoreColumn(level, cursor);

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintFeeding;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
@@ -148,7 +149,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
         for (int attempt = 0; attempt < HYBRID_GOO_ATTEMPTS; attempt++) {
             BlockPos column = origin.offset(gooOffset(), 0, gooOffset());
             int quanta = 1 + this.random.nextInt(HYBRID_GOO_MAX_EXTRA_QUANTA);
-            if (server.hasChunkAt(column) && !tryGoo(server, column, quanta)) {
+            if (LoadedChunks.contains(server, column) && !tryGoo(server, column, quanta)) {
                 tryGoo(server, column.below(), quanta);
             }
         }

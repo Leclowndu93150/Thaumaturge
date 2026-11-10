@@ -297,11 +297,11 @@ class NodeHungerPortTest {
         Level level = mock(Level.class);
         RandomSource random = mock(RandomSource.class);
         when(random.nextInt(anyInt())).thenReturn(1, 0, 0, 0, 0, 0);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(false);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(false);
 
         assertNull(NodeHunger.findTarget(level, BlockPos.ZERO, null, random));
 
-        verify(level).hasChunkAt(any(BlockPos.class));
+        verify(level).hasChunk(anyInt(), anyInt());
         verify(level, never()).getHeight(any(), anyInt(), anyInt());
         verify(level, never()).clip(any());
     }

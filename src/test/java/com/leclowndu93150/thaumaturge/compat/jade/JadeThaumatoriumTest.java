@@ -23,7 +23,7 @@ class JadeThaumatoriumTest {
         BlockEntityThaumatorium machine = mock(BlockEntityThaumatorium.class);
         BlockEntityThaumatoriumTop top = mock(BlockEntityThaumatoriumTop.class);
         BlockEntityCrucible crucible = mock(BlockEntityCrucible.class);
-        when(level.hasChunkAt(CONTROLLER)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(level.getBlockEntity(CONTROLLER)).thenReturn(machine);
 
         assertSame(machine, JadeBlockProviderHolder.resolve(accessor(level, CONTROLLER, machine)));
@@ -36,7 +36,7 @@ class JadeThaumatoriumTest {
         Level level = mock(Level.class);
         BlockEntityCrucible crucible = mock(BlockEntityCrucible.class);
         BlockEntityThaumatoriumTop top = mock(BlockEntityThaumatoriumTop.class);
-        when(level.hasChunkAt(CONTROLLER)).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
 
         assertSame(crucible, JadeBlockProviderHolder.resolve(accessor(level, CONTROLLER.below(), crucible)));
         assertSame(top, JadeBlockProviderHolder.resolve(accessor(level, CONTROLLER.above(), top)));

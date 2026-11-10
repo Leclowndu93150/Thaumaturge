@@ -49,7 +49,7 @@ class PortAndResonatorCompatibilityTest {
     @BeforeEach
     void setUp() {
         level = mock(ServerLevel.class);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
         MappedRegistry<IAspect> registry = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());
         Registry.register(registry, TTAspects.ORDO, mock(IAspect.class));
@@ -285,7 +285,7 @@ class PortAndResonatorCompatibilityTest {
             var port = port(true);
             var sources = intercepted.constructed().getFirst();
             clearInvocations(tube, sources);
-            when(level.hasChunkAt(BlockPos.ZERO.west())).thenReturn(false);
+            when(level.hasChunk(-1, 0)).thenReturn(false);
             tick(port, 5);
             verifyNoInteractions(tube, sources);
             verify(level, never()).getCapability(EssentiaCapabilities.CONDUIT, BlockPos.ZERO.west(), Direction.EAST);

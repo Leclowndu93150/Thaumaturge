@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
@@ -117,7 +118,7 @@ public final class BlockEntityLampGrowth extends AbstractSyncedBlockEntity imple
     }
 
     private boolean growColumn(ServerLevel level, BlockPos origin, int offsetX, int offsetZ) {
-        if (!level.hasChunkAt(cell.set(origin.getX() + offsetX, origin.getY(), origin.getZ() + offsetZ))) {
+        if (!LoadedChunks.contains(level, cell.set(origin.getX() + offsetX, origin.getY(), origin.getZ() + offsetZ))) {
             return false;
         }
         int reach = verticalReach(offsetX * offsetX + offsetZ * offsetZ);

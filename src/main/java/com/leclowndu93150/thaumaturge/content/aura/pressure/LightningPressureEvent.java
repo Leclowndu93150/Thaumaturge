@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +26,7 @@ public final class LightningPressureEvent extends AbstractFluxPressureEvent {
     @Override
     public boolean fire(ServerLevel level, BlockPos origin, FluxPressureState state) {
         BlockPos strike = findTarget(level, origin);
-        if (!level.hasChunkAt(strike) || !level.canSeeSky(strike)) {
+        if (!LoadedChunks.contains(level, strike) || !level.canSeeSky(strike)) {
             return false;
         }
         RandomSource random = level.getRandom();

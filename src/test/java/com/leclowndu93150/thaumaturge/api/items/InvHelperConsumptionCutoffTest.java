@@ -25,7 +25,7 @@ class InvHelperConsumptionCutoffTest {
     @BeforeEach
     void setUp() {
         level = mock(Level.class);
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
         player = mock(Player.class);
         inventory = new Inventory(player);
         when(player.getInventory()).thenReturn(inventory);

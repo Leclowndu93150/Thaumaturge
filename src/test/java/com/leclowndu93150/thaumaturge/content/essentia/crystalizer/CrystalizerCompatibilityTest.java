@@ -53,7 +53,7 @@ class CrystalizerCompatibilityTest {
         level = mock(ServerLevel.class);
         when(level.registryAccess()).thenReturn(registries);
         when(level.getRandom()).thenReturn(mock(RandomSource.class));
-        when(level.hasChunkAt(any())).thenReturn(true);
+        when(level.hasChunk(anyInt(), anyInt())).thenReturn(true);
     }
 
     private BlockEntityEssentiaCrystalizer machine() {
@@ -143,10 +143,10 @@ class CrystalizerCompatibilityTest {
         tick(machine);
         verifyNoInteractions(source);
         when(level.getGameTime()).thenReturn(5L);
-        when(level.hasChunkAt(BlockPos.ZERO.east())).thenReturn(false);
+        when(level.hasChunk(0, 0)).thenReturn(false);
         tick(machine);
         verifyNoInteractions(source);
-        when(level.hasChunkAt(BlockPos.ZERO.east())).thenReturn(true);
+        when(level.hasChunk(0, 0)).thenReturn(true);
         when(source.pullThreshold()).thenReturn(129);
         tick(machine);
         verify(source, never()).extract(any(), anyInt(), any(), anyBoolean());

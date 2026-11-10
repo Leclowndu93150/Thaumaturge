@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public final class ArcaneAccess {
     }
 
     public static boolean carry(ServerLevel fromLevel, BlockPos from, ServerLevel toLevel, BlockPos to) {
-        if (!fromLevel.hasChunkAt(from) || !toLevel.hasChunkAt(to)) {
+        if (!LoadedChunks.contains(fromLevel, from) || !LoadedChunks.contains(toLevel, to)) {
             return false;
         }
         WardAccess lock = locks(fromLevel, from).take(from);
