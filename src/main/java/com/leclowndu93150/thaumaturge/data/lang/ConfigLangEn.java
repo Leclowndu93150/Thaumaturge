@@ -88,6 +88,8 @@ final class ConfigLangEn {
             Map.entry("fluxScrubber.essentiaCapacity", "Essentia Capacity"),
             Map.entry("infernal_furnace", "Infernal Furnace"),
             Map.entry("infernal_furnace.lavaTurnIntoBlaze", "Lava Becomes a Blaze"),
+            Map.entry("cultists", "Cultists"),
+            Map.entry("cultists.fireballsIgniteBlocks", "Cultist Fireballs Ignite Blocks"),
             Map.entry("spells", "Spells"),
             Map.entry("spells.maxEntitiesPerTick", "Entities per Cast per Tick"),
             Map.entry("spells.maxBlocksPerTick", "Blocks per Cast per Tick"),

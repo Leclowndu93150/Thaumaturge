@@ -7,6 +7,7 @@ public final class ThaumaturgeServerConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue INFERNAL_FURNACE_TURN_TO_BLAZE;
+    public static final ModConfigSpec.BooleanValue CULTIST_FIREBALLS_IGNITE_BLOCKS;
     public static final ModConfigSpec.BooleanValue APRIL_FOOLS;
     public static final ModConfigSpec.IntValue SPELL_MAX_ENTITIES_PER_TICK;
     public static final ModConfigSpec.IntValue SPELL_MAX_BLOCKS_PER_TICK;
@@ -20,6 +21,11 @@ public final class ThaumaturgeServerConfig {
         INFERNAL_FURNACE_TURN_TO_BLAZE = builder.comment(
                         "Setting this to true will make the lava of the infernal furnace turn into a blaze when it is broken.")
                 .define("lavaTurnIntoBlaze", true);
+        builder.pop();
+        builder.push("cultists");
+        CULTIST_FIREBALLS_IGNITE_BLOCKS = builder.comment(
+                        "Whether cultist fireballs set blocks on fire. Disabling this still allows them to damage and ignite living targets.")
+                .define("fireballsIgniteBlocks", true);
         builder.pop();
         builder.push("spells");
         SPELL_MAX_ENTITIES_PER_TICK = builder.comment(
