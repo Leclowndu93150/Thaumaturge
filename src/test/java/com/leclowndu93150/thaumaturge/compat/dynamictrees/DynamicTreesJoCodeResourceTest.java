@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
@@ -138,10 +140,15 @@ class DynamicTreesJoCodeResourceTest {
     }
 
     private static String resource(String path) throws Exception {
-        try (InputStream stream =
-                DynamicTreesJoCodeResourceTest.class.getClassLoader().getResourceAsStream(path)) {
-            assertNotNull(stream, path);
-            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        InputStream stream =
+                DynamicTreesJoCodeResourceTest.class.getClassLoader().getResourceAsStream(path);
+        if (stream != null) {
+            try (stream) {
+                return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            }
         }
+        Path generated = Path.of("src/generated/resources", path);
+        assertTrue(Files.isRegularFile(generated), path);
+        return Files.readString(generated, StandardCharsets.UTF_8);
     }
 }
