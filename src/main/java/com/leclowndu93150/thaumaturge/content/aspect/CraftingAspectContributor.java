@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -88,11 +89,12 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
 
     private static ItemStack outputOf(Recipe<?> recipe) {
         try {
+            // Some mods' special recipes return null instead of ItemStack.EMPTY for an input they don't match
             if (recipe instanceof IArcaneRecipe arcane) {
-                return arcane.assemble(ArcaneCraftingInput.EMPTY);
+                return Objects.requireNonNullElse(arcane.assemble(ArcaneCraftingInput.EMPTY), ItemStack.EMPTY);
             }
             if (recipe instanceof CraftingRecipe crafting) {
-                return crafting.assemble(CraftingInput.EMPTY);
+                return Objects.requireNonNullElse(crafting.assemble(CraftingInput.EMPTY), ItemStack.EMPTY);
             }
         } catch (RuntimeException e) {
             return ItemStack.EMPTY;
