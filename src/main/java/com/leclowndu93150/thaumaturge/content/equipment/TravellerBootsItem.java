@@ -33,7 +33,7 @@ public final class TravellerBootsItem extends ArmorItem {
     private static final float VANILLA_AIR_CONTROL = 0.02F;
     private static final float BOOSTED_AIR_CONTROL = 0.05F;
     private static final float AIR_CONTROL_BONUS = BOOSTED_AIR_CONTROL - VANILLA_AIR_CONTROL;
-    private static final float STEP_HEIGHT_BONUS = 0.4F;
+    private static final float STEP_HEIGHT_BONUS = 0.5F;
     private static final AttributeModifier STEP_MODIFIER = new AttributeModifier(
             ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "traveller_step"),
             STEP_HEIGHT_BONUS,
