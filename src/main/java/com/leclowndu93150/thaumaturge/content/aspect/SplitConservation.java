@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.util.Mth;
@@ -125,7 +126,7 @@ final class SplitConservation {
         ItemStack output;
         List<Ingredient> ingredients;
         try {
-            output = recipe.assemble(CraftingInput.EMPTY);
+            output = Objects.requireNonNullElse(recipe.assemble(CraftingInput.EMPTY), ItemStack.EMPTY);
             ingredients = recipe.placementInfo().ingredients();
         } catch (RuntimeException e) {
             return Optional.empty();
