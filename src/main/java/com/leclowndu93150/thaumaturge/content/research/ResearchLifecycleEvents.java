@@ -37,6 +37,7 @@ public final class ResearchLifecycleEvents {
                 ResearchManager.complete(player, ENTER_OUTER_LANDS);
             }
             ResearchManager.of(player).queueSync(player);
+            AspectPools.sync(player);
         }
     }
 
