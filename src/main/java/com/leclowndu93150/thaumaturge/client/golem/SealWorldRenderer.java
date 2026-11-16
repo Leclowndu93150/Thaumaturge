@@ -99,9 +99,18 @@ public final class SealWorldRenderer {
                 continue;
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
+            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
+        }
+        SEAL_BUFFERS.endBatch(typeFor(AREA_RING));
+        for (SealEntity seal : ClientSealHolder.all().values()) {
+            BlockPos pos = seal.pos().pos();
+            double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
+            if (distSqr > MAX_DIST_SQR) {
+                continue;
+            }
+            float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
             boolean inactive = seal.isStoppedByRedstone(mc.level);
             drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive);
-            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
             if (seal.type().hasArea()) {
                 drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
             }
