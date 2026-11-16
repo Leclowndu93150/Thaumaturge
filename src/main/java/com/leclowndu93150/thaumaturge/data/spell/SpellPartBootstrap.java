@@ -131,7 +131,7 @@ public final class SpellPartBootstrap {
                 .color(0xD9B8C9)
                 .complexity(4)
                 .aspect(TTAspects.MOTUS)
-                .research("focus_projectile")
+                .research("focus_projectile", 1)
                 .setting("speed", 1, 5, 1, 2, 0.5F)
                 .register(ctx, TTSpellParts.PROJECTILE);
         PartBuilder.of(new ProjectileDelivery(0.75F, 0.0F, 0.05, 2.0F))
