@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -70,6 +71,21 @@ public final class MenuSmelter extends AbstractTTMenu {
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Level level = player.level();
+        if (index >= SLOT_COUNT) {
+            Slot source = slots.get(index);
+            ItemStack stack = source.getItem();
+            if (!stack.isEmpty() && BlockEntitySmelter.isFuelValid(level, stack)) {
+                ItemStack original = stack.copy();
+                if (moveItemStackTo(stack, BlockEntitySmelter.FUEL_SLOT, BlockEntitySmelter.FUEL_SLOT + 1, false)) {
+                    if (stack.isEmpty()) {
+                        source.setByPlayer(ItemStack.EMPTY);
+                    } else {
+                        source.setChanged();
+                    }
+                    return original;
+                }
+            }
+        }
         return quickMoveBetween(
                 index,
                 SLOT_COUNT,
