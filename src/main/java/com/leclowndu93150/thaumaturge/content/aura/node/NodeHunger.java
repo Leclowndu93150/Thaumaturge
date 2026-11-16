@@ -35,6 +35,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 final class NodeHunger {
@@ -203,19 +204,23 @@ final class NodeHunger {
         int reach = eatRange(modifier);
         BlockPos aim = NodeScatter.triangular(pos, reach - 1, random);
         SpaceFrame frame = LevelSpaces.frameOf(level, pos);
-        Vec3 to = frame.toWorld(Vec3.atCenterOf(aim));
-        if (aim.equals(pos)
-                || !LoadedChunks.contains(level, BlockPos.containing(to))
+        if (aim.equals(pos)) {
+            return null;
+        }
+        Vec3 origin = Vec3.atCenterOf(pos);
+        Vec3 target = Vec3.atCenterOf(aim);
+        Vec3 direction = target.subtract(origin).normalize();
+        double sourceExit =
+                0.5 / Math.max(Math.max(Math.abs(direction.x), Math.abs(direction.y)), Math.abs(direction.z)) + 1.0E-3;
+        Vec3 from = frame.toWorld(origin.add(direction.scale(sourceExit)));
+        Vec3 to = frame.toWorld(target);
+        if (!LoadedChunks.contains(level, BlockPos.containing(to))
                 || (frame.isWorld()
                         && aim.getY() >= level.getHeight(Heightmap.Types.WORLD_SURFACE, aim.getX(), aim.getZ()))) {
             return null;
         }
-        BlockHitResult hit = level.clip(new SourceIgnoringClipContext(
-                pos,
-                frame.toWorld(Vec3.atCenterOf(pos)),
-                to,
-                ClipContext.Block.OUTLINE,
-                ClipContext.Fluid.SOURCE_ONLY));
+        BlockHitResult hit = level.clip(new ClipContext(
+                from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, CollisionContext.empty()));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return null;
         }
