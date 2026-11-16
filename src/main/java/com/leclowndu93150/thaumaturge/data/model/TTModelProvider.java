@@ -1301,7 +1301,7 @@ public final class TTModelProvider implements DataProvider {
                     flat.addProperty("parent", TTIds.rl("item/nitor").toString());
                     model.add("base", flat);
                     JsonObject inHand = new JsonObject();
-                    inHand.addProperty("parent", TTIds.rl("item/nitor").toString());
+                    inHand.addProperty("parent", "minecraft:builtin/entity");
                     JsonObject perspectives = new JsonObject();
                     perspectives.add("firstperson_lefthand", inHand);
                     perspectives.add("firstperson_righthand", inHand);
