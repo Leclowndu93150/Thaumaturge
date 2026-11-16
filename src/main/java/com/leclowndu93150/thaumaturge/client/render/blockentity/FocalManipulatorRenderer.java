@@ -34,7 +34,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float FOCUS_HEIGHT = 1.32F;
     private static final float CRYSTAL_SCALE = 0.45F;
     private static final float LEGACY_CENTER_Y = 0.35F;
-    private static final float GLINT_RISE = 0.17F;
     private static final float GLINT_SIZE = 0.2F;
     private static final float GLINT_HALF = 0.5F;
     private static final float GLINT_ALPHA = 0.85F;
@@ -49,7 +48,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final int RENDER_BOUNDS_HEIGHT = 2;
 
     private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(TTIds.rl("textures/misc/white.png"));
-    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
+    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.ORB_GLOW);
 
     public FocalManipulatorRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -143,12 +142,12 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             PoseStack poseStack,
             MultiBufferSource buffers) {
         int frame = Math.floorMod(
-                (int) (ticks / GLINT_TICKS_PER_FRAME) + index * GLINT_FRAME_STEP, ParticleTextures.STAR_GLINT_FRAMES);
-        float u0 = StripUv.u0(frame, ParticleTextures.STAR_GLINT_FRAMES);
-        float u1 = StripUv.u1(frame, ParticleTextures.STAR_GLINT_FRAMES);
+                (int) (ticks / GLINT_TICKS_PER_FRAME) + index * GLINT_FRAME_STEP, ParticleTextures.ORB_GLOW_FRAMES);
+        float u0 = StripUv.u0(frame, ParticleTextures.ORB_GLOW_FRAMES);
+        float u1 = StripUv.u1(frame, ParticleTextures.ORB_GLOW_FRAMES);
         int tint = ARGB32.color((int) (GLINT_ALPHA * 255.0F), color);
         poseStack.pushPose();
-        poseStack.translate(x, y + GLINT_RISE, z);
+        poseStack.translate(x, y, z);
         poseStack.mulPose(facing);
         poseStack.scale(GLINT_SIZE, GLINT_SIZE, GLINT_SIZE);
         writeGlint(buffers.getBuffer(GLOW_TYPE), poseStack.last().pose(), u0, u1, tint);
