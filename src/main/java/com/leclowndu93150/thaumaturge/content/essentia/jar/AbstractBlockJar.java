@@ -181,6 +181,9 @@ public abstract class AbstractBlockJar extends BaseEntityBlock
         if (!(level.getBlockEntity(pos) instanceof AbstractBlockEntityJar jar)) {
             return InteractionResult.PASS;
         }
+        if ((brace.isEmpty() || jar.isBlocked()) && !player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }

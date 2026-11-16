@@ -150,9 +150,9 @@ public class BlockCrucible extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible)) return InteractionResult.PASS;
         if (!player.isCrouching()) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         crucible.spillRemnants();
         return InteractionResult.SUCCESS;
     }

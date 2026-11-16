@@ -169,11 +169,11 @@ public class BlockAlembic extends BaseEntityBlock implements LabelTarget {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic)) {
             return InteractionResult.PASS;
         }
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
         if (!player.isShiftKeyDown()) {
             return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
         if (alembic.aspectFilterKey() != null && hit.getDirection() == alembic.spoutSide()) {
             alembic.setAspectFilter(null);
