@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -22,17 +23,24 @@ public final class ParticleSheet {
         ADDITIVE(true, true, true),
         ADDITIVE_SOFT(true, false, true),
         TRANSLUCENT(false, true, true),
+        FX_TRANSLUCENT(false, false, true, true),
         ADDITIVE_NO_DEPTH(true, false, false),
         TRANSLUCENT_NO_DEPTH(false, false, false);
 
         final boolean additive;
         final boolean depthMask;
         final boolean depthTest;
+        final boolean fxShader;
 
         Mode(boolean additive, boolean depthMask, boolean depthTest) {
+            this(additive, depthMask, depthTest, false);
+        }
+
+        Mode(boolean additive, boolean depthMask, boolean depthTest, boolean fxShader) {
             this.additive = additive;
             this.depthMask = depthMask;
             this.depthTest = depthTest;
+            this.fxShader = fxShader;
         }
     }
 
@@ -73,7 +81,7 @@ public final class ParticleSheet {
 
     private ParticleRenderType build(Mode mode) {
         return (tesselator, textureManager) -> {
-            RenderSystem.setShader(GameRenderer::getParticleShader);
+            RenderSystem.setShader(mode.fxShader ? TTShaders::fx : GameRenderer::getParticleShader);
             RenderSystem.setShaderTexture(0, texture);
             RenderSystem.enableBlend();
             if (mode.additive) {

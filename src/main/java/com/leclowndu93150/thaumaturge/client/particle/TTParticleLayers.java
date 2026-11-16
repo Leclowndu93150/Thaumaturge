@@ -45,6 +45,10 @@ public final class TTParticleLayers {
         return sheet.layer(ParticleSheet.Mode.TRANSLUCENT);
     }
 
+    public static ParticleRenderType fxTranslucent(ParticleSheet sheet) {
+        return sheet.layer(ParticleSheet.Mode.FX_TRANSLUCENT);
+    }
+
     public static ParticleRenderType additiveNoDepth(ParticleSheet sheet) {
         return sheet.layer(ParticleSheet.Mode.ADDITIVE_NO_DEPTH);
     }

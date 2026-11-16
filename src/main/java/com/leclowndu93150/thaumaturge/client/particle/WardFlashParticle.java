@@ -6,12 +6,14 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import org.joml.Quaternionf;
 
 public final class WardFlashParticle extends TTParticle {
+    private static final ParticleSheet SHEET = TTParticleSheets.sheet("ward_flash");
     private static final int FRAME_COUNT = 16;
     private static final int BASE_AGE = 12;
     private static final int AGE_JITTER = 5;
@@ -76,13 +78,16 @@ public final class WardFlashParticle extends TTParticle {
     }
 
     @Override
+    public ParticleRenderType getRenderType() {
+        return TTParticleLayers.fxTranslucent(SHEET);
+    }
+
+    @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTickTime) {
         renderRotatedQuad(buffer, camera, new Quaternionf(this.faceRotation), partialTickTime);
     }
 
     public static final class Provider implements ParticleProvider<WardFlashParticleOptions> {
-        private static final ParticleSheet SHEET = TTParticleSheets.sheet("ward_flash");
-
         @Override
         public Particle createParticle(
                 WardFlashParticleOptions options,
