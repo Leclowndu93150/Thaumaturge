@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
+import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
@@ -33,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
+public final class BlockEntityRechargePedestal extends BlockEntityPedestal implements ReadOnlyAspectContainer {
     private static final int RECHARGE_INTERVAL_TICKS = 10;
     private static final int RECHARGE_AMOUNT = 5;
     private static final int SPARKLE_SPREAD = 3;
@@ -54,6 +56,22 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
 
     public int getDrainColor() {
         return drainColor;
+    }
+
+    @Override
+    public AspectList getAspects() {
+        if (level == null || !(getItem().getItem() instanceof ItemWand)) {
+            return AspectList.EMPTY;
+        }
+        AspectList aspects = AspectList.EMPTY;
+        for (ResourceKey<IAspect> key : TTAspects.PRIMALS) {
+            int centivis = WandVisHelper.getVis(getItem(), key);
+            Holder<IAspect> aspect = Aspects.resolve(level.registryAccess(), key);
+            if (centivis > 0 && aspect != null) {
+                aspects = aspects.add(aspect, Math.max(1, Math.round(centivis / 100.0F)));
+            }
+        }
+        return aspects;
     }
 
     public BlockEntityRechargePedestal(BlockPos pos, BlockState state) {

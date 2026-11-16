@@ -61,6 +61,8 @@ public final class TTCapabilities {
     }
 
     private static void devices(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                AspectCapabilities.CONTAINER, TTBlockEntities.RECHARGE_PEDESTAL.get(), (be, side) -> be);
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.LAMP_GROWTH.get(), (be, side) -> be.intake());
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be.intake());
         EssentiaCapabilities.registerConduit(event, TTBlockEntities.CENTRIFUGE.get(), (be, side) -> be);

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
+import com.leclowndu93150.thaumaturge.content.aura.BlockEntityRechargePedestal;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
@@ -84,11 +85,14 @@ public final class GogglesWorldOverlay {
         float scale = advanceAnimation(pos, now);
 
         boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
-        Direction dir = spaceAbove ? Direction.UP : mc.player.getDirection().getOpposite();
+        boolean rechargePedestal = be instanceof BlockEntityRechargePedestal;
+        Direction dir = rechargePedestal || spaceAbove
+                ? Direction.UP
+                : mc.player.getDirection().getOpposite();
         if (!spaceAbove && (be instanceof AbstractBlockEntityJar || be instanceof BlockEntityEssentiaReservoir)) {
             dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
         }
-        double y = pos.getY() + (spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
+        double y = pos.getY() + (rechargePedestal ? 1.1F : spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
         if (be instanceof AbstractBlockEntityJar && dir == Direction.UP) {
             y += JAR_READOUT_LIFT - scale * 2.0F;
         }
