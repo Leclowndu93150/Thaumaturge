@@ -45,6 +45,8 @@ public final class SealWorldRenderer {
     private static final float RING_ALPHA = 0.8F;
     private static final float CORNER_ALPHA = 0.7F;
     private static final RenderType ICON_TYPE = TTRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
+    private static final RenderType ICON_NO_DEPTH_TYPE =
+            TTRenderTypes.translucentTexturedNoDepth(InventoryMenu.BLOCK_ATLAS);
     private static final MultiBufferSource.BufferSource SEAL_BUFFERS =
             MultiBufferSource.immediate(new ByteBufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE));
 
@@ -67,6 +69,10 @@ public final class SealWorldRenderer {
 
     private static RenderType typeFor(ResourceLocation texture) {
         return TTRenderTypes.translucentTextured(texture);
+    }
+
+    private static RenderType typeFor(ResourceLocation texture, boolean seeThrough) {
+        return seeThrough ? TTRenderTypes.translucentTexturedNoDepth(texture) : typeFor(texture);
     }
 
     @SubscribeEvent
@@ -92,6 +98,7 @@ public final class SealWorldRenderer {
         MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(SEAL_BUFFERS);
         float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
         float time = player.tickCount % 360 + partialTicks;
+        boolean seeThrough = player.isShiftKeyDown();
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();
             double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
@@ -99,9 +106,9 @@ public final class SealWorldRenderer {
                 continue;
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
-            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
+            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time, seeThrough);
         }
-        SEAL_BUFFERS.endBatch(typeFor(AREA_RING));
+        SEAL_BUFFERS.endBatch(typeFor(AREA_RING, seeThrough));
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();
             double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
@@ -110,16 +117,22 @@ public final class SealWorldRenderer {
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
             boolean inactive = seal.isStoppedByRedstone(mc.level);
-            drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive);
+            drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive, seeThrough);
             if (seal.type().hasArea()) {
-                drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
+                drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time, seeThrough);
             }
         }
         SEAL_BUFFERS.endBatch();
     }
 
     private static void drawSealIcon(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, boolean inactive) {
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            SealEntity seal,
+            Vec3 cam,
+            float alpha,
+            boolean inactive,
+            boolean seeThrough) {
         BlockPos pos = seal.pos().pos();
         Direction face = seal.pos().face();
         poseStack.pushPose();
@@ -138,7 +151,7 @@ public final class SealWorldRenderer {
         float shade = inactive ? 0.5F : 1.0F;
         int color = ARGB32.colorFromFloat(alpha, shade, shade, shade);
         TextureAtlasSprite sprite = iconSprite(seal.type().icon().orElseGet(() -> defaultIcon(seal.typeId())));
-        drawExtrudedIcon(poseStack, buffers.getBuffer(ICON_TYPE), sprite, color);
+        drawExtrudedIcon(poseStack, buffers.getBuffer(seeThrough ? ICON_NO_DEPTH_TYPE : ICON_TYPE), sprite, color);
         poseStack.popPose();
     }
 
@@ -291,7 +304,13 @@ public final class SealWorldRenderer {
     }
 
     private static void drawSealRing(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            SealEntity seal,
+            Vec3 cam,
+            float alpha,
+            float time,
+            boolean seeThrough) {
         BlockPos pos = seal.pos().pos();
         Direction face = seal.pos().face();
         float r;
@@ -315,14 +334,20 @@ public final class SealWorldRenderer {
         poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(time), 0.0F, 0.0F, 1.0F));
         drawQuad(
                 poseStack,
-                buffers.getBuffer(typeFor(AREA_RING)),
+                buffers.getBuffer(typeFor(AREA_RING, seeThrough)),
                 RING_SCALE / 2.0F,
                 ARGB32.colorFromFloat(alpha * RING_ALPHA, r, g, b));
         poseStack.popPose();
     }
 
     private static void drawAreaCorners(
-            PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            SealEntity seal,
+            Vec3 cam,
+            float alpha,
+            float time,
+            boolean seeThrough) {
         BlockPos pos = seal.pos().pos();
         float r = 0.7F + Mth.sin((time + pos.getX()) / 4.0F) * 0.1F;
         float g = 0.7F + Mth.sin((time + pos.getY()) / 5.0F) * 0.1F;
@@ -339,7 +364,7 @@ public final class SealWorldRenderer {
             {area.minX, area.maxY - 1.0, area.maxZ - 1.0}
         };
         int color = ARGB32.colorFromFloat(alpha * CORNER_ALPHA, r, g, b);
-        VertexConsumer buffer = buffers.getBuffer(typeFor(CORNER_FRAME));
+        VertexConsumer buffer = buffers.getBuffer(typeFor(CORNER_FRAME, seeThrough));
         for (int q = 0; q < corners.length; q++) {
             poseStack.pushPose();
             poseStack.translate(corners[q][0] + 0.5 - cam.x, corners[q][1] + 0.5 - cam.y, corners[q][2] + 0.5 - cam.z);
