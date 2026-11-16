@@ -1,11 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -64,6 +67,13 @@ public class BlockBellows extends BaseEntityBlock {
         return defaultBlockState()
                 .setValue(FACING, context.getClickedFace().getOpposite())
                 .setValue(ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
+    }
+
+    @Override
+    public void setPlacedBy(
+            Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        BlockEssentiaTransport.refreshConnectionsAround(level, pos);
     }
 
     @Override

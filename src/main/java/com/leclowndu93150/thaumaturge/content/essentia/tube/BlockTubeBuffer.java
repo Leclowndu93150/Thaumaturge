@@ -68,6 +68,7 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
         if (level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer) {
             buffer.setFacingForPlacement(placer);
         }
+        BlockEssentiaTransport.refreshConnectionsAround(level, pos);
     }
 
     @Override
