@@ -123,6 +123,7 @@ import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
 import com.leclowndu93150.thaumaturge.content.world.plant.BlockGrassAmbient;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantBlock;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantTraits;
+import com.leclowndu93150.thaumaturge.content.world.plant.PottedMagicPlantBlock;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockGreatwoodLog;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSaplingTT;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSilverwoodNodeLog;
@@ -1370,10 +1371,11 @@ public final class TTBlocks {
                     .noOcclusion());
 
     public static final DeferredBlock<FlowerPotBlock> POTTED_SHIMMERLEAF =
-            pottedPlant("potted_shimmerleaf", PLANT_SHIMMERLEAF);
+            pottedMagicPlant("potted_shimmerleaf", PLANT_SHIMMERLEAF);
     public static final DeferredBlock<FlowerPotBlock> POTTED_CINDERPEARL =
-            pottedPlant("potted_cinderpearl", PLANT_CINDERPEARL);
-    public static final DeferredBlock<FlowerPotBlock> POTTED_VISHROOM = pottedPlant("potted_vishroom", PLANT_VISHROOM);
+            pottedMagicPlant("potted_cinderpearl", PLANT_CINDERPEARL);
+    public static final DeferredBlock<FlowerPotBlock> POTTED_VISHROOM =
+            pottedMagicPlant("potted_vishroom", PLANT_VISHROOM);
 
     public static final DeferredBlock<BlockGrassAmbient> GRASS_AMBIENT = BLOCKS.registerBlock(
             "grass_ambient", BlockGrassAmbient::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
@@ -1383,6 +1385,14 @@ public final class TTBlocks {
                 name,
                 properties -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, plant, properties),
                 BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING));
+    }
+
+    private static DeferredBlock<FlowerPotBlock> pottedMagicPlant(String name, DeferredBlock<MagicPlantBlock> plant) {
+        return BLOCKS.registerBlock(
+                name,
+                properties -> new PottedMagicPlantBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, plant, properties),
+                BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING)
+                        .lightLevel(state -> plant.get().defaultBlockState().getLightEmission()));
     }
 
     private static void registerPottedPlants() {

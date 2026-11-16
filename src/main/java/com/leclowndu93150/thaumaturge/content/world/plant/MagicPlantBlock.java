@@ -52,6 +52,10 @@ public final class MagicPlantBlock extends AbstractTTPlant {
         aura.emit(level, pos.getBottomCenter().add(state.getOffset(level, pos)), random);
     }
 
+    public void animatePottedTick(Level level, BlockPos pos, RandomSource random) {
+        aura.emit(level, pos.getBottomCenter(), random);
+    }
+
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         contactEffect.ifPresent(effect -> effect.touch(level, entity));
