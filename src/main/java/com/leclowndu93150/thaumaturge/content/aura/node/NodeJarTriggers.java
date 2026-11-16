@@ -36,14 +36,15 @@ public final class NodeJarTriggers implements CasterBlockAction {
 
     private static @Nullable BlockPos findEnclosedNode(Level level, BlockPos clicked) {
         for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -2; dy <= 1; dy++) {
+            for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if (dx == 0 && dy == 0 && dz == 0) {
                         continue;
                     }
                     BlockPos candidate = clicked.offset(dx, dy, dz);
                     if (level.getBlockEntity(candidate) instanceof BlockEntityNode node
-                            && !(node instanceof BlockEntityJarNode)) {
+                            && !(node instanceof BlockEntityJarNode)
+                            && NodeJarRitual.fitsStructure(level, candidate)) {
                         return candidate;
                     }
                 }
