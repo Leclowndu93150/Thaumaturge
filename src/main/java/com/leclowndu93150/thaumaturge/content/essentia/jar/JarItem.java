@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -71,7 +72,10 @@ public class JarItem extends BlockItem {
         }
         ItemStack held = context.getItemInHand();
         AspectList contents = contentsOf(held);
-        if (!contents.isEmpty() && !contents.entries().getFirst().aspect().equals(aspect)) {
+        ResourceKey<IAspect> filter = held.get(TTDataComponents.ASPECT_FILTER.get());
+        if ((filter != null && !aspect.is(filter))
+                || (!contents.isEmpty()
+                        && !contents.entries().getFirst().aspect().equals(aspect))) {
             return super.useOn(context);
         }
         int scoop = Math.min(alembic.amount(), IEssentiaJar.DEFAULT_CAPACITY - contents.totalAmount());
