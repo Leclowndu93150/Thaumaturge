@@ -126,6 +126,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private static final String PREREQ_CHEST_PREFIX = "c_";
     private static final String PREREQ_FLASK_PREFIX = "f_";
     private static final int CHECKMARK_DEPTH = 300;
+    private static final int INSERT_DEPTH = CHECKMARK_DEPTH + 100;
 
     private static final int REQ_TOP_Y_OFFSET = 210 - 25;
     private static final int REQ_ROW_STEP = 18;
@@ -623,7 +624,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             drawKnowledges(graphics, sw, sh + KNOW_INPAGE_INSERT_INPAGE_Y_OFFSET - 16, pageMouseX, pageMouseY, true);
         }
         graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, 200.0F);
+        graphics.pose().translate(0.0F, 0.0F, INSERT_DEPTH);
         if (showingAspects) {
             renderAspectsInsert(graphics, mouseX, mouseY);
         } else if (showingKnowledge) {
