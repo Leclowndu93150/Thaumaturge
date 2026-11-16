@@ -396,6 +396,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("jei.thaumaturge.research.missing_research", "Missing research: ");
         add("jei.thaumaturge.infernal_furnace.count", "Count: %s");
         add("tooltip.thaumaturge.aspects.header", "Aspects:");
+        add("tooltip.thaumaturge.filter.header", "Filter:");
 
         add("block.thaumaturge.ore_amber", "Amber Bearing Stone");
         add("block.thaumaturge.ore_cinnabar", "Cinnabar Ore");

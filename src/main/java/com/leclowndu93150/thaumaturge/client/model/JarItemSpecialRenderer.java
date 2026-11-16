@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.JarRenderer;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -9,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -60,6 +63,18 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
                     JarRenderer.ANIMATED_GLOW_MATERIAL.sprite(),
                     poseStack,
                     buffers);
+        }
+        var filterKey = stack.get(TTDataComponents.ASPECT_FILTER.get());
+        var filter = filterKey == null ? null : Aspects.resolve(Minecraft.getInstance().level, filterKey);
+        if (filter != null) {
+            JarRenderer.submitFilterLabel(
+                    Direction.SOUTH,
+                    filter.value().texture(),
+                    ARGB32.opaque(filter.value().color()),
+                    BlockPos.ZERO,
+                    poseStack,
+                    buffers,
+                    light);
         }
     }
 

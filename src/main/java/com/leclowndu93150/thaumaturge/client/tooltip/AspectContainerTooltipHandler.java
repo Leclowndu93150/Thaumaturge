@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
@@ -36,31 +37,49 @@ public final class AspectContainerTooltipHandler {
             return;
         }
         IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        int filterLine = 1;
         if (essentia != null) {
-            renderAspectList(essentia.getAspects(), event.getToolTip());
+            filterLine = renderAspectList(essentia.getAspects(), event.getToolTip());
         }
 
-        if (stack.getItem() instanceof ILabel label) {
-            ResourceKey<IAspect> filter = label.getFilteredAspect(stack);
-            HolderLookup.Provider registries = event.getContext().registries();
-            if (filter == null || registries == null) return;
-            Holder<IAspect> aspect = EssentiaTransportHelper.resolve(registries, filter);
-            if (aspect == null) return;
-            renderAspectList(AspectList.of(new AspectInstance(aspect, 1)), event.getToolTip());
+        ResourceKey<IAspect> filter = stack.get(TTDataComponents.ASPECT_FILTER.get());
+        if (filter == null && stack.getItem() instanceof ILabel label) {
+            filter = label.getFilteredAspect(stack);
         }
+        HolderLookup.Provider registries = event.getContext().registries();
+        if (filter == null || registries == null) return;
+        Holder<IAspect> aspect = EssentiaTransportHelper.resolve(registries, filter);
+        if (aspect != null) renderFilter(aspect, event.getToolTip(), filterLine);
     }
 
-    private static void renderAspectList(AspectList aspects, List<Component> tooltip) {
+    private static void renderFilter(Holder<IAspect> aspect, List<Component> tooltip, int index) {
         if (!shouldShow()) {
             return;
         }
+        tooltip.add(
+                index++,
+                Component.translatable("tooltip.thaumaturge.filter.header")
+                        .withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
+        tooltip.add(
+                index,
+                Component.literal("  ")
+                        .append(AspectComponents.trueName(aspect)
+                                .withStyle(style -> style.withColor(
+                                        TextColor.fromRgb(aspect.value().color())))));
+    }
+
+    private static int renderAspectList(AspectList aspects, List<Component> tooltip) {
+        if (!shouldShow()) {
+            return 1;
+        }
         if (aspects.isEmpty()) {
-            return;
+            return 1;
         }
         tooltip.add(
                 1,
                 Component.translatable("tooltip.thaumaturge.aspects.header")
                         .withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
+        int index = 2;
         for (AspectInstance entry : aspects.sortedByAmount().reversed()) {
             Holder<IAspect> aspect = entry.aspect();
             Component named = AspectKnowledgeAccess.isKnown(aspect)
@@ -70,8 +89,9 @@ public final class AspectContainerTooltipHandler {
             MutableComponent line = Component.literal("  ").append(named);
 
             line.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(aspect.value().color())));
-            tooltip.add(2, line);
+            tooltip.add(index++, line);
         }
+        return index;
     }
 
     private static boolean shouldShow() {

@@ -309,7 +309,7 @@ public final class JarRenderer implements BlockEntityRenderer<AbstractBlockEntit
                 .setColor(color);
     }
 
-    private void submitFilterLabel(
+    public static void submitFilterLabel(
             Direction facing,
             ResourceLocation filterTexture,
             int filterColor,
