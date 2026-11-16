@@ -124,9 +124,17 @@ public final class SealWorldRenderer {
         Direction face = seal.pos().face();
         poseStack.pushPose();
         poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
-        poseStack.mulPose(new Quaternionf()
-                .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
-        poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.55 : 0.55);
+        float quarterTurn = (float) (Math.PI / 2.0);
+        poseStack.mulPose(
+                switch (face) {
+                    case DOWN -> new Quaternionf().rotationX(quarterTurn);
+                    case UP -> new Quaternionf().rotationX(-quarterTurn);
+                    case NORTH -> new Quaternionf().rotationY((float) Math.PI);
+                    case EAST -> new Quaternionf().rotationY(quarterTurn);
+                    case WEST -> new Quaternionf().rotationY(-quarterTurn);
+                    case SOUTH -> new Quaternionf();
+                });
+        poseStack.translate(0.0, 0.0, 0.55);
         float shade = inactive ? 0.5F : 1.0F;
         int color = ARGB32.colorFromFloat(alpha, shade, shade, shade);
         TextureAtlasSprite sprite = iconSprite(seal.type().icon().orElseGet(() -> defaultIcon(seal.typeId())));
