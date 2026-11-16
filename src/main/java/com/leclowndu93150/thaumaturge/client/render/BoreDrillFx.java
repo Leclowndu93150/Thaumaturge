@@ -21,7 +21,8 @@ public final class BoreDrillFx {
     private static final float BEAM_RADIUS = 0.15F;
     private static final float BEAM_ALPHA = 0.4F;
     private static final int BEAM_TINT = ARGB32.colorFromFloat(BEAM_ALPHA, 0.0F, 1.0F, 0.4F);
-    private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(TTIds.rl("textures/misc/beam1.png"));
+    private static final RenderType BEAM_TYPE = TTRenderTypes.fxTranslucent(TTIds.rl("textures/misc/beam1.png"));
+    private static final RenderType TIP_TYPE = TTRenderTypes.fxTranslucent(BeamRenderType.NODE);
     private static final int BEAM_LIGHT = 0x000000C8;
     private static final int BEAM_STRIPS = 3;
     private static final float TIP_FORWARD_OFFSET = 0.5F;
@@ -132,23 +133,26 @@ public final class BoreDrillFx {
         float v0 = tipFrame / TIP_FLARE_GRID * frameSize;
         float u1 = u0 + frameSize;
         float v1 = v0 + frameSize;
-        addTipFlareVertices(
-                buffers.getBuffer(BeamRenderType.NODE_TYPE), poseStack.last().pose(), u0, v0, u1, v1);
+        addTipFlareVertices(buffers.getBuffer(TIP_TYPE), poseStack.last().pose(), u0, v0, u1, v1);
     }
 
     private static void addTipFlareVertices(
             VertexConsumer buffer, Matrix4f matrix, float u0, float v0, float u1, float v1) {
         buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
                 .setUv(u1, v1)
-                .setColor(TIP_FLARE_TINT);
+                .setColor(TIP_FLARE_TINT)
+                .setLight(BEAM_LIGHT);
         buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
                 .setUv(u1, v0)
-                .setColor(TIP_FLARE_TINT);
+                .setColor(TIP_FLARE_TINT)
+                .setLight(BEAM_LIGHT);
         buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
                 .setUv(u0, v0)
-                .setColor(TIP_FLARE_TINT);
+                .setColor(TIP_FLARE_TINT)
+                .setLight(BEAM_LIGHT);
         buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
                 .setUv(u0, v1)
-                .setColor(TIP_FLARE_TINT);
+                .setColor(TIP_FLARE_TINT)
+                .setLight(BEAM_LIGHT);
     }
 }
