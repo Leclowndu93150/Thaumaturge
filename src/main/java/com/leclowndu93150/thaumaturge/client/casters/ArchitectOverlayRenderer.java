@@ -40,8 +40,8 @@ public final class ArchitectOverlayRenderer {
     private static final ResourceLocation FRAME_SIDE = TTIds.rl("textures/misc/frame_side.png");
     private static final ResourceLocation ARROWS = TTIds.rl("textures/misc/architect_arrows.png");
 
-    private static final RenderType SIDE_TYPE = TTRenderTypes.additiveTexturedNoDepth(FRAME_SIDE);
-    private static final RenderType CORNER_TYPE = TTRenderTypes.additiveTexturedNoDepth(FRAME_CORNER);
+    private static final RenderType SIDE_TYPE = TTRenderTypes.translucentTexturedNoDepth(FRAME_SIDE);
+    private static final RenderType CORNER_TYPE = TTRenderTypes.translucentTexturedNoDepth(FRAME_CORNER);
     private static final RenderType ARROWS_TYPE = TTRenderTypes.additiveTexturedNoDepth(ARROWS);
 
     private static final int[][] MOS = {

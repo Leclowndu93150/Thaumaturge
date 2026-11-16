@@ -149,6 +149,13 @@ public final class TTRenderTypes {
             RenderStateShard.TRANSLUCENT_TRANSPARENCY,
             RenderStateShard.LEQUAL_DEPTH_TEST,
             true));
+    private static final Function<ResourceLocation, RenderType> TRANSLUCENT_TEXTURED_NO_DEPTH =
+            Util.memoize(texture -> textured(
+                    "tt_translucent_textured_no_depth",
+                    texture,
+                    RenderStateShard.TRANSLUCENT_TRANSPARENCY,
+                    RenderStateShard.NO_DEPTH_TEST,
+                    true));
     private static final Function<ResourceLocation, RenderType> ADDITIVE_TEXTURED_NO_DEPTH =
             Util.memoize(texture -> textured(
                     "tt_additive_textured_no_depth",
@@ -295,6 +302,10 @@ public final class TTRenderTypes {
 
     public static RenderType translucentTextured(ResourceLocation texture) {
         return TRANSLUCENT_TEXTURED.apply(texture);
+    }
+
+    public static RenderType translucentTexturedNoDepth(ResourceLocation texture) {
+        return TRANSLUCENT_TEXTURED_NO_DEPTH.apply(texture);
     }
 
     public static RenderType additiveTexturedNoDepth(ResourceLocation texture) {
