@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -10,7 +11,9 @@ final class AspectReadoutPlacement {
     private AspectReadoutPlacement() {}
 
     static Direction visibleSide(Level level, BlockPos pos, Direction preferred) {
-        Direction side = preferred.getAxis().isHorizontal() ? preferred : Direction.NORTH;
+        Direction side = preferred.getAxis().isHorizontal()
+                ? LevelSpaces.directionToLocal(level, pos, preferred)
+                : Direction.NORTH;
         for (int i = 0; i < 4; i++) {
             BlockPos neighborPos = pos.relative(side);
             if (LoadedChunks.contains(level, neighborPos)) {
@@ -21,6 +24,6 @@ final class AspectReadoutPlacement {
             }
             side = side.getClockWise();
         }
-        return preferred;
+        return side;
     }
 }

@@ -116,7 +116,7 @@ public final class ThaumometerAspectOverlay {
             advanceAnimation(pos.immutable());
             Direction dir = mc.level.getBlockState(pos.above()).isAir() && mc.player.getEyeY() > pos.getY() + 1.0
                     ? Direction.UP
-                    : hit.getDirection();
+                    : mc.player.getDirection().getOpposite();
             if (dir != Direction.UP) {
                 dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
             }
@@ -148,7 +148,8 @@ public final class ThaumometerAspectOverlay {
         boolean topVisible = mc.player.getEyeY() > pos.getY() + 1.0;
         Direction dir = topFree && topVisible ? Direction.UP : hit.getDirection();
         if (dir != Direction.UP && mc.level.getBlockEntity(pos) instanceof AbstractBlockEntityJar) {
-            dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
+            dir = AspectReadoutPlacement.visibleSide(
+                    mc.level, pos, mc.player.getDirection().getOpposite());
         }
         drawTags(
                 event.getPoseStack(),

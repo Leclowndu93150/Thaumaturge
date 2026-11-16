@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.blocks.LabelTarget;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.LabelledVesselActions;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -59,7 +60,7 @@ public abstract class AbstractBlockJar extends BaseEntityBlock
                 LabelledVesselActions.aspectToLabel(stack, jar.aspectFilterKey(), jar.aspectKey(), jar.amount());
         if (label != null) {
             jar.setAspectFilter(label);
-            jar.setFacing(LabelledVesselActions.labelSideFacing(player));
+            jar.setFacing(LabelledVesselActions.labelSideFacing(level, pos, player));
             LabelledVesselActions.playLabelSound(level, pos);
         }
         return label != null;
@@ -108,7 +109,8 @@ public abstract class AbstractBlockJar extends BaseEntityBlock
             return;
         }
         if (level.getBlockEntity(pos) instanceof AbstractBlockEntityJar jar && jar.aspectFilterKey() != null) {
-            jar.setFacing(placer.getDirection().getOpposite());
+            jar.setFacing(LevelSpaces.directionToLocal(
+                    level, pos, placer.getDirection().getOpposite()));
         }
     }
 

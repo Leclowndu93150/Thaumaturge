@@ -99,6 +99,11 @@ public final class LevelSpaces {
         return frameOf(level, pos).directionToWorld(Vec3.atLowerCornerOf(face.getNormal()));
     }
 
+    public static Direction directionToLocal(Level level, BlockPos pos, Direction direction) {
+        Vec3 local = frameOf(level, pos).directionToLocal(Vec3.atLowerCornerOf(direction.getNormal()));
+        return Direction.getNearest(local.x, local.y, local.z);
+    }
+
     public static double distanceSqr(Level level, BlockPos a, BlockPos b) {
         if (isWorldOnly()) {
             return a.distSqr(b);

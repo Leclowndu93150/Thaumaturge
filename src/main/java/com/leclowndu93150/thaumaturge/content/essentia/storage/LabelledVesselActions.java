@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.storage;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -65,7 +66,7 @@ public final class LabelledVesselActions {
         return label.getFilteredAspect(labelStack);
     }
 
-    public static Direction labelSideFacing(Player player) {
-        return player.getDirection().getOpposite();
+    public static Direction labelSideFacing(Level level, BlockPos pos, Player player) {
+        return LevelSpaces.directionToLocal(level, pos, player.getDirection().getOpposite());
     }
 }
