@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,24 +24,67 @@ import org.joml.Vector3f;
 public final class LegacyItemLift {
     public static final float LEGACY_CENTER_Y = 0.35F;
     private static final long QUAD_SEED = 42L;
-    private static final int MAX_BOTTOM_LIFT_CACHE_ENTRIES = 512;
+    private static final int MAX_MODEL_BOUNDS_CACHE_ENTRIES = 512;
     private static final float MAX_REASONABLE_RENDER_BOUND = 64.0F;
-    private static final Long2FloatOpenHashMap BOTTOM_LIFT_CACHE = new Long2FloatOpenHashMap();
+    private static final Long2ObjectOpenHashMap<ModelBounds> MODEL_BOUNDS_CACHE = new Long2ObjectOpenHashMap<>();
 
-    static {
-        BOTTOM_LIFT_CACHE.defaultReturnValue(Float.NaN);
+    public record ModelBounds(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+        public float centerX() {
+            return (minX + maxX) * 0.5F;
+        }
+
+        public float centerY() {
+            return (minY + maxY) * 0.5F;
+        }
+
+        public float centerZ() {
+            return (minZ + maxZ) * 0.5F;
+        }
+
+        public float sizeY() {
+            return maxY - minY;
+        }
+
+        public float sizeZ() {
+            return maxZ - minZ;
+        }
     }
 
     private LegacyItemLift() {}
 
     public static float centerLift(ItemStack stack, ItemDisplayContext context) {
+        ModelBounds bounds = modelBounds(stack, context);
+        return bounds == null ? LEGACY_CENTER_Y : LEGACY_CENTER_Y - bounds.centerY();
+    }
+
+    public static ModelBounds modelBounds(ItemStack stack, ItemDisplayContext context) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+
         Minecraft minecraft = Minecraft.getInstance();
         BakedModel model = minecraft.getItemRenderer().getModel(stack, minecraft.level, null, 0);
-        float[] bounds = bakedYBounds(model, context);
-        if (!usableBounds(bounds)) {
-            return LEGACY_CENTER_Y;
+        long key = cacheKey(stack, context, model);
+        ModelBounds cached = MODEL_BOUNDS_CACHE.get(key);
+        if (cached != null) {
+            return cached;
         }
-        return LEGACY_CENTER_Y - (bounds[0] + bounds[1]) * 0.5F;
+
+        RenderBounds rendered = renderedModelBounds(minecraft, stack, context);
+        ModelBounds bounds = rendered.usable() ? rendered.modelBounds() : bakedBounds(model, context);
+        if (bounds == null) {
+            return null;
+        }
+
+        if (MODEL_BOUNDS_CACHE.size() >= MAX_MODEL_BOUNDS_CACHE_ENTRIES) {
+            var iterator = MODEL_BOUNDS_CACHE.keySet().iterator();
+            if (iterator.hasNext()) {
+                iterator.nextLong();
+                iterator.remove();
+            }
+        }
+        MODEL_BOUNDS_CACHE.put(key, bounds);
+        return bounds;
     }
 
     /**
@@ -60,30 +103,16 @@ public final class LegacyItemLift {
             return 0.0F;
         }
 
-        Minecraft minecraft = Minecraft.getInstance();
-        BakedModel model = minecraft.getItemRenderer().getModel(stack, minecraft.level, null, 0);
-        long cacheKey = cacheKey(stack, context, model);
-        float cached = BOTTOM_LIFT_CACHE.get(cacheKey);
-        if (!Float.isNaN(cached)) {
-            return cached;
-        }
-
-        float lift = renderedBottomLift(minecraft, stack, context);
-        if (!Float.isFinite(lift)) {
-            float[] bounds = bakedYBounds(model, context);
-            lift = usableBounds(bounds) ? -bounds[0] : 0.0F;
-        }
-
-        cacheBottomLift(cacheKey, lift);
-        return lift;
+        ModelBounds bounds = modelBounds(stack, context);
+        return bounds == null ? 0.0F : -bounds.minY();
     }
 
     /** Clears cached measurements after models are rebuilt during a resource reload. */
     public static void clearBottomLiftCache() {
-        BOTTOM_LIFT_CACHE.clear();
+        MODEL_BOUNDS_CACHE.clear();
     }
 
-    private static float renderedBottomLift(Minecraft minecraft, ItemStack stack, ItemDisplayContext context) {
+    private static RenderBounds renderedModelBounds(Minecraft minecraft, ItemStack stack, ItemDisplayContext context) {
         RenderBounds bounds = new RenderBounds();
         Map<RenderType, VertexConsumer> consumers = new IdentityHashMap<>();
         MultiBufferSource measuringBuffers =
@@ -103,33 +132,24 @@ public final class LegacyItemLift {
                             minecraft.level,
                             0);
         } catch (RuntimeException | LinkageError ignored) {
-            return Float.NaN;
+            return bounds;
         }
-
-        return bounds.usable() ? -bounds.minY : Float.NaN;
+        return bounds;
     }
 
-    private static float[] bakedYBounds(BakedModel model, ItemDisplayContext context) {
+    private static ModelBounds bakedBounds(BakedModel model, ItemDisplayContext context) {
         RandomSource random = RandomSource.create(QUAD_SEED);
         PoseStack poseStack = new PoseStack();
         model = model.applyTransform(context, poseStack, false);
         poseStack.translate(-0.5F, -0.5F, -0.5F);
         Matrix4f matrix = poseStack.last().pose();
 
-        float[] bounds = {Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY};
-        accumulateY(model.getQuads(null, null, random, ModelData.EMPTY, null), matrix, bounds);
+        RenderBounds bounds = new RenderBounds();
+        accumulate(model.getQuads(null, null, random, ModelData.EMPTY, null), matrix, bounds);
         for (Direction direction : Direction.values()) {
-            accumulateY(model.getQuads(null, direction, random, ModelData.EMPTY, null), matrix, bounds);
+            accumulate(model.getQuads(null, direction, random, ModelData.EMPTY, null), matrix, bounds);
         }
-        return bounds;
-    }
-
-    private static boolean usableBounds(float[] bounds) {
-        return Float.isFinite(bounds[0])
-                && Float.isFinite(bounds[1])
-                && bounds[0] <= bounds[1]
-                && Math.abs(bounds[0]) <= MAX_REASONABLE_RENDER_BOUND
-                && Math.abs(bounds[1]) <= MAX_REASONABLE_RENDER_BOUND;
+        return bounds.usable() ? bounds.modelBounds() : null;
     }
 
     private static long cacheKey(ItemStack stack, ItemDisplayContext context, BakedModel model) {
@@ -137,18 +157,7 @@ public final class LegacyItemLift {
         return ((long) System.identityHashCode(model) << 32) ^ Integer.toUnsignedLong(stackState);
     }
 
-    private static void cacheBottomLift(long key, float lift) {
-        if (BOTTOM_LIFT_CACHE.size() >= MAX_BOTTOM_LIFT_CACHE_ENTRIES) {
-            var iterator = BOTTOM_LIFT_CACHE.keySet().iterator();
-            if (iterator.hasNext()) {
-                iterator.nextLong();
-                iterator.remove();
-            }
-        }
-        BOTTOM_LIFT_CACHE.put(key, lift);
-    }
-
-    private static void accumulateY(List<BakedQuad> quads, Matrix4f matrix, float[] bounds) {
+    private static void accumulate(List<BakedQuad> quads, Matrix4f matrix, RenderBounds bounds) {
         Vector3f corner = new Vector3f();
         for (BakedQuad quad : quads) {
             int[] vertices = quad.getVertices();
@@ -160,33 +169,54 @@ public final class LegacyItemLift {
                         Float.intBitsToFloat(vertices[base + 1]),
                         Float.intBitsToFloat(vertices[base + 2]));
                 matrix.transformPosition(corner);
-                bounds[0] = Math.min(bounds[0], corner.y);
-                bounds[1] = Math.max(bounds[1], corner.y);
+                bounds.include(corner.x, corner.y, corner.z);
             }
         }
     }
 
     private static final class RenderBounds {
+        private float minX = Float.POSITIVE_INFINITY;
+        private float maxX = Float.NEGATIVE_INFINITY;
         private float minY = Float.POSITIVE_INFINITY;
         private float maxY = Float.NEGATIVE_INFINITY;
+        private float minZ = Float.POSITIVE_INFINITY;
+        private float maxZ = Float.NEGATIVE_INFINITY;
         private boolean invalid;
 
-        private void include(float y) {
-            if (!Float.isFinite(y)) {
+        private void include(float x, float y, float z) {
+            if (!Float.isFinite(x) || !Float.isFinite(y) || !Float.isFinite(z)) {
                 invalid = true;
                 return;
             }
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
+            minZ = Math.min(minZ, z);
+            maxZ = Math.max(maxZ, z);
         }
 
         private boolean usable() {
             return !invalid
+                    && Float.isFinite(minX)
+                    && Float.isFinite(maxX)
                     && Float.isFinite(minY)
                     && Float.isFinite(maxY)
+                    && Float.isFinite(minZ)
+                    && Float.isFinite(maxZ)
+                    && minX <= maxX
                     && minY <= maxY
+                    && minZ <= maxZ
+                    && Math.abs(minX) <= MAX_REASONABLE_RENDER_BOUND
+                    && Math.abs(maxX) <= MAX_REASONABLE_RENDER_BOUND
                     && Math.abs(minY) <= MAX_REASONABLE_RENDER_BOUND
-                    && Math.abs(maxY) <= MAX_REASONABLE_RENDER_BOUND;
+                    && Math.abs(maxY) <= MAX_REASONABLE_RENDER_BOUND
+                    && Math.abs(minZ) <= MAX_REASONABLE_RENDER_BOUND
+                    && Math.abs(maxZ) <= MAX_REASONABLE_RENDER_BOUND;
+        }
+
+        private ModelBounds modelBounds() {
+            return new ModelBounds(minX, maxX, minY, maxY, minZ, maxZ);
         }
     }
 
@@ -199,7 +229,7 @@ public final class LegacyItemLift {
 
         @Override
         public VertexConsumer addVertex(float x, float y, float z) {
-            bounds.include(y);
+            bounds.include(x, y, z);
             return this;
         }
 
