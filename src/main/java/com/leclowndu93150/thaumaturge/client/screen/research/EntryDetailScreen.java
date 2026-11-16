@@ -366,10 +366,19 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         }
         rebuildPages();
         if (!flagsCleared) {
-            PacketDistributor.sendToServer(new ServerboundClearResearchFlagsPayload(
-                    entryId, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
+            clearEntryFlags();
             flagsCleared = true;
         }
+    }
+
+    private void clearEntryFlags() {
+        if (minecraft != null && minecraft.player != null) {
+            PlayerResearch knowledge = PlayerResearchAccess.of(minecraft.player);
+            knowledge.removeFlag(entryId, ResearchFlag.RESEARCH);
+            knowledge.removeFlag(entryId, ResearchFlag.PAGE);
+        }
+        PacketDistributor.sendToServer(
+                new ServerboundClearResearchFlagsPayload(entryId, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
     }
 
     private TTButton createReturnControl() {
@@ -2653,6 +2662,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     @Override
     public void onClose() {
         if (!closeInsert()) {
+            clearEntryFlags();
             super.onClose();
         }
     }
@@ -2661,6 +2671,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         if (closeInsert()) {
             return;
         }
+        clearEntryFlags();
         ThaumonomiconBrowserScreen.rememberEntry(null);
         if (minecraft != null) minecraft.setScreen(parent);
     }
