@@ -1261,13 +1261,6 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                 }
             }
             satisfied[i] = met;
-            if (reward.type() == KnowledgeType.THEORY
-                    && mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
-                reward.category()
-                        .unwrapKey()
-                        .ifPresent(
-                                k -> DeferredTooltip.set(TTTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
-            }
         }
     }
 
