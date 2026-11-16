@@ -1,11 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -51,6 +55,21 @@ public final class RunicShieldingEvents {
                         SoundSource.PLAYERS,
                         EFFECT_VOLUME,
                         pitch);
+        Vec3 center = player.position().add(0.0, player.getBbHeight() / 2.0, 0.0);
+        BlockPos particleOrigin = BlockPos.containing(center);
+        for (Direction face : Direction.values()) {
+            player.serverLevel()
+                    .sendParticles(
+                            WardFlashParticleOptions.at(particleOrigin, face, center),
+                            center.x,
+                            center.y,
+                            center.z,
+                            1,
+                            0.0,
+                            0.0,
+                            0.0,
+                            0.0);
+        }
     }
 
     private static boolean hasActiveShield(ServerPlayer player) {
