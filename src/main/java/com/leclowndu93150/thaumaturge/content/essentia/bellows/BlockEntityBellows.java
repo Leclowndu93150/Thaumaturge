@@ -1,36 +1,44 @@
 package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.IBellowsPower;
 import com.leclowndu93150.thaumaturge.mixin.world.level.block.entity.AbstractFurnaceBlockEntityAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockEntityBellows extends BlockEntity implements IBellowsPower {
+public final class BlockEntityBellows extends AbstractSyncedBlockEntity implements IBellowsPower {
     private static final float PUFF_VOLUME = 0.02F;
     private static final float PUFF_BASE_PITCH = 0.5F;
     private static final float PUFF_PITCH_SPREAD = 0.08F;
     private static final int BOOST_INTERVAL = 2;
     private static final int BOOST_STEP = 1;
     private static final int BOOST_MARGIN = 5;
+    private long animationOffset;
+    private long pausedAt = -1L;
+    private boolean animationClockInitialized;
 
     public BlockEntityBellows(BlockPos pos, BlockState state) {
         super(TTBlockEntities.BELLOWS.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityBellows bellows) {
-        if (!state.getValue(BlockBellows.ENABLED)) {
+        long gameTime = level.getGameTime();
+        boolean enabled = state.getValue(BlockBellows.ENABLED);
+        bellows.updateAnimationClock(gameTime, enabled);
+        if (!enabled) {
             return;
         }
-        long gameTime = level.getGameTime();
-        if (BellowsStroke.startsSqueeze(gameTime, pos)) {
+        if (BellowsStroke.startsSqueeze(bellows.animationTime(gameTime), pos)) {
             RandomSource random = level.getRandom();
             level.playSound(
                     null,
@@ -58,10 +66,55 @@ public final class BlockEntityBellows extends BlockEntity implements IBellowsPow
     }
 
     public float inflation(float partialTick) {
-        if (level == null || !bellowsEnabled()) {
+        if (level == null) {
             return BellowsStroke.FULL;
         }
-        return BellowsStroke.inflation(level.getGameTime(), partialTick, worldPosition);
+        boolean enabled = bellowsEnabled();
+        return BellowsStroke.inflation(animationTime(level.getGameTime()), enabled ? partialTick : 0.0F, worldPosition);
+    }
+
+    private void updateAnimationClock(long gameTime, boolean enabled) {
+        if (!animationClockInitialized) {
+            animationClockInitialized = true;
+            if (!enabled) {
+                pausedAt = gameTime;
+                animationOffset = gameTime + Mth.getSeed(worldPosition);
+                setChangedAndSync();
+            } else {
+                setChanged();
+            }
+            return;
+        }
+        if (!enabled && pausedAt < 0L) {
+            pausedAt = gameTime;
+            setChangedAndSync();
+        } else if (enabled && pausedAt >= 0L) {
+            animationOffset += gameTime - pausedAt;
+            pausedAt = -1L;
+            setChangedAndSync();
+        }
+    }
+
+    private long animationTime(long gameTime) {
+        return (pausedAt >= 0L ? pausedAt : gameTime) - animationOffset;
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putLong("AnimationOffset", animationOffset);
+        tag.putBoolean("AnimationClockInitialized", animationClockInitialized);
+        if (pausedAt >= 0L) {
+            tag.putLong("AnimationPausedAt", pausedAt);
+        }
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        animationOffset = tag.getLong("AnimationOffset");
+        pausedAt = tag.contains("AnimationPausedAt") ? tag.getLong("AnimationPausedAt") : -1L;
+        animationClockInitialized = tag.getBoolean("AnimationClockInitialized");
     }
 
     @Override
