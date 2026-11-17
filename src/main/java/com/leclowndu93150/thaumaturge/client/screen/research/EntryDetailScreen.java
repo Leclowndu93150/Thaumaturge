@@ -385,7 +385,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private TTButton createReturnControl() {
         TTButton control = new TTImageButton(
                 width / 2 - BACK_W / 2,
-                Math.max(4, sh - 46),
+                sh + ARROW_Y_OFFSET - 4,
                 BACK_W,
                 21,
                 TTScreenTextures.RESEARCH_BOOK,
@@ -599,6 +599,12 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         DeferredTooltip.render(graphics, font);
+        if (insertOpen() && returnControl != null) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, INSERT_DEPTH + 1);
+            returnControl.render(graphics, mouseX, mouseY, partialTick);
+            graphics.pose().popPose();
+        }
     }
 
     @Override
