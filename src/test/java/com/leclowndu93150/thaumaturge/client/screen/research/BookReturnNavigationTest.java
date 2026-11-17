@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -26,22 +27,25 @@ class BookReturnNavigationTest {
 
     @Test
     void rightClickClosesTheInsertBeforeReturningToTheSameMap() throws Exception {
-        Minecraft game = mock(Minecraft.class);
-        Screen map = mock(Screen.class);
-        EntryDetailScreen detail = detail(game, map);
-        field(EntryDetailScreen.class, "shownRecipe").set(detail, RECIPE);
+        try (MockedStatic<PacketDistributor> packets = mockStatic(PacketDistributor.class)) {
+            Minecraft game = mock(Minecraft.class);
+            Screen map = mock(Screen.class);
+            EntryDetailScreen detail = detail(game, map);
+            field(EntryDetailScreen.class, "shownRecipe").set(detail, RECIPE);
 
-        assertTrue(detail.mouseClicked(100, 100, 1));
-        assertNull(field(EntryDetailScreen.class, "shownRecipe").get(detail));
-        verify(game, org.mockito.Mockito.never()).setScreen(map);
+            assertTrue(detail.mouseClicked(100, 100, 1));
+            assertNull(field(EntryDetailScreen.class, "shownRecipe").get(detail));
+            verify(game, org.mockito.Mockito.never()).setScreen(map);
 
-        assertTrue(detail.mouseClicked(100, 100, 1));
-        verify(game).setScreen(map);
+            assertTrue(detail.mouseClicked(100, 100, 1));
+            verify(game).setScreen(map);
+        }
     }
 
     @Test
     void returnControlClosesEveryInsertBeforeReturningToTheSameMap() throws Exception {
-        try (MockedStatic<Minecraft> minecraft = mockStatic(Minecraft.class)) {
+        try (MockedStatic<Minecraft> minecraft = mockStatic(Minecraft.class);
+                MockedStatic<PacketDistributor> packets = mockStatic(PacketDistributor.class)) {
             for (String insert : List.of("shownRecipe", "showingAspects", "showingKnowledge", "showingConstruct")) {
                 Minecraft game = mock(Minecraft.class);
                 when(game.getSoundManager()).thenReturn(mock(SoundManager.class));
