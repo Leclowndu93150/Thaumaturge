@@ -16,8 +16,9 @@ public final class TTRenderTypes {
     private static final float NON_ZERO_ALPHA_TEST = 0.0001F;
     private static final float IRIS_PARTICLE_ALPHA_TEST = 0.1F;
 
-    private static final RenderStateShard.DepthTestStateShard REVEALED_NODE_DEPTH =
-            new RenderStateShard.DepthTestStateShard("tt_revealed_node", 519) {
+    // Vanilla's NO_DEPTH_TEST leaves the current depth test state alone.
+    private static final RenderStateShard.DepthTestStateShard DISABLED_DEPTH_TEST =
+            new RenderStateShard.DepthTestStateShard("tt_disabled_depth_test", 519) {
                 @Override
                 public void setupRenderState() {
                     RenderSystem.disableDepthTest();
@@ -111,7 +112,7 @@ public final class TTRenderTypes {
             "tt_fx_additive_no_depth",
             texture,
             RenderStateShard.ADDITIVE_TRANSPARENCY,
-            REVEALED_NODE_DEPTH,
+            DISABLED_DEPTH_TEST,
             RenderStateShard.COLOR_WRITE,
             false));
     private static final Function<ResourceLocation, RenderType> FX_ALPHA_ADDITIVE_NO_DEPTH =
@@ -119,7 +120,7 @@ public final class TTRenderTypes {
                     "tt_fx_alpha_additive_no_depth",
                     texture,
                     RenderStateShard.LIGHTNING_TRANSPARENCY,
-                    REVEALED_NODE_DEPTH,
+                    DISABLED_DEPTH_TEST,
                     RenderStateShard.COLOR_WRITE,
                     false));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_NO_DEPTH =
@@ -127,7 +128,7 @@ public final class TTRenderTypes {
                     "tt_fx_translucent_no_depth",
                     texture,
                     RenderStateShard.TRANSLUCENT_TRANSPARENCY,
-                    REVEALED_NODE_DEPTH,
+                    DISABLED_DEPTH_TEST,
                     RenderStateShard.COLOR_WRITE,
                     true));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_DEPTH = Util.memoize(texture -> particle(
@@ -162,14 +163,14 @@ public final class TTRenderTypes {
                     "tt_translucent_textured_no_depth",
                     texture,
                     RenderStateShard.TRANSLUCENT_TRANSPARENCY,
-                    RenderStateShard.NO_DEPTH_TEST,
+                    DISABLED_DEPTH_TEST,
                     true));
     private static final Function<ResourceLocation, RenderType> ADDITIVE_TEXTURED_NO_DEPTH =
             Util.memoize(texture -> textured(
                     "tt_additive_textured_no_depth",
                     texture,
                     RenderStateShard.ADDITIVE_TRANSPARENCY,
-                    RenderStateShard.NO_DEPTH_TEST,
+                    DISABLED_DEPTH_TEST,
                     false));
 
     private static final Function<ResourceLocation, RenderType> ENTITY_CUTOUT_FLAT = Util.memoize(
