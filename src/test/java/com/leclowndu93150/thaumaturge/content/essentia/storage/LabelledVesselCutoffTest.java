@@ -53,10 +53,11 @@ class LabelledVesselCutoffTest {
 
     @Test
     void labelFacingFollowsOppositePlayerDirection() {
+        Level level = mock(Level.class);
         Player player = mock(Player.class);
         for (Direction direction : new Direction[] {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST}) {
             when(player.getDirection()).thenReturn(direction);
-            assertEquals(direction.getOpposite(), LabelledVesselActions.labelSideFacing(player));
+            assertEquals(direction.getOpposite(), LabelledVesselActions.labelSideFacing(level, BlockPos.ZERO, player));
         }
     }
 
