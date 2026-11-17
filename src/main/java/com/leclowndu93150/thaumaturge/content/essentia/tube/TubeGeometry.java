@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import java.util.Map;
+import java.util.function.Function;
+import net.minecraft.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,6 +36,7 @@ public final class TubeGeometry {
     private final VoxelShape core;
     private final Map<Direction, VoxelShape> arms;
     private final Map<Direction, VoxelShape> inletMarkers;
+    private final Function<BlockState, VoxelShape> shapes = Util.memoize(this::buildShape);
 
     private TubeGeometry(double coreHalf, VoxelShape downArm, VoxelShape downInletMarker) {
         this.coreHalf = coreHalf;
@@ -49,6 +52,10 @@ public final class TubeGeometry {
     }
 
     public VoxelShape shape(BlockState state) {
+        return shapes.apply(state);
+    }
+
+    private VoxelShape buildShape(BlockState state) {
         VoxelShape shape = core;
         for (Direction direction : Direction.values()) {
             if (state.getValue(BlockEssentiaTransport.propertyFor(direction))) {

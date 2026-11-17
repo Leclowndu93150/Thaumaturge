@@ -28,6 +28,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +40,23 @@ class TubeCompatibilityTest {
     private Holder<IAspect> order;
     private Holder<IAspect> fire;
     private final Map<BlockPos, IEssentiaConduit> peers = new HashMap<>();
+
+    @Test
+    void reusesTubeShapesAndKeepsDifferentInletDirections() {
+        var connected = TTBlocks.TUBE_ONEWAY
+                .get()
+                .defaultBlockState()
+                .setValue(BlockEssentiaTransport.EAST, true)
+                .setValue(BlockEssentiaTransport.WEST, true);
+        var east = connected.setValue(BlockStateProperties.FACING, Direction.EAST);
+        var west = connected.setValue(BlockStateProperties.FACING, Direction.WEST);
+        var eastShape = TubeGeometry.ONEWAY.shape(east);
+        var westShape = TubeGeometry.ONEWAY.shape(west);
+
+        assertSame(eastShape, TubeGeometry.ONEWAY.shape(east));
+        assertSame(westShape, TubeGeometry.ONEWAY.shape(west));
+        assertTrue(Shapes.joinIsNotEmpty(eastShape, westShape, BooleanOp.NOT_SAME));
+    }
 
     @BeforeEach
     void setUp() throws Exception {
