@@ -1204,6 +1204,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add(
                 "message.thaumaturge.node_jar.vis",
                 "The ritual fails - it demands %s vis of each primal aspect from wands in your hotbar");
+        add("message.thaumaturge.node_jar.warded", "The ritual cannot remove another player's ward");
         add(
                 "message.thaumaturge.salis_mundus.no_research",
                 "The dust sparkles with promise, but you lack the knowledge to direct it");
