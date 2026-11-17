@@ -3,11 +3,10 @@
   "name": "research.thaumaturge.focus_spellbat.title",
   "parents": [
     "thaumaturge:focus_mine",
-    "thaumaturge:f_bat",
     "thaumaturge:scanned/entity/thaumaturge/firebat"
   ],
-  "column": 9,
-  "row": -1,
+  "column": 8,
+  "row": 0,
   "meta": [
     "reverse"
   ],
