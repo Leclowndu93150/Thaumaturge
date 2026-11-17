@@ -114,6 +114,14 @@ public final class TTRenderTypes {
             REVEALED_NODE_DEPTH,
             RenderStateShard.COLOR_WRITE,
             false));
+    private static final Function<ResourceLocation, RenderType> FX_ALPHA_ADDITIVE_NO_DEPTH =
+            Util.memoize(texture -> particle(
+                    "tt_fx_alpha_additive_no_depth",
+                    texture,
+                    RenderStateShard.LIGHTNING_TRANSPARENCY,
+                    REVEALED_NODE_DEPTH,
+                    RenderStateShard.COLOR_WRITE,
+                    false));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_NO_DEPTH =
             Util.memoize(texture -> particle(
                     "tt_fx_translucent_no_depth",
@@ -282,6 +290,10 @@ public final class TTRenderTypes {
 
     public static RenderType fxAdditiveNoDepth(ResourceLocation texture) {
         return FX_ADDITIVE_NO_DEPTH.apply(texture);
+    }
+
+    public static RenderType fxAlphaAdditiveNoDepth(ResourceLocation texture) {
+        return FX_ALPHA_ADDITIVE_NO_DEPTH.apply(texture);
     }
 
     public static RenderType fxTranslucentNoDepth(ResourceLocation texture) {

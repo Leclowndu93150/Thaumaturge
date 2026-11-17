@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.content.world.space.WorldFrame;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,8 @@ class ArchitectDeliveryTest {
         when(level.getBlockState(any(BlockPos.class)))
                 .thenAnswer(call -> blocks.getOrDefault(call.getArgument(0), Blocks.AIR.defaultBlockState()));
 
-        Set<BlockPos> affected = Set.copyOf(ArchitectDelivery.volume(level, origin, Direction.EAST, 1, 1, 1));
+        Set<BlockPos> affected =
+                Set.copyOf(ArchitectDelivery.volume(level, origin, Direction.EAST, 1, 1, 1, WorldFrame.INSTANCE));
 
         assertEquals(Set.of(nearCorner, farCorner), affected);
     }

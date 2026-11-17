@@ -5,7 +5,8 @@ import com.leclowndu93150.thaumaturge.api.items.AreaPreviewer;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
-import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -24,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -42,7 +45,7 @@ public final class ArchitectOverlayRenderer {
 
     private static final RenderType SIDE_TYPE = TTRenderTypes.translucentTexturedNoDepth(FRAME_SIDE);
     private static final RenderType CORNER_TYPE = TTRenderTypes.translucentTexturedNoDepth(FRAME_CORNER);
-    private static final RenderType ARROWS_TYPE = TTRenderTypes.additiveTexturedNoDepth(ARROWS);
+    private static final RenderType ARROWS_TYPE = TTRenderTypes.fxAlphaAdditiveNoDepth(ARROWS);
 
     private static final int[][] MOS = {
         {4, 5, 6, 7}, {0, 1, 2, 3}, {0, 1, 4, 5}, {2, 3, 6, 7}, {0, 2, 4, 6}, {1, 3, 5, 7}
@@ -73,7 +76,7 @@ public final class ArchitectOverlayRenderer {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -91,7 +94,7 @@ public final class ArchitectOverlayRenderer {
         }
         BlockPos anchor = hit.getBlockPos();
         int bucket = player.tickCount / HASH_TICK_STEP;
-        if (PREVIEW_CACHE.update(anchor, hit.getDirection(), bucket)) {
+        if (PREVIEW_CACHE.update(mc.level, LevelSpaces.frameOf(mc.level, anchor), anchor, hit.getDirection(), bucket)) {
             bmCache.clear();
             architectBlocks = architect.previewArea(stack, mc.level, anchor, hit.getDirection(), player);
             architectSet.clear();
@@ -101,24 +104,22 @@ public final class ArchitectOverlayRenderer {
             return;
         }
         PoseStack poseStack = event.getPoseStack();
-        poseStack.pushPose();
         Vec3 corner = Vec3.atLowerCornerOf(anchor);
-        ClientSpaces.applyFrame(
-                poseStack, mc.level, corner, mc.gameRenderer.getMainCamera().getPosition());
-        Vec3 cam = corner;
+        Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
+        poseStack.pushPose();
+        ClientSpaces.applyFrame(poseStack, mc.level, corner, camera);
         drawArchitectAxis(
                 poseStack,
-                effectBuffers,
+                buffers,
                 player,
                 anchor,
-                cam,
+                corner,
                 architect.showsAxisArrows(stack, mc.level, player, hit.getDirection(), Direction.Axis.X),
                 architect.showsAxisArrows(stack, mc.level, player, hit.getDirection(), Direction.Axis.Y),
                 architect.showsAxisArrows(stack, mc.level, player, hit.getDirection(), Direction.Axis.Z));
         for (BlockPos pos : architectBlocks) {
-            drawOverlayBlock(poseStack, effectBuffers, pos, cam);
+            drawOverlayBlock(poseStack, buffers, pos, corner);
         }
         buffers.endBatch();
         poseStack.popPose();
@@ -183,10 +184,16 @@ public final class ArchitectOverlayRenderer {
         return bitMatrix;
     }
 
-    private static void drawOverlayBlock(PoseStack poseStack, MultiBufferSource buffers, BlockPos pos, Vec3 cam) {
+    static void translateToBlockCenter(PoseStack poseStack, BlockPos pos, Vec3 origin) {
+        // Sable plot coordinates are too large to add the half block in float precision.
+        Vec3 center = Vec3.atCenterOf(pos).subtract(origin);
+        poseStack.translate(center.x, center.y, center.z);
+    }
+
+    private static void drawOverlayBlock(PoseStack poseStack, MultiBufferSource buffers, BlockPos pos, Vec3 origin) {
         boolean[] bitMatrix = connectedSides(pos);
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + HALF - cam.x, pos.getY() + HALF - cam.y, pos.getZ() + HALF - cam.z);
+        translateToBlockCenter(poseStack, pos, origin);
         for (Direction face : Direction.values()) {
             if (isConnected(pos.relative(face))) {
                 continue;
@@ -216,7 +223,7 @@ public final class ArchitectOverlayRenderer {
             MultiBufferSource buffers,
             LocalPlayer player,
             BlockPos pos,
-            Vec3 cam,
+            Vec3 origin,
             boolean dx,
             boolean dy,
             boolean dz) {
@@ -228,7 +235,7 @@ public final class ArchitectOverlayRenderer {
         float b = Mth.sin(player.tickCount / AXIS_B_PERIOD + pos.getZ()) * AXIS_PULSE + AXIS_B_BASE;
         VertexConsumer buffer = buffers.getBuffer(ARROWS_TYPE);
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + HALF - cam.x, pos.getY() + HALF - cam.y, pos.getZ() + HALF - cam.z);
+        translateToBlockCenter(poseStack, pos, origin);
         poseStack.mulPose(new Quaternionf().rotationX((float) Math.toRadians(90.0)));
         if (dz) {
             poseStack.pushPose();
@@ -259,21 +266,42 @@ public final class ArchitectOverlayRenderer {
     private static void drawQuad(PoseStack poseStack, VertexConsumer buffer, float r, float g, float b, float alpha) {
         int color = ARGB32.colorFromFloat(alpha, Math.min(r, 1.0F), Math.min(g, 1.0F), Math.min(b, 1.0F));
         PoseStack.Pose pose = poseStack.last();
-        buffer.addVertex(pose, -HALF, HALF, 0.0F).setUv(1.0F, 1.0F).setColor(color);
-        buffer.addVertex(pose, HALF, HALF, 0.0F).setUv(1.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, HALF, -HALF, 0.0F).setUv(0.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, -HALF, -HALF, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+        // The particle format used by the arrows requires a lightmap value.
+        buffer.addVertex(pose, -HALF, HALF, 0.0F)
+                .setUv(1.0F, 1.0F)
+                .setColor(color)
+                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.addVertex(pose, HALF, HALF, 0.0F)
+                .setUv(1.0F, 0.0F)
+                .setColor(color)
+                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.addVertex(pose, HALF, -HALF, 0.0F)
+                .setUv(0.0F, 0.0F)
+                .setColor(color)
+                .setLight(LightTexture.FULL_BRIGHT);
+        buffer.addVertex(pose, -HALF, -HALF, 0.0F)
+                .setUv(0.0F, 1.0F)
+                .setColor(color)
+                .setLight(LightTexture.FULL_BRIGHT);
     }
 
     static final class PreviewCache {
+        private Level level;
+        private SpaceFrame frame;
         private BlockPos anchor;
         private Direction face;
         private int bucket;
 
-        boolean update(BlockPos nextAnchor, Direction nextFace, int nextBucket) {
-            if (nextAnchor.equals(anchor) && nextFace == face && nextBucket == bucket) {
+        boolean update(Level nextLevel, SpaceFrame nextFrame, BlockPos nextAnchor, Direction nextFace, int nextBucket) {
+            if (nextLevel == level
+                    && nextFrame.equals(frame)
+                    && nextAnchor.equals(anchor)
+                    && nextFace == face
+                    && nextBucket == bucket) {
                 return false;
             }
+            level = nextLevel;
+            frame = nextFrame;
             anchor = nextAnchor.immutable();
             face = nextFace;
             bucket = nextBucket;

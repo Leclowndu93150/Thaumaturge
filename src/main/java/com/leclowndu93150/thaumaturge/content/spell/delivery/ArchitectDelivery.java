@@ -13,6 +13,8 @@ import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.spell.casting.CasterHands;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellRayTrace;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -86,9 +88,7 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
 
     @Override
     public @Nullable HitResult traceAnchor(ItemStack stack, Level level, LivingEntity caster) {
-        Vec3 eyes = caster.getEyePosition();
-        return SpellRayTrace.clipBlocks(
-                level, caster, eyes, eyes.add(caster.getLookAngle().scale(range)));
+        return caster.pick(range, 1.0F, false);
     }
 
     @Override
@@ -158,10 +158,14 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
         int ax = CasterManager.getAreaX(stack);
         int ay = CasterManager.getAreaY(stack);
         int az = CasterManager.getAreaZ(stack);
-        return method == FULL ? volume(level, origin, side, ax, ay, az) : surface(level, origin, side, ax, az);
+        SpaceFrame frame = LevelSpaces.frameOf(level, origin);
+        return method == FULL
+                ? volume(level, origin, side, ax, ay, az, frame)
+                : surface(level, origin, side, ax, az, frame);
     }
 
-    static List<BlockPos> volume(Level level, BlockPos origin, Direction side, int ax, int ay, int az) {
+    static List<BlockPos> volume(
+            Level level, BlockPos origin, Direction side, int ax, int ay, int az, SpaceFrame frame) {
         BlockPos min = new BlockPos(
                 origin.getX() - ax - ax * side.getStepX(),
                 origin.getY() - ay - ay * side.getStepY(),
@@ -172,14 +176,15 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
                 origin.getZ() + az - az * side.getStepZ());
         List<BlockPos> affected = new ArrayList<>();
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
-            if (!level.getBlockState(pos).isAir()) {
+            if (sameSpace(level, frame, pos) && !level.getBlockState(pos).isAir()) {
                 affected.add(pos.immutable());
             }
         }
         return affected;
     }
 
-    private static List<BlockPos> surface(Level level, BlockPos origin, Direction side, int ax, int az) {
+    private static List<BlockPos> surface(
+            Level level, BlockPos origin, Direction side, int ax, int az, SpaceFrame frame) {
         BlockState match = level.getBlockState(origin);
         List<Direction.Axis> plane = planeAxes(side);
         Direction.Axis first = plane.get(0);
@@ -188,7 +193,10 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
                 origin,
                 pos -> Math.abs(pos.get(first) - origin.get(first)) <= ax
                         && Math.abs(pos.get(second) - origin.get(second)) <= az,
-                pos -> !match.isAir() && level.getBlockState(pos) == match && exposed(level, pos),
+                pos -> !match.isAir()
+                        && sameSpace(level, frame, pos)
+                        && level.getBlockState(pos).equals(match)
+                        && exposed(level, pos, frame),
                 side,
                 true);
     }
@@ -225,13 +233,22 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
         return out;
     }
 
-    private static boolean exposed(Level level, BlockPos pos) {
+    private static boolean exposed(Level level, BlockPos pos, SpaceFrame frame) {
         for (Direction face : Direction.values()) {
-            if (!level.getBlockState(pos.relative(face)).isSolidRender(level, pos.relative(face))) {
+            BlockPos neighbor = pos.relative(face);
+            if (!sameSpace(level, frame, neighbor)
+                    || !level.getBlockState(neighbor).isSolidRender(level, neighbor)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean sameSpace(Level level, SpaceFrame frame, BlockPos pos) {
+        if (LevelSpaces.isWorldOnly()) {
+            return true;
+        }
+        return frame.isWorld() ? !LevelSpaces.isPlot(level, pos) : frame.equals(LevelSpaces.frameOf(level, pos));
     }
 
     @Override
