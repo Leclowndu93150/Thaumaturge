@@ -643,15 +643,29 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             return change;
         }
         BlockPos otherPos = NodeScatter.triangular(pos, DISCHARGE_RANGE, random);
-        if (otherPos.equals(pos)) {
-            return change;
+        BlockEntityNode other = !otherPos.equals(pos)
+                        && isGenerated(serverLevel, otherPos)
+                        && serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode candidate
+                        && candidate.allowDischarge()
+                        && candidate.lock <= 0
+                ? candidate
+                : null;
+        if (other == null) {
+            List<BlockPos> foreignOrigins =
+                    LevelSpaces.foreignCentersNear(serverLevel, pos, DISCHARGE_RANGE * Math.sqrt(3.0));
+            if (!foreignOrigins.isEmpty()) {
+                BlockPos origin = foreignOrigins.get(random.nextInt(foreignOrigins.size()));
+                otherPos = NodeScatter.triangular(origin, DISCHARGE_RANGE, random);
+                if (LevelSpaces.withinCube(serverLevel, pos, otherPos, DISCHARGE_RANGE)
+                        && isGenerated(serverLevel, otherPos)
+                        && serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode candidate
+                        && candidate.allowDischarge()
+                        && candidate.lock <= 0) {
+                    other = candidate;
+                }
+            }
         }
-        if (!isGenerated(serverLevel, otherPos)) {
-            return change;
-        }
-        if (!(serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode other)
-                || !other.allowDischarge()
-                || other.lock > 0) {
+        if (other == null) {
             return change;
         }
         int otherAvg = (other.aspects.totalAmount() + other.aspectsBase.totalAmount()) / 2;
