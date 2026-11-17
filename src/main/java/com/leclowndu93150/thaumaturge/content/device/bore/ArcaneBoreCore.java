@@ -57,7 +57,6 @@ public final class ArcaneBoreCore {
     private static final int MAX_TUNNEL_LIGHT = 15;
     private static final int ACTIVE_AIM_DISTANCE = 2;
     private static final int INACTIVE_AIM_DISTANCE = 1;
-    private static final double TARGET_CENTER = 0.5;
     private static final Direction[] SIDES = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
     private @Nullable BlockPos digTarget;
@@ -108,12 +107,9 @@ public final class ArcaneBoreCore {
 
     public static void aim(ArcaneBoreHost host, @Nullable BlockPos target) {
         if (target != null) {
-            host.aimBore(
-                    target.getX() + TARGET_CENTER,
-                    target.getY() + TARGET_CENTER,
-                    target.getZ() + TARGET_CENTER,
-                    IDLE_YAW_STEP,
-                    DIG_PITCH_STEP);
+            Vec3 localTarget =
+                    LevelSpaces.frameOf(host.boreLevel(), host.borePos()).toLocal(Vec3.atCenterOf(target));
+            host.aimBore(localTarget.x, localTarget.y, localTarget.z, IDLE_YAW_STEP, DIG_PITCH_STEP);
             return;
         }
         Direction facing = host.boreFacing();
