@@ -78,7 +78,9 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
-        if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table) {
+        if (!moving
+                && !state.is(next.getBlock())
+                && level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table) {
             table.dropContents();
         }
         super.onRemove(state, level, pos, next, moving);

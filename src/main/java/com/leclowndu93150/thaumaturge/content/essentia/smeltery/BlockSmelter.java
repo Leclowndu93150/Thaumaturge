@@ -86,7 +86,7 @@ public class BlockSmelter extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
+        if (!movedByPiston && !state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof BlockEntitySmelter smelter) smelter.dropContents();
             level.updateNeighbourForOutputSignal(pos, state.getBlock());
         }

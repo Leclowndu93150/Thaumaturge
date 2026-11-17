@@ -175,7 +175,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
+        if (!movedByPiston && !state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof BlockEntityResearchTable be) {
                 be.dropContents(level, pos);
             }

@@ -146,7 +146,7 @@ public final class BlockThaumatorium extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level instanceof ServerLevel) {
+        if (!movedByPiston && !state.is(newState.getBlock()) && level instanceof ServerLevel) {
             if (level.getBlockEntity(pos) instanceof BlockEntityThaumatorium thaumatorium) {
                 thaumatorium.dropContents();
             }
