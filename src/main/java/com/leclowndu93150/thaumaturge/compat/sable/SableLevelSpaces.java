@@ -7,13 +7,16 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.platform.SableEventPlatform;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Position;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
@@ -52,6 +55,18 @@ public final class SableLevelSpaces implements LevelSpaceProvider {
             frames.add(new SubLevelFrame(subLevel, pushes));
         }
         return frames;
+    }
+
+    @Override
+    public @Nullable LevelChunk loadedChunk(ServerLevel level, net.minecraft.core.BlockPos pos) {
+        SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(level, pos);
+        if (subLevel instanceof ServerSubLevel ship) {
+            var plot = ship.getPlot();
+            return plot.getChunk(plot.toLocal(new ChunkPos(pos)));
+        }
+        return com.leclowndu93150.thaumaturge.content.world.LoadedChunks.contains(level, pos)
+                ? level.getChunkAt(pos)
+                : null;
     }
 
     private SpaceFrame frame(@Nullable SubLevelAccess subLevel) {

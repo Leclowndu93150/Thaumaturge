@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.sable;
 
+import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper.AssemblyTransform;
 import java.util.HashMap;
@@ -18,6 +19,12 @@ public final class SableAssembly {
         }
         if (!moves.isEmpty()) {
             NeoForge.EVENT_BUS.post(new BlocksMovedEvent(level, transform.getLevel(), moves, transform.getRotation()));
+        }
+    }
+
+    public static void wardsMoved(ServerLevel level, AssemblyTransform transform, Iterable<BlockPos> blocks) {
+        for (BlockPos from : blocks) {
+            WardHandler.carry(level, from, transform.getLevel(), transform.apply(from));
         }
     }
 }

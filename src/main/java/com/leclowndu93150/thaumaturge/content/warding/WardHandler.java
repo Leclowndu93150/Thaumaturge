@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -25,33 +25,35 @@ public final class WardHandler {
 
     public static boolean isWarded(LevelAccessor level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            WardChunkData data = existing(serverLevel, pos);
-            return data != null && data.contains(pos);
+            return find(serverLevel, pos) != null;
         }
         return level.isClientSide() && ClientWardHolder.isWarded(pos);
     }
 
     public static @Nullable UUID owner(ServerLevel level, BlockPos pos) {
-        WardChunkData data = existing(level, pos);
-        return data == null ? null : data.owner(pos);
+        WardLocation ward = find(level, pos);
+        return ward == null ? null : ward.data().owner(ward.pos());
     }
 
     public static boolean canAccess(ServerLevel level, BlockPos pos, UUID player) {
-        WardChunkData data = existing(level, pos);
-        return player.equals(owner(level, pos)) || (data != null && data.canAccess(pos, player));
+        WardLocation ward = find(level, pos);
+        return ward != null
+                && (player.equals(ward.data().owner(ward.pos())) || ward.data().canAccess(ward.pos(), player));
     }
 
     public static boolean canDelegateIron(ServerLevel level, BlockPos pos, UUID player) {
-        WardChunkData data = existing(level, pos);
-        return player.equals(owner(level, pos)) || (data != null && data.canDelegateIron(pos, player));
+        WardLocation ward = find(level, pos);
+        return ward != null
+                && (player.equals(ward.data().owner(ward.pos())) || ward.data().canDelegateIron(ward.pos(), player));
     }
 
     public static boolean grantAccess(ServerLevel level, BlockPos pos, UUID player, boolean gold) {
-        WardChunkData data = existing(level, pos);
-        if (data == null || !data.contains(pos) || !data.grantAccess(pos, player, gold)) {
+        WardLocation ward = find(level, pos);
+        LevelChunk chunk = ward == null ? null : LevelSpaces.loadedChunk(level, ward.pos());
+        if (ward == null || chunk == null || !ward.data().grantAccess(ward.pos(), player, gold)) {
             return false;
         }
-        level.getChunkAt(pos).setUnsaved(true);
+        chunk.setUnsaved(true);
         return true;
     }
 
@@ -67,58 +69,65 @@ public final class WardHandler {
     }
 
     public static boolean ward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!LoadedChunks.contains(level, pos) || !canWard(level, pos) || isWarded(level, pos)) {
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, pos);
+        if (chunk == null || !canWard(level, pos) || isWarded(level, pos)) {
             return false;
         }
-        LevelChunk chunk = level.getChunkAt(pos);
         chunk.getData(TTAttachments.WARDS.get()).put(pos, owner);
         chunk.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                level, chunk.getPos(), new ClientboundWardUpdatePayload(pos, Optional.of(owner)));
+        sendUpdate(level, chunk, new ClientboundWardUpdatePayload(pos, Optional.of(owner)));
         return true;
     }
 
     public static boolean unward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!LoadedChunks.contains(level, pos)) {
+        WardLocation ward = find(level, pos);
+        LevelChunk chunk = ward == null ? null : LevelSpaces.loadedChunk(level, ward.pos());
+        if (ward == null
+                || chunk == null
+                || !owner.equals(ward.data().owner(ward.pos()))
+                || !ward.data().remove(ward.pos())) {
             return false;
         }
-        WardChunkData data = existing(level, pos);
-        if (data == null || !owner.equals(data.owner(pos)) || !data.remove(pos)) {
-            return false;
-        }
-        LevelChunk chunk = level.getChunkAt(pos);
         chunk.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                level, chunk.getPos(), new ClientboundWardUpdatePayload(pos, Optional.empty()));
+        sendUpdate(level, chunk, new ClientboundWardUpdatePayload(ward.pos(), Optional.empty()));
         return true;
     }
 
     public static void carry(ServerLevel fromLevel, BlockPos from, ServerLevel toLevel, BlockPos to) {
-        WardChunkData data = existing(fromLevel, from);
-        if (data == null || !data.contains(from) || !LoadedChunks.contains(toLevel, to)) {
+        WardLocation source = find(fromLevel, from);
+        LevelChunk target = LevelSpaces.loadedChunk(toLevel, to);
+        if (source == null || target == null) {
             return;
         }
-        WardAccess ward = data.take(from);
-        LevelChunk source = fromLevel.getChunkAt(from);
-        source.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                fromLevel, source.getPos(), new ClientboundWardUpdatePayload(from, Optional.empty()));
-        LevelChunk target = toLevel.getChunkAt(to);
+        WardAccess ward = source.data().take(source.pos());
+        if (ward == null) {
+            return;
+        }
+        LevelChunk sourceChunk = LevelSpaces.loadedChunk(fromLevel, source.pos());
+        if (sourceChunk == null) {
+            source.data().restore(source.pos(), ward);
+            return;
+        }
+        sourceChunk.setUnsaved(true);
+        sendUpdate(fromLevel, sourceChunk, new ClientboundWardUpdatePayload(source.pos(), Optional.empty()));
         target.getData(TTAttachments.WARDS.get()).restore(to, ward);
         target.setUnsaved(true);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                toLevel, target.getPos(), new ClientboundWardUpdatePayload(to, Optional.of(ward.owner())));
+        sendUpdate(toLevel, target, new ClientboundWardUpdatePayload(to, Optional.of(ward.owner())));
     }
 
     public static void syncChunk(ServerPlayer player, LevelChunk chunk) {
+        ClientboundWardChunkPayload payload = chunkPayload(chunk);
+        if (payload != null) {
+            PacketDistributor.sendToPlayer(player, payload);
+        }
+    }
+
+    public static @Nullable ClientboundWardChunkPayload chunkPayload(LevelChunk chunk) {
         if (!chunk.hasData(TTAttachments.WARDS.get())) {
-            return;
+            return null;
         }
         WardChunkData data = chunk.getData(TTAttachments.WARDS.get());
-        if (data.isEmpty()) {
-            return;
-        }
-        PacketDistributor.sendToPlayer(player, ClientboundWardChunkPayload.of(chunk.getPos(), data.owners()));
+        return data.isEmpty() ? null : ClientboundWardChunkPayload.of(chunk.getPos(), data.owners());
     }
 
     public static void prune(LevelChunk chunk) {
@@ -133,12 +142,21 @@ public final class WardHandler {
     }
 
     private static @Nullable WardChunkData existing(ServerLevel level, BlockPos pos) {
-        if (!LoadedChunks.contains(level, pos)) {
-            return null;
-        }
-        LevelChunk chunk = level.getChunkAt(pos);
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, pos);
+        if (chunk == null) return null;
         return chunk.hasData(TTAttachments.WARDS.get()) ? chunk.getData(TTAttachments.WARDS.get()) : null;
     }
+
+    private static void sendUpdate(ServerLevel level, LevelChunk chunk, ClientboundWardUpdatePayload payload) {
+        PacketDistributor.sendToPlayersTrackingChunk(level, chunk.getPos(), payload);
+    }
+
+    private static @Nullable WardLocation find(ServerLevel level, BlockPos pos) {
+        WardChunkData data = existing(level, pos);
+        return data != null && data.contains(pos) ? new WardLocation(data, pos) : null;
+    }
+
+    private record WardLocation(WardChunkData data, BlockPos pos) {}
 
     public static @Nullable BlockPos partner(BlockState state, BlockPos pos) {
         if (!state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {

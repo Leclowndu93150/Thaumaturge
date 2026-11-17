@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.mixin.client.particle;
 
 import com.leclowndu93150.thaumaturge.client.particle.TTParticleLayers;
 import com.leclowndu93150.thaumaturge.client.warding.WardClientHandler;
-import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
+import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -76,7 +76,7 @@ public class ParticleEngineMixin {
     @Inject(method = "crack", at = @At("HEAD"), cancellable = true)
     private void thaumaturge$wardHitEffect(BlockPos pos, Direction direction, CallbackInfo ci) {
         ClientLevel level = Minecraft.getInstance().level;
-        if (level != null && ClientWardHolder.isWarded(pos)) {
+        if (level != null && WardHandler.isWarded(level, pos)) {
             WardClientHandler.spawnHitEffect(level, pos, direction, null);
             ci.cancel();
         }

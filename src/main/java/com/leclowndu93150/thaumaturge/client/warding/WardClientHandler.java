@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.warding;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -22,16 +24,18 @@ import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WardClientHandler {
-    private static final float CENTER = 0.5F;
-
     private WardClientHandler() {}
 
     public static void spawnHitEffect(ClientLevel level, BlockPos pos, Direction face, @Nullable HitResult hit) {
+        Vec3 center = LevelSpaces.worldCenter(level, pos);
+        BlockPos particlePos = BlockPos.containing(center);
+        Direction worldFace = Direction.getNearest(LevelSpaces.faceNormal(level, pos, face));
+        Vec3 worldHit = hit == null ? null : LevelSpaces.frameOf(level, pos).toWorld(hit.getLocation());
         level.addParticle(
-                WardFlashParticleOptions.at(pos, face, hit == null ? null : hit.getLocation()),
-                pos.getX() + CENTER,
-                pos.getY() + CENTER,
-                pos.getZ() + CENTER,
+                WardFlashParticleOptions.at(particlePos, worldFace, worldHit),
+                center.x,
+                center.y,
+                center.z,
                 0.0,
                 0.0,
                 0.0);

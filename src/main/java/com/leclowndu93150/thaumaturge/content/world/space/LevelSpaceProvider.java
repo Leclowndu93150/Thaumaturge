@@ -3,10 +3,13 @@ package com.leclowndu93150.thaumaturge.content.world.space;
 import java.util.List;
 import net.minecraft.core.Position;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 public interface LevelSpaceProvider {
     SpaceFrame frameOf(Level level, Position pos);
@@ -18,4 +21,7 @@ public interface LevelSpaceProvider {
     boolean isPlotChunk(Level level, ChunkPos pos);
 
     List<SpaceFrame> framesTouching(Level level, AABB worldBox);
+
+    @Nullable
+    LevelChunk loadedChunk(ServerLevel level, net.minecraft.core.BlockPos pos);
 }

@@ -2,10 +2,11 @@ package com.leclowndu93150.thaumaturge.content.warding;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
-import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.BlockForwarding;
 import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -78,9 +79,12 @@ public final class WardEvents {
         if (!WardHandler.isWarded(level, pos)) {
             return;
         }
-        Vec3 centre = Vec3.atCenterOf(pos);
+        Vec3 centre = LevelSpaces.worldCenter(level, pos);
+        BlockPos particlePos = BlockPos.containing(centre);
+        Direction face = Direction.getNearest(LevelSpaces.faceNormal(level, pos, blockHit.getDirection()));
+        Vec3 hit = LevelSpaces.frameOf(level, pos).toWorld(blockHit.getLocation());
         level.sendParticles(
-                WardFlashParticleOptions.at(pos, blockHit.getDirection(), blockHit.getLocation()),
+                WardFlashParticleOptions.at(particlePos, face, hit),
                 centre.x,
                 centre.y,
                 centre.z,
@@ -100,9 +104,13 @@ public final class WardEvents {
 
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
+        if (!(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
         BlockPos origin = event.getPos().getWorldPosition();
-        if (LoadedChunks.contains(event.getLevel(), origin)) {
-            WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, origin);
+        if (chunk != null) {
+            WardHandler.syncChunk(event.getPlayer(), chunk);
         }
     }
 

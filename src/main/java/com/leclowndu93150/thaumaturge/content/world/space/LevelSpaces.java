@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -80,6 +82,10 @@ public final class LevelSpaces {
 
     public static boolean isPlot(Level level, BlockPos pos) {
         return isPlotChunk(level, new ChunkPos(pos));
+    }
+
+    public static LevelChunk loadedChunk(ServerLevel level, BlockPos pos) {
+        return provider.loadedChunk(level, pos);
     }
 
     public static Vec3 toWorld(Level level, Vec3 pos) {

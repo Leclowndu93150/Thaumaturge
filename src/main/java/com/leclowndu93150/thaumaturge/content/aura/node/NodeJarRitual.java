@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -80,6 +81,10 @@ public final class NodeJarRitual {
         }
         int lastBreak = 0;
         for (BlockPos structurePos : structure) {
+            var owner = WardHandler.owner(level, structurePos);
+            if (owner != null) {
+                WardHandler.unward(level, structurePos, owner);
+            }
             double dist = Math.sqrt(LevelSpaces.distanceSqr(level, hand, Vec3.atCenterOf(structurePos)));
             int delay = (int) (dist * DustTriggerFx.SPARKLE_TICKS_PER_BLOCK) + SHELL_BREAK_MARGIN_TICKS;
             DustTriggerSwapQueue.enqueueClear(level, structurePos, level.getBlockState(structurePos), delay);
@@ -124,7 +129,7 @@ public final class NodeJarRitual {
                         continue;
                     }
                     BlockState state = level.getBlockState(nodePos.offset(xx, yy, zz));
-                    if (!state.is(Tags.Blocks.GLASS_BLOCKS)) {
+                    if (!state.is(Tags.Blocks.GLASS_BLOCKS) && !state.is(TTBlocks.WARDED_GLASS.get())) {
                         return false;
                     }
                 }
