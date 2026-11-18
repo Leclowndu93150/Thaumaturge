@@ -2,9 +2,12 @@ package com.leclowndu93150.thaumaturge.content.world.space;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
@@ -86,6 +89,27 @@ public final class LevelSpaces {
 
     public static LevelChunk loadedChunk(ServerLevel level, BlockPos pos) {
         return provider.loadedChunk(level, pos);
+    }
+
+    public static void rememberBlock(ServerLevel level, UUID id, BlockPos pos) {
+        provider.rememberBlock(level, id, pos);
+    }
+
+    public static BlockPos rememberedBlockPosition(ServerLevel level, UUID id) {
+        return provider.rememberedBlockPosition(level, id);
+    }
+
+    public static Optional<LevelSpaceProvider.TrackedBlock> trackedBlock(
+            ServerLevel level, UUID id, boolean loadSubLevel) {
+        return Optional.ofNullable(provider.trackedBlock(level, id, loadSubLevel));
+    }
+
+    public static void forgetBlock(ServerLevel level, UUID id) {
+        provider.forgetBlock(level, id);
+    }
+
+    public static void sendToTrackingPlayers(ServerLevel level, BlockPos pos, CustomPacketPayload payload) {
+        provider.sendToTrackingPlayers(level, pos, payload);
     }
 
     public static Vec3 toWorld(Level level, Vec3 pos) {

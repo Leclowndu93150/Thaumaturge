@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
@@ -23,6 +24,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -30,6 +32,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
+import org.joml.Vector3f;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class SealWorldRenderer {
@@ -101,25 +105,31 @@ public final class SealWorldRenderer {
         boolean seeThrough = player.isShiftKeyDown();
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();
-            double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
+            Vec3 localCenter = Vec3.atCenterOf(pos);
+            Quaternionfc orientation = ClientSpaces.renderOrientation(mc.level, localCenter);
+            Vec3 center = renderPoint(mc.level, localCenter, orientation, localCenter);
+            double distSqr = player.position().distanceToSqr(center);
             if (distSqr > MAX_DIST_SQR) {
                 continue;
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
-            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time, seeThrough);
+            drawSealRing(poseStack, effectBuffers, mc.level, seal, orientation, cam, alpha, time, seeThrough);
         }
         SEAL_BUFFERS.endBatch(typeFor(AREA_RING, seeThrough));
         for (SealEntity seal : ClientSealHolder.all().values()) {
             BlockPos pos = seal.pos().pos();
-            double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
+            Vec3 localCenter = Vec3.atCenterOf(pos);
+            Quaternionfc orientation = ClientSpaces.renderOrientation(mc.level, localCenter);
+            Vec3 center = renderPoint(mc.level, localCenter, orientation, localCenter);
+            double distSqr = player.position().distanceToSqr(center);
             if (distSqr > MAX_DIST_SQR) {
                 continue;
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
             boolean inactive = seal.isStoppedByRedstone(mc.level);
-            drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive, seeThrough);
+            drawSealIcon(poseStack, effectBuffers, mc.level, seal, orientation, cam, alpha, inactive, seeThrough);
             if (seal.type().hasArea()) {
-                drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time, seeThrough);
+                drawAreaCorners(poseStack, effectBuffers, mc.level, seal, orientation, cam, alpha, time, seeThrough);
             }
         }
         SEAL_BUFFERS.endBatch();
@@ -128,25 +138,20 @@ public final class SealWorldRenderer {
     private static void drawSealIcon(
             PoseStack poseStack,
             MultiBufferSource buffers,
+            Level level,
             SealEntity seal,
+            Quaternionfc orientation,
             Vec3 cam,
             float alpha,
             boolean inactive,
             boolean seeThrough) {
         BlockPos pos = seal.pos().pos();
         Direction face = seal.pos().face();
+        Vec3 anchor = Vec3.atCenterOf(pos);
+        Vec3 center = renderPoint(level, anchor, orientation, anchor);
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
-        float quarterTurn = (float) (Math.PI / 2.0);
-        poseStack.mulPose(
-                switch (face) {
-                    case DOWN -> new Quaternionf().rotationX(quarterTurn);
-                    case UP -> new Quaternionf().rotationX(-quarterTurn);
-                    case NORTH -> new Quaternionf().rotationY((float) Math.PI);
-                    case EAST -> new Quaternionf().rotationY(quarterTurn);
-                    case WEST -> new Quaternionf().rotationY(-quarterTurn);
-                    case SOUTH -> new Quaternionf();
-                });
+        poseStack.translate(center.x - cam.x, center.y - cam.y, center.z - cam.z);
+        poseStack.mulPose(new Quaternionf(orientation).mul(iconFaceRotation(face)));
         poseStack.translate(0.0, 0.0, 0.55);
         float shade = inactive ? 0.5F : 1.0F;
         int color = ARGB32.colorFromFloat(alpha, shade, shade, shade);
@@ -306,7 +311,9 @@ public final class SealWorldRenderer {
     private static void drawSealRing(
             PoseStack poseStack,
             MultiBufferSource buffers,
+            Level level,
             SealEntity seal,
+            Quaternionfc orientation,
             Vec3 cam,
             float alpha,
             float time,
@@ -326,10 +333,11 @@ public final class SealWorldRenderer {
             g = 0.7F + Mth.sin((time + pos.getY()) / 5.0F) * 0.1F;
             b = 0.7F + Mth.sin((time + pos.getZ()) / 6.0F) * 0.1F;
         }
+        Vec3 anchor = Vec3.atCenterOf(pos);
+        Vec3 center = renderPoint(level, anchor, orientation, anchor);
         poseStack.pushPose();
-        poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
-        poseStack.mulPose(new Quaternionf()
-                .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
+        poseStack.translate(center.x - cam.x, center.y - cam.y, center.z - cam.z);
+        poseStack.mulPose(new Quaternionf(orientation).mul(planeFaceRotation(face)));
         poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.51 : 0.51);
         poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(time), 0.0F, 0.0F, 1.0F));
         drawQuad(
@@ -343,7 +351,9 @@ public final class SealWorldRenderer {
     private static void drawAreaCorners(
             PoseStack poseStack,
             MultiBufferSource buffers,
+            Level level,
             SealEntity seal,
+            Quaternionfc orientation,
             Vec3 cam,
             float alpha,
             float time,
@@ -365,18 +375,19 @@ public final class SealWorldRenderer {
         };
         int color = ARGB32.colorFromFloat(alpha * CORNER_ALPHA, r, g, b);
         VertexConsumer buffer = buffers.getBuffer(typeFor(CORNER_FRAME, seeThrough));
+        Vec3 anchor = Vec3.atCenterOf(pos);
         for (int q = 0; q < corners.length; q++) {
+            Vec3 center = renderPoint(
+                    level,
+                    anchor,
+                    orientation,
+                    new Vec3(corners[q][0] + 0.5, corners[q][1] + 0.5, corners[q][2] + 0.5));
             poseStack.pushPose();
-            poseStack.translate(corners[q][0] + 0.5 - cam.x, corners[q][1] + 0.5 - cam.y, corners[q][2] + 0.5 - cam.z);
+            poseStack.translate(center.x - cam.x, center.y - cam.y, center.z - cam.z);
             for (int w = 0; w < ROT_FACES[q].length; w++) {
                 Direction cornerFace = ROT_FACES[q][w];
                 poseStack.pushPose();
-                poseStack.mulPose(new Quaternionf()
-                        .rotationAxis(
-                                (float) Math.toRadians(90.0),
-                                -cornerFace.getStepY(),
-                                cornerFace.getStepX(),
-                                -cornerFace.getStepZ()));
+                poseStack.mulPose(new Quaternionf(orientation).mul(planeFaceRotation(cornerFace)));
                 poseStack.translate(0.0, 0.0, cornerFace.getStepZ() < 0 ? -0.49 : 0.49);
                 poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(90.0), 0.0F, 0.0F, -1.0F));
                 poseStack.mulPose(
@@ -386,6 +397,30 @@ public final class SealWorldRenderer {
             }
             poseStack.popPose();
         }
+    }
+
+    private static Quaternionf iconFaceRotation(Direction face) {
+        float quarterTurn = (float) (Math.PI / 2.0);
+        return switch (face) {
+            case DOWN -> new Quaternionf().rotationX(quarterTurn);
+            case UP -> new Quaternionf().rotationX(-quarterTurn);
+            case NORTH -> new Quaternionf().rotationY((float) Math.PI);
+            case EAST -> new Quaternionf().rotationY(quarterTurn);
+            case WEST -> new Quaternionf().rotationY(-quarterTurn);
+            case SOUTH -> new Quaternionf();
+        };
+    }
+
+    private static Quaternionf planeFaceRotation(Direction face) {
+        return new Quaternionf()
+                .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ());
+    }
+
+    private static Vec3 renderPoint(Level level, Vec3 anchor, Quaternionfc orientation, Vec3 point) {
+        Vector3f offset = new Quaternionf(orientation)
+                .transform(new Vector3f(
+                        (float) (point.x - anchor.x), (float) (point.y - anchor.y), (float) (point.z - anchor.z)));
+        return ClientSpaces.renderPosition(level, anchor).add(offset.x, offset.y, offset.z);
     }
 
     private static void drawQuad(PoseStack poseStack, VertexConsumer buffer, float half, int color) {

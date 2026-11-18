@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
-import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -18,12 +17,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class SealHandler {
@@ -68,12 +65,15 @@ public final class SealHandler {
     }
 
     public static boolean addSealEntity(ServerLevel level, SealEntity seal) {
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, seal.pos().pos());
+        if (chunk == null) {
+            return false;
+        }
         SealWorldIndex index = index(level);
         if (index.seals().containsKey(seal.pos())) {
             return false;
         }
         index.seals().put(seal.pos(), seal);
-        LevelChunk chunk = level.getChunkAt(seal.pos().pos());
         SealsChunkData data = chunk.getData(TTAttachments.SEALS);
         if (!data.seals().contains(seal)) {
             data.seals().add(seal);
@@ -89,8 +89,8 @@ public final class SealHandler {
             return;
         }
         seal.behavior().onRemoved(level, seal);
-        if (LoadedChunks.contains(level, pos.pos())) {
-            LevelChunk chunk = level.getChunkAt(pos.pos());
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, pos.pos());
+        if (chunk != null) {
             chunk.getData(TTAttachments.SEALS).seals().remove(seal);
             chunk.setUnsaved(true);
         }
@@ -100,8 +100,9 @@ public final class SealHandler {
                     level, spot.x, spot.y, spot.z, new ItemStack(seal.type().placer())));
         }
         TaskBoard.of(level).endAllFrom(pos);
-        PacketDistributor.sendToPlayersTrackingChunk(
-                level, new ChunkPos(pos.pos()), ClientboundSealPayload.remove(pos));
+        if (chunk != null) {
+            LevelSpaces.sendToTrackingPlayers(level, pos.pos(), ClientboundSealPayload.remove(pos));
+        }
     }
 
     public static void carry(ServerLevel from, ServerLevel to, Map<BlockPos, BlockPos> moves, Rotation rotation) {
@@ -133,7 +134,7 @@ public final class SealHandler {
     public static void tickSealEntities(ServerLevel level) {
         boolean validate = level.getGameTime() % 20 == 0;
         for (SealEntity seal : index(level).seals().values()) {
-            if (!LoadedChunks.contains(level, seal.pos().pos())) {
+            if (LevelSpaces.loadedChunk(level, seal.pos().pos()) == null) {
                 continue;
             }
             try {
@@ -153,9 +154,11 @@ public final class SealHandler {
         }
     }
 
-    public static void markDirty(ServerLevel level, BlockPos pos) {
-        if (LoadedChunks.contains(level, pos)) {
-            level.getChunkAt(pos).setUnsaved(true);
+    public static void markChanged(ServerLevel level, SealEntity seal) {
+        LevelChunk chunk = LevelSpaces.loadedChunk(level, seal.pos().pos());
+        if (chunk != null) {
+            chunk.setUnsaved(true);
+            LevelSpaces.sendToTrackingPlayers(level, seal.pos().pos(), ClientboundSealPayload.update(seal));
         }
     }
 

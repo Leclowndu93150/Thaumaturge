@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.level.ChunkPos;
@@ -21,6 +22,11 @@ public final class ClientSealHolder {
 
     public static void put(SealEntity seal) {
         SEALS.put(seal.pos(), seal);
+    }
+
+    public static void replaceChunk(ChunkPos chunk, List<SealEntity> seals) {
+        forgetChunk(chunk);
+        seals.forEach(ClientSealHolder::put);
     }
 
     public static void remove(SealPos pos) {

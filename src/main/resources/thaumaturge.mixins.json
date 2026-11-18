@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "sable.api.SubLevelAssemblyHelperMixin",
+    "sable.plot.ServerLevelPlotSealsMixin",
     "sable.plot.SubLevelPlayerChunkSenderMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
     "world.entity.ExperienceOrbAccessor",

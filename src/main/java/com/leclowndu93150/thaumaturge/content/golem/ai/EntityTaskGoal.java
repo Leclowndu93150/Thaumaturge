@@ -3,11 +3,13 @@ package com.leclowndu93150.thaumaturge.content.golem.ai;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.Vec3;
 
 public final class EntityTaskGoal extends TaskGoal {
     private static final double BASE_REACH_SQR = 3.5;
@@ -64,8 +66,11 @@ public final class EntityTaskGoal extends TaskGoal {
         if (end == null) {
             return false;
         }
-        int dx = end.x - Mth.floor(target.getX());
-        int dz = end.z - Mth.floor(target.getZ());
+        var level = golem.level();
+        Vec3 targetInPath =
+                LevelSpaces.frameOf(level, end.asBlockPos()).toLocal(LevelSpaces.toWorld(level, target.position()));
+        double dx = (double) end.x - Mth.floor(targetInPath.x);
+        double dz = (double) end.z - Mth.floor(targetInPath.z);
         return dx * dx + dz * dz < reachSqr;
     }
 }

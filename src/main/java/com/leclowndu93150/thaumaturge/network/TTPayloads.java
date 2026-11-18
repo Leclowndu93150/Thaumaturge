@@ -57,6 +57,10 @@ public final class TTPayloads {
                 ClientboundSealPayload.STREAM_CODEC,
                 (payload, context) -> SealClientHandler.handle(payload, context));
         registrar.playToClient(
+                ClientboundSealChunkPayload.TYPE,
+                ClientboundSealChunkPayload.STREAM_CODEC,
+                SealClientHandler::handleChunk);
+        registrar.playToClient(
                 ClientboundGolemPressStuffPayload.TYPE,
                 ClientboundGolemPressStuffPayload.STREAM_CODEC,
                 (payload, context) -> GolemPressClientHandler.handle(payload, context));

@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.content.golem.ai.BlockTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.EntityTaskGoal;
 import com.leclowndu93150.thaumaturge.content.golem.ai.ReturnHomeGoal;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntityDataSerializers;
@@ -113,6 +114,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public static final int MAX_RANK = 10;
     private static final int HOME_RANGE = 32;
     private static final int HOME_RANGE_SCOUT = 48;
+    private static final double FETTER_CONTACT_DEPTH = 0.2;
     private static final double BASE_MOVEMENT_SPEED = 0.3;
     private static final double WORK_SPEED_PER_RANK = 0.025;
     private static final double LIGHT_WORK_BONUS = 0.2;
@@ -145,6 +147,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private boolean accessorySyncOverBudget;
     private final GolemHands hands = new GolemHands(this);
     private Task task;
+    private @Nullable DeckFetter deckFetter;
 
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
         super(type, level);
@@ -537,11 +540,21 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public void tick() {
+        if (level() instanceof ServerLevel server && hasRestriction() && !LevelSpaces.isWorldOnly()) {
+            BlockPos trackedHome = LevelSpaces.rememberedBlockPosition(server, getUUID());
+            if (trackedHome == null) {
+                LevelSpaces.rememberBlock(server, getUUID(), getRestrictCenter());
+            } else if (!trackedHome.equals(getRestrictCenter())) {
+                super.restrictTo(trackedHome, (int) getRestrictRadius());
+                getNavigation().stop();
+            }
+        }
         super.tick();
         if (!level().isClientSide() && isFettered()) {
             pauseForFetter();
             return;
         }
+        deckFetter = null;
         GolemProperties props = properties();
         if (props.hasTrait(TTGolemTraits.FLYER.get())) {
             setNoGravity(true);
@@ -594,22 +607,68 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
+    public void restrictTo(BlockPos pos, int radius) {
+        super.restrictTo(pos, radius);
+        if (level() instanceof ServerLevel server) {
+            LevelSpaces.rememberBlock(server, getUUID(), pos);
+        }
+    }
+
+    @Override
+    public void clearRestriction() {
+        super.clearRestriction();
+        if (level() instanceof ServerLevel server) {
+            LevelSpaces.forgetBlock(server, getUUID());
+        }
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (reason.shouldDestroy() && level() instanceof ServerLevel server) {
+            LevelSpaces.forgetBlock(server, getUUID());
+        }
+        super.remove(reason);
+    }
+
+    @Override
     public boolean isEffectiveAi() {
         return super.isEffectiveAi() && !isFettered();
     }
 
     public boolean isFettered() {
-        BlockState below = level().getBlockState(blockPosition().below());
+        var frame = LevelSpaces.trackedFrame(this);
+        // Sample below the feet in deck coordinates so contact survives small gaps in collision resolution.
+        BlockPos support = frame.isWorld()
+                ? blockPosition().below()
+                : BlockPos.containing(fetterFeet(frame).add(0.0, -FETTER_CONTACT_DEPTH, 0.0));
+        BlockState below = level().getBlockState(support);
         return below.is(TTBlocks.GOLEM_FETTER.get()) && below.getValue(BlockGolemFetter.POWERED);
     }
 
+    private Vec3 fetterFeet(SpaceFrame frame) {
+        return deckFetter != null && deckFetter.frame().equals(frame) ? deckFetter.feet() : frame.toLocal(position());
+    }
+
     private void pauseForFetter() {
+        var frame = LevelSpaces.trackedFrame(this);
+        if (frame.isWorld()) {
+            deckFetter = null;
+        } else {
+            // Hold the same point on the deck when ship motion moves the collision contact.
+            Vec3 feet = fetterFeet(frame);
+            if (deckFetter == null || !deckFetter.frame().equals(frame)) {
+                deckFetter = new DeckFetter(frame, feet);
+            }
+            setPos(frame.toWorld(feet));
+        }
         getNavigation().stop();
         setDeltaMovement(Vec3.ZERO);
         setTarget(null);
         releaseTask();
         task = null;
     }
+
+    private record DeckFetter(SpaceFrame frame, Vec3 feet) {}
 
     private void tickAbility(@Nullable IGolemPartAbility ability) {
         if (ability != null) {
@@ -918,7 +977,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
         TTNbt.read(input, "props", GolemProperties.CODEC, registries).ifPresent(this::applyBuild);
-        restrictTo(TTNbt.read(input, "homepos", BlockPos.CODEC, registries).orElse(blockPosition()), HOME_RANGE);
+        // A Sable home can move while this entity is unloaded. Keep the saved position as a fallback.
+        super.restrictTo(
+                TTNbt.read(input, "homepos", BlockPos.CODEC, registries).orElse(blockPosition()), HOME_RANGE);
         entityData.set(FLAGS, (input.contains("gflags") ? input.getByte("gflags") : (byte) 0));
         rankXp = (input.contains("rankXP") ? input.getInt("rankXP") : 0);
         setGolemColor((input.contains("color") ? input.getByte("color") : (byte) 0));

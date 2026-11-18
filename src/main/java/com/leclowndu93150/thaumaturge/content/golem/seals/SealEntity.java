@@ -8,7 +8,6 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSeals;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -21,10 +20,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class SealEntity implements ISealEntity {
@@ -230,9 +227,7 @@ public final class SealEntity implements ISealEntity {
     @Override
     public void markChanged(Level level) {
         if (level instanceof ServerLevel server) {
-            SealHandler.markDirty(server, pos.pos());
-            PacketDistributor.sendToPlayersTrackingChunk(
-                    server, new ChunkPos(pos.pos()), ClientboundSealPayload.update(this));
+            SealHandler.markChanged(server, this);
         }
     }
 

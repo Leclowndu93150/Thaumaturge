@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.golem;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
+import com.leclowndu93150.thaumaturge.network.ClientboundSealChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,6 +24,10 @@ public final class SealClientHandler {
                 ClientSealHolder.remove(payload.pos());
             }
         });
+    }
+
+    public static void handleChunk(ClientboundSealChunkPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> ClientSealHolder.replaceChunk(payload.chunk(), payload.seals()));
     }
 
     @SubscribeEvent
