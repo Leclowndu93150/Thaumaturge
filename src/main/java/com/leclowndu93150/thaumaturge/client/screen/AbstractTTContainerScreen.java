@@ -2,12 +2,14 @@ package com.leclowndu93150.thaumaturge.client.screen;
 
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import org.lwjgl.glfw.GLFW;
 
 public abstract class AbstractTTContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private final ResourceLocation background;
@@ -43,6 +45,15 @@ public abstract class AbstractTTContainerScreen<T extends AbstractContainerMenu>
         this.backgroundHeight = imageHeight;
         this.backgroundTextureWidth = textureWidth;
         this.backgroundTextureHeight = textureHeight;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode != GLFW.GLFW_KEY_ESCAPE && getFocused() instanceof EditBox field && field.canConsumeInput()) {
+            field.keyPressed(keyCode, scanCode, modifiers);
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
