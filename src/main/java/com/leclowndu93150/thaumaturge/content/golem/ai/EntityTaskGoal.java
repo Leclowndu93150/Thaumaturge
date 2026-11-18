@@ -23,12 +23,21 @@ public final class EntityTaskGoal extends TaskGoal {
     protected boolean claim(ServerLevel level) {
         for (Task task : TaskBoard.of(level).openEntityTasks(golem.getUUID(), golem)) {
             Entity target = task.entity();
-            if (target != null && mayTake(task, target.blockPosition()) && pathEndsNear(target)) {
+            if (target == null || !mayTake(task, target.blockPosition()) || !shouldTestPath(target.blockPosition()))
+                continue;
+            PathResult result = pathEndsNear(target);
+            if (result == PathResult.REACHABLE) {
                 float halfWidth = target.getBbWidth() / 2.0F;
                 reachSqr = BASE_REACH_SQR + halfWidth * halfWidth;
                 take(task);
                 return true;
             }
+            // A partial path may become reachable after a moving deck or target changes.
+            // Cache only when no route exists at all.
+            if (result == PathResult.NO_ROUTE && !GolemPathSearchBudget.exhausted(level)) {
+                rememberFailedPath(target.blockPosition());
+            }
+            break;
         }
         return false;
     }
@@ -57,20 +66,26 @@ public final class EntityTaskGoal extends TaskGoal {
         }
     }
 
-    private boolean pathEndsNear(Entity target) {
+    private PathResult pathEndsNear(Entity target) {
         if (golem.distanceToSqr(target) < reachSqr) {
-            return true;
+            return PathResult.REACHABLE;
         }
         Path path = golem.getNavigation().createPath(target, 0);
         Node end = path == null ? null : path.getEndNode();
         if (end == null) {
-            return false;
+            return PathResult.NO_ROUTE;
         }
         var level = golem.level();
         Vec3 targetInPath =
                 LevelSpaces.frameOf(level, end.asBlockPos()).toLocal(LevelSpaces.toWorld(level, target.position()));
         double dx = (double) end.x - Mth.floor(targetInPath.x);
         double dz = (double) end.z - Mth.floor(targetInPath.z);
-        return dx * dx + dz * dz < reachSqr;
+        return dx * dx + dz * dz < reachSqr ? PathResult.REACHABLE : PathResult.PARTIAL;
+    }
+
+    private enum PathResult {
+        REACHABLE,
+        PARTIAL,
+        NO_ROUTE
     }
 }

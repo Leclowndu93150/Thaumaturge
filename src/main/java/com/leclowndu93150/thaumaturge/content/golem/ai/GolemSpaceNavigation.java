@@ -7,9 +7,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
@@ -24,8 +26,9 @@ import org.jspecify.annotations.Nullable;
 /** Routes between physical decks; the native navigator still owns paths inside one frame. */
 public final class GolemSpaceNavigation extends PathNavigation {
     private static final double GRID = 0.5;
-    private static final int MAX_VISITED = 4096;
+    private static final int MAX_VISITED = 2048;
     private static final int REPATH_TICKS = 10;
+    private static final int VALIDATE_EVERY = 5;
     private final PathNavigation nativeNavigation;
     private final boolean flying;
     private int routeAge;
@@ -118,7 +121,7 @@ public final class GolemSpaceNavigation extends PathNavigation {
         }
         if (route.isDone()) return;
         routeAge++;
-        if (!valid(route)) {
+        if (!valid(route, routeAge % VALIDATE_EVERY == 0)) {
             BlockPos target = route.getTarget();
             stop();
             moveTo(createPath(target, 1), speedModifier);
@@ -159,17 +162,23 @@ public final class GolemSpaceNavigation extends PathNavigation {
     }
 
     private boolean valid(SpacePath route) {
+        return valid(route, true);
+    }
+
+    private boolean valid(SpacePath route, boolean checkCollision) {
         Vec3 previous = mob.position();
         for (int i = route.getNextNodeIndex(); i < route.points.size(); i++) {
             Vec3 next = route.points.get(i).worldFeet();
             if (previous.distanceToSqr(next) > 3.0) return false;
-            if (i == route.getNextNodeIndex() && !edgeClear(previous, next)) return false;
+            if (checkCollision && i == route.getNextNodeIndex() && !edgeClear(previous, next)) return false;
             previous = next;
         }
         return previous.distanceToSqr(LevelSpaces.worldCenter(level, route.getTarget())) <= route.reachSqr;
     }
 
     private @Nullable SpacePath findPath(BlockPos target, Vec3 goal, int accuracy, float range) {
+        // Include re-pathing from the navigator, not just task-claim checks, in the budget.
+        if (level instanceof ServerLevel server && !GolemPathSearchBudget.tryAcquire(server)) return null;
         Vec3 start = mob.position();
         if (start.distanceToSqr(goal) > range * range) return null;
         var first = flying
@@ -179,6 +188,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
         double reachSqr = Math.max(1.0, accuracy * accuracy + 0.5);
         PriorityQueue<Step> open = new PriorityQueue<>(Comparator.comparingDouble(step -> step.cost + step.estimate));
         Map<BlockPos, Double> best = new HashMap<>();
+        // Cache only within this synchronous search: no stale collision state across ticks.
+        Map<SurfaceQuery, Optional<GolemPathGeometry.Surface>> surfaces = new HashMap<>();
         Step root = new Step(first, null, 0.0, first.worldFeet().distanceTo(goal));
         open.add(root);
         best.put(key(first.worldFeet()), 0.0);
@@ -200,20 +211,21 @@ public final class GolemSpaceNavigation extends PathNavigation {
                         double z = from.z + dz * GRID;
                         var surface = flying
                                 ? new GolemPathGeometry.Surface(WorldFrame.INSTANCE, new Vec3(x, from.y + dy * GRID, z))
-                                : GolemPathGeometry.surface(
-                                        level,
-                                        mob,
+                                : surface(
+                                        surfaces,
                                         x,
                                         z,
                                         from.y - Math.min(3, mob.getMaxFallDistance()),
                                         from.y + mob.maxUpStep());
                         if (surface == null) continue;
                         Vec3 to = surface.worldFeet();
-                        if (to.distanceToSqr(start) > range * range || !edgeClear(from, to)) continue;
+                        if (to.distanceToSqr(start) > range * range) continue;
                         double cost = step.cost + from.distanceTo(to);
-                        BlockPos key = key(to);
-                        if (cost >= best.getOrDefault(key, Double.POSITIVE_INFINITY)) continue;
-                        best.put(key, cost);
+                        BlockPos node = key(to);
+                        // Check the best-known cost before the very expensive edge collision sweep.
+                        if (cost >= best.getOrDefault(node, Double.POSITIVE_INFINITY)) continue;
+                        if (!edgeClear(from, to, surfaces)) continue;
+                        best.put(node, cost);
                         open.add(new Step(surface, step, cost, to.distanceTo(goal)));
                     }
                 }
@@ -222,14 +234,29 @@ public final class GolemSpaceNavigation extends PathNavigation {
         return null;
     }
 
+    private GolemPathGeometry.@Nullable Surface surface(
+            Map<SurfaceQuery, Optional<GolemPathGeometry.Surface>> cache,
+            double x,
+            double z,
+            double minY,
+            double maxY) {
+        return cache.computeIfAbsent(
+                        new SurfaceQuery(x, z, minY, maxY),
+                        ignored -> Optional.ofNullable(GolemPathGeometry.surface(level, mob, x, z, minY, maxY)))
+                .orElse(null);
+    }
+
     private boolean edgeClear(Vec3 from, Vec3 to) {
+        return edgeClear(from, to, new HashMap<>());
+    }
+
+    private boolean edgeClear(Vec3 from, Vec3 to, Map<SurfaceQuery, Optional<GolemPathGeometry.Surface>> cache) {
         int samples = Math.max(1, (int) Math.ceil(from.distanceTo(to) / 0.2));
         for (int i = 1; i <= samples; i++) {
             Vec3 point = from.lerp(to, (double) i / samples);
             if (!flying) {
-                var surface = GolemPathGeometry.surface(
-                        level,
-                        mob,
+                var surface = surface(
+                        cache,
                         point.x,
                         point.z,
                         Math.min(from.y, to.y) - 0.1,
@@ -255,6 +282,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
     private static BlockPos key(Vec3 pos) {
         return BlockPos.containing(pos.x / GRID, pos.y / GRID, pos.z / GRID);
     }
+
+    private record SurfaceQuery(double x, double z, double minY, double maxY) {}
 
     private record Step(
             GolemPathGeometry.Surface surface, @Nullable Step previous, double cost, double estimate) {}

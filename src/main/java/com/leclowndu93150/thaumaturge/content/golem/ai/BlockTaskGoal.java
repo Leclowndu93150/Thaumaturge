@@ -28,11 +28,17 @@ public final class BlockTaskGoal extends TaskGoal {
     protected boolean claim(ServerLevel level) {
         standingSpot = null;
         for (Task task : TaskBoard.of(level).openBlockTasks(golem.getUUID(), golem)) {
-            if (mayTake(task, task.pos()) && pathEndsNear(task.pos())) {
-                standingSpot = nearestOpenSide(task.pos());
+            BlockPos target = task.pos();
+            if (!mayTake(task, target) || !shouldTestPath(target)) continue;
+            // TaskBoard already ranks candidates. Evaluate at most one expensive path per claim.
+            if (pathEndsNear(target)) {
+                standingSpot = nearestOpenSide(target);
                 take(task);
                 return true;
             }
+            // A budget miss is not a failed path and must be eligible for retry next tick.
+            if (!GolemPathSearchBudget.exhausted(level)) rememberFailedPath(target);
+            break;
         }
         return false;
     }

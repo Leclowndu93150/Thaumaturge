@@ -10,6 +10,8 @@ import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -19,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 public abstract class TaskGoal extends Goal {
     private static final int CLAIM_COOLDOWN = 5;
+    private static final int UNREACHABLE_RETRY_TICKS = 40;
+    private static final int MAX_REMEMBERED_FAILURES = 64;
     private static final int GIVE_UP_AFTER = 1000;
     private static final int REPATH_EVERY = 5;
     private static final int RETRY_DELAY = 10;
@@ -33,6 +37,8 @@ public abstract class TaskGoal extends Goal {
     private int cooldown;
     private int pause;
     private @Nullable BlockPos lastFoothold;
+    // A task search must not retry the same expensive failed path every five ticks.
+    private final Map<BlockPos, Long> unreachableUntil = new HashMap<>();
 
     protected TaskGoal(EntityThaumaturgeGolem golem) {
         this.golem = golem;
@@ -76,6 +82,17 @@ public abstract class TaskGoal extends Goal {
         return SealAccess.allows(SealHandler.getSealEntity(golem.level(), task.origin()), golem)
                 && task.canBePerformedBy(golem)
                 && golem.isWithinRestriction(target);
+    }
+
+    protected boolean shouldTestPath(BlockPos target) {
+        return golem.level().getGameTime() >= unreachableUntil.getOrDefault(target, 0L);
+    }
+
+    protected void rememberFailedPath(BlockPos target) {
+        if (unreachableUntil.size() >= MAX_REMEMBERED_FAILURES) {
+            unreachableUntil.clear();
+        }
+        unreachableUntil.put(target.immutable(), golem.level().getGameTime() + UNREACHABLE_RETRY_TICKS);
     }
 
     protected void take(Task task) {
