@@ -28,6 +28,10 @@ public final class StreamEffectClientHandler {
     }
 
     private static void dispatch(ClientboundStreamEffectPayload p) {
+        if (p.kind() == StreamEffectKind.BEAM_STOP) {
+            BeamManager.stopChannels(p.entityId(), p.wandHand());
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         Vec3 rawSource = new Vec3(p.sx(), p.sy(), p.sz());
         Vec3 rawTarget = new Vec3(p.tx(), p.ty(), p.tz());
@@ -64,6 +68,7 @@ public final class StreamEffectClientHandler {
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT),
                         wand == null,
                         wand);
+                beam.withChannelHand(p.wandHand());
                 if (p.extraFloat2() > 0.0F) {
                     int handBranch = p.wandHand() == InteractionHand.OFF_HAND ? 8 : 0;
                     beam.withChannel(p.channelBranch() + handBranch, p.extraFloat2());

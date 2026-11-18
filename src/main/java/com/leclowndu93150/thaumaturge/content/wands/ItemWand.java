@@ -29,6 +29,7 @@ import com.leclowndu93150.thaumaturge.content.spell.casting.SpellCasting;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItem;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.text.DecimalFormat;
@@ -62,6 +63,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("removal")
@@ -285,6 +287,14 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
         if (level instanceof ServerLevel serverLevel
                 && entity instanceof Player player
                 && SpellCasting.channels(focusStack)) {
+            PacketDistributor.sendToPlayersNear(
+                    serverLevel,
+                    null,
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    64.0,
+                    ClientboundStreamEffectPayload.beamStop(player.getId(), player.getUsedItemHand()));
             SpellCasting.release(serverLevel, player, stack, focusStack, getUseDuration(stack, entity) - remainingTime);
             return;
         }

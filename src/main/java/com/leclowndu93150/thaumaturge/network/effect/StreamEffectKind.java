@@ -6,7 +6,8 @@ public enum StreamEffectKind {
     BEAM,
     ESSENTIA,
     BORE,
-    VOID;
+    VOID,
+    BEAM_STOP;
 
     private static final StreamEffectKind[] BY_ORDINAL = values();
 

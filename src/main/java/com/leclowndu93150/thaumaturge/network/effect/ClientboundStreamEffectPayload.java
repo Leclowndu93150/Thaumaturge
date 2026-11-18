@@ -119,6 +119,12 @@ public record ClientboundStreamEffectPayload(
         return hasFlag(FLAG_OFF_HAND) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
     }
 
+    public static ClientboundStreamEffectPayload beamStop(int casterId, InteractionHand hand) {
+        return new ClientboundStreamEffectPayload(
+                StreamEffectKind.BEAM_STOP, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0F, 0F, casterId, (byte)
+                        (FLAG_WAND | (hand == InteractionHand.OFF_HAND ? FLAG_OFF_HAND : 0)));
+    }
+
     public static ClientboundStreamEffectPayload arc(
             double sx, double sy, double sz, double tx, double ty, double tz, int color, float gravity) {
         return new ClientboundStreamEffectPayload(

@@ -2,12 +2,14 @@ package com.leclowndu93150.thaumaturge.client.effect.instance;
 
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker.WandSource;
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
+import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellRayTrace;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -61,6 +63,11 @@ public final class BeamInstance implements IFXInstance {
     private float channelYawOffset;
     private float channelPitchOffset;
     private boolean localChannelHit;
+    private boolean channelStopped;
+    private @Nullable InteractionHand channelHand;
+    private @Nullable Vec3 lastChannelTarget;
+    private @Nullable Vec3 frozenSource;
+    private @Nullable Vec3 ribbonSide;
 
     public BeamInstance(
             double sx,
@@ -175,6 +182,7 @@ public final class BeamInstance implements IFXInstance {
         this.sourceEntityId = sourceEntityId;
         this.entityAnchored = anchorToEntity && sourceEntityId != BeamPayloadIds.NO_ENTITY;
         this.wandSource = wandSource;
+        this.channelHand = wandSource == null ? null : wandSource.hand();
         this.withSource = withSource;
         this.requestedSource = new Vec3(sx, sy, sz);
         this.sourceX = sx;
@@ -212,6 +220,12 @@ public final class BeamInstance implements IFXInstance {
             this.sourceX = castPoint.x;
             this.sourceY = castPoint.y;
             this.sourceZ = castPoint.z;
+        }
+        if (isChannel() && this.wandSource != null && !this.channelStopped) {
+            LocalPlayer player = this.wandSource.player();
+            if (!player.isUsingItem() || player.getUsedItemHand() != this.channelHand) {
+                stopChannel();
+            }
         }
         refreshGeometry();
         unwindAngles();
@@ -272,18 +286,45 @@ public final class BeamInstance implements IFXInstance {
         this.channelBranch = branch;
         this.channelRange = range;
         this.localChannelHit = this.hitTicks > 0;
-        if (isChannel() && this.hitTicks > 0) {
-            this.hitTicks = Math.max(this.hitTicks, this.maxAge);
-        }
+        // Only the initial packet determines relative branch spread. Recomputing these
+        // offsets on every server pulse mixes an old server aim with the current camera.
         if (isChannel() && this.wandSource != null) {
             LocalPlayer player = this.wandSource.player();
             Vec3 aim = new Vec3(this.targetX, this.targetY, this.targetZ).subtract(player.getEyePosition());
-            this.channelYawOffset =
-                    Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(-aim.x, aim.z)) - player.getYRot());
-            this.channelPitchOffset =
-                    (float) -Math.toDegrees(Math.atan2(aim.y, aim.horizontalDistance())) - player.getXRot();
+            if (aim.lengthSqr() > 1.0E-6) {
+                float yaw = Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(-aim.x, aim.z)) - player.getYRot());
+                float pitch = (float) -Math.toDegrees(Math.atan2(aim.y, aim.horizontalDistance())) - player.getXRot();
+                // A single channel ray should track the live camera, not delayed server aim.
+                // Preserve intentional spread on additional channel branches.
+                this.channelYawOffset = (branch - 1) % 8 == 0 ? 0.0F : Mth.clamp(yaw, -15.0F, 15.0F);
+                this.channelPitchOffset = (branch - 1) % 8 == 0 ? 0.0F : Mth.clamp(pitch, -15.0F, 15.0F);
+            }
         }
         return this;
+    }
+
+    public BeamInstance withChannelHand(@Nullable InteractionHand hand) {
+        this.channelHand = hand;
+        return this;
+    }
+
+    public boolean isStopped() {
+        return this.channelStopped;
+    }
+
+    public boolean isChannelFrom(int entityId, @Nullable InteractionHand hand) {
+        return isChannel() && this.sourceEntityId == entityId && (hand == null || this.channelHand == hand);
+    }
+
+    public void stopChannel() {
+        if (!isChannel() || this.channelStopped) return;
+        this.frozenSource = this.wandSource == null ? sourcePos(1.0F) : this.wandSource.tip();
+        if (this.frozenSource == null) this.frozenSource = sourcePos(1.0F);
+        this.channelStopped = true;
+        this.hitTicks = 0;
+        this.localChannelHit = false;
+        // Stop tracking instantly; retain only a very short, stationary afterglow.
+        this.maxAge = Math.min(this.maxAge, this.age + 2);
     }
 
     public boolean isChannel() {
@@ -305,12 +346,13 @@ public final class BeamInstance implements IFXInstance {
         this.targetX = newer.targetX;
         this.targetY = newer.targetY;
         this.targetZ = newer.targetZ;
-        this.maxAge = Math.max(this.maxAge, this.age + newer.maxAge);
-        this.hitTicks = isChannel() ? newer.hitTicks : Math.max(this.hitTicks, newer.hitTicks);
-        this.channelRange = newer.channelRange;
-        this.channelYawOffset = newer.channelYawOffset;
-        this.channelPitchOffset = newer.channelPitchOffset;
-        this.expired = false;
+        if (!this.channelStopped) {
+            this.maxAge = Math.max(this.maxAge, this.age + newer.maxAge);
+            this.hitTicks = isChannel() ? newer.hitTicks : Math.max(this.hitTicks, newer.hitTicks);
+            this.channelRange = newer.channelRange;
+            // Keep the initial channel aim offset stable across asynchronous server pulses.
+            this.expired = false;
+        }
         refreshGeometry();
     }
 
@@ -374,6 +416,7 @@ public final class BeamInstance implements IFXInstance {
     }
 
     public Vec3 sourcePos(float partial) {
+        if (this.channelStopped && this.frozenSource != null) return this.frozenSource;
         LivingEntity anchor = this.wandSource != null
                 ? this.wandSource.player()
                 : this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
@@ -387,19 +430,29 @@ public final class BeamInstance implements IFXInstance {
     }
 
     public @Nullable Vec3 wandTip() {
+        if (this.channelStopped) return this.wandSource == null ? null : this.frozenSource;
         return this.wandSource == null ? null : this.wandSource.tip();
     }
 
     public Vec3 targetPos(float partial) {
-        if (isChannel() && this.wandSource != null) {
-            LocalPlayer player = this.wandSource.player();
-            Vec3 direction = Vec3.directionFromRotation(
-                    player.getViewXRot(partial) + this.channelPitchOffset,
-                    player.getViewYRot(partial) + this.channelYawOffset);
-            HitResult hit = SpellRayTrace.trace(
-                    player.level(), player, player.getEyePosition(partial), direction, this.channelRange);
-            this.localChannelHit = hit.getType() != HitResult.Type.MISS;
-            return hit.getLocation();
+        if (isChannel()) {
+            if (this.channelStopped && this.lastChannelTarget != null) return this.lastChannelTarget;
+            LivingEntity anchor = this.wandSource != null
+                    ? this.wandSource.player()
+                    : this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
+            if (anchor != null && !this.channelStopped) {
+                Vec3 direction = channelForward(partial);
+                HitResult hit = SpellRayTrace.trace(
+                        anchor.level(), anchor, anchor.getEyePosition(partial), direction, this.channelRange);
+                this.localChannelHit = hit.getType() != HitResult.Type.MISS;
+                // Sable block clips return plot coordinates; entities and misses are world-space.
+                // Use the interpolated render pose so moving decks do not wobble each tick.
+                Vec3 result = hit.getType() == HitResult.Type.BLOCK
+                        ? ClientSpaces.renderPosition(anchor.level(), hit.getLocation())
+                        : hit.getLocation();
+                this.lastChannelTarget = result;
+                return result;
+            }
         }
         return new Vec3(
                 Mth.lerp(partial, this.prevTargetX, this.targetX),
@@ -411,10 +464,29 @@ public final class BeamInstance implements IFXInstance {
         LivingEntity anchor = this.wandSource != null
                 ? this.wandSource.player()
                 : this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
+        if (this.wandSource != null) {
+            LocalPlayer player = this.wandSource.player();
+            return Vec3.directionFromRotation(
+                    player.getViewXRot(partial) + this.channelPitchOffset,
+                    player.getViewYRot(partial) + this.channelYawOffset);
+        }
         return anchor == null
                 ? new Vec3(this.targetX - this.sourceX, this.targetY - this.sourceY, this.targetZ - this.sourceZ)
                         .normalize()
                 : anchor.getViewVector(partial);
+    }
+
+    /** Parallel-transport a ribbon axis between render frames instead of flipping at vertical aim. */
+    public Vec3 ribbonSide(Vec3 axis) {
+        Vec3 candidate = this.ribbonSide == null
+                ? (Math.abs(axis.y) < 0.9 ? axis.cross(new Vec3(0.0, 1.0, 0.0)) : axis.cross(new Vec3(1.0, 0.0, 0.0)))
+                : this.ribbonSide;
+        candidate = candidate.subtract(axis.scale(candidate.dot(axis)));
+        if (candidate.lengthSqr() < 1.0E-8) {
+            candidate = axis.cross(Math.abs(axis.y) < 0.9 ? new Vec3(0.0, 1.0, 0.0) : new Vec3(1.0, 0.0, 0.0));
+        }
+        this.ribbonSide = candidate.normalize();
+        return this.ribbonSide;
     }
 
     public float yawAt(float partial) {

@@ -27,8 +27,10 @@ public final class SpellRayTrace {
     }
 
     public static List<EntityHitResult> entitiesAlong(Level level, @Nullable Entity source, Vec3 from, Vec3 to) {
-        from = LevelSpaces.toWorld(level, from);
-        to = LevelSpaces.toWorld(level, to);
+        return entitiesAlongWorld(level, source, LevelSpaces.toWorld(level, from), LevelSpaces.toWorld(level, to));
+    }
+
+    private static List<EntityHitResult> entitiesAlongWorld(Level level, @Nullable Entity source, Vec3 from, Vec3 to) {
         Vec3 start = from;
         AABB sweep = new AABB(from, to).inflate(ENTITY_PADDING + 1.0);
         List<EntityHitResult> hits = new ArrayList<>();
@@ -45,8 +47,8 @@ public final class SpellRayTrace {
     public static HitResult trace(Level level, @Nullable Entity source, Vec3 from, Vec3 direction, double range) {
         Vec3 to = from.add(direction.normalize().scale(range));
         BlockHitResult block = clipBlocks(level, source, from, to);
-        Vec3 reach = block.getType() == HitResult.Type.MISS ? to : block.getLocation();
-        List<EntityHitResult> entities = entitiesAlong(level, source, from, reach);
+        Vec3 reach = block.getType() == HitResult.Type.MISS ? to : LevelSpaces.toWorld(level, block.getLocation());
+        List<EntityHitResult> entities = entitiesAlongWorld(level, source, LevelSpaces.toWorld(level, from), reach);
         if (!entities.isEmpty()) {
             return entities.getFirst();
         }
@@ -57,9 +59,9 @@ public final class SpellRayTrace {
             Level level, @Nullable Entity source, Vec3 from, Vec3 direction, double range, int entityCount) {
         Vec3 to = from.add(direction.normalize().scale(range));
         BlockHitResult block = clipBlocks(level, source, from, to);
-        Vec3 reach = block.getType() == HitResult.Type.MISS ? to : block.getLocation();
+        Vec3 reach = block.getType() == HitResult.Type.MISS ? to : LevelSpaces.toWorld(level, block.getLocation());
         List<HitResult> out = new ArrayList<>();
-        for (EntityHitResult hit : entitiesAlong(level, source, from, reach)) {
+        for (EntityHitResult hit : entitiesAlongWorld(level, source, LevelSpaces.toWorld(level, from), reach)) {
             if (out.size() >= entityCount) {
                 return out;
             }

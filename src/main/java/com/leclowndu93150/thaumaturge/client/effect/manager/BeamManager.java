@@ -20,9 +20,11 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.jspecify.annotations.Nullable;
 
 public final class BeamManager extends AbstractFXManager<IFXInstance> {
     public static final BeamManager INSTANCE = new BeamManager();
@@ -55,13 +57,24 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         if (instance.isExpired()) {
             return;
         }
-        for (BeamInstance existing : BEAMS) {
+        for (Iterator<BeamInstance> it = BEAMS.iterator(); it.hasNext(); ) {
+            BeamInstance existing = it.next();
             if (existing.sameBeamAs(instance)) {
+                if (existing.isStopped()) {
+                    it.remove();
+                    break;
+                }
                 existing.refresh(instance);
                 return;
             }
         }
         BEAMS.add(instance);
+    }
+
+    public static void stopChannels(int casterId, @Nullable InteractionHand hand) {
+        for (BeamInstance beam : BEAMS) {
+            if (beam.isChannelFrom(casterId, hand)) beam.stopChannel();
+        }
     }
 
     @Override
@@ -168,10 +181,7 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
 
         if (beam.withSource()) {
             VertexConsumer node = bufSource.getBuffer(BeamRenderType.NODE_TYPE);
-            float sourceOp = 0.8F;
-            if (beam.maxAge() - beam.age() <= 4) {
-                sourceOp = 0.8F - (4 - (beam.maxAge() - beam.age())) * 0.2F;
-            }
+            float sourceOp = 2.0F * beam.computeOpacity(partialTick);
             int sourceColor = ARGB32.colorFromFloat(sourceOp, beam.colorR(), beam.colorG(), beam.colorB());
             drawNodeQuad(poseStack, node, camPos, source, beam.age(), SOURCE_QUAD_SIZE, sourceColor);
         }
@@ -198,8 +208,7 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         Vec3 span = target.subtract(source);
         double length = span.length();
         Vec3 axis = span.normalize();
-        Vec3 side = axis.cross(new Vec3(0.0, 1.0, 0.0));
-        side = side.lengthSqr() < 1.0E-6 ? new Vec3(1.0, 0.0, 0.0) : side.normalize();
+        Vec3 side = beam.ribbonSide(axis);
         Vec3 around = axis.cross(side).normalize();
         Vec3 forward = beam.channelForward(partialTick);
         poseStack.pushPose();

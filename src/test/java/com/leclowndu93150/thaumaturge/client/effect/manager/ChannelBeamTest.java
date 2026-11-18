@@ -69,6 +69,30 @@ class ChannelBeamTest {
         assertEquals(source, BeamManager.channelPoint(source, source, forward, 0.5F));
     }
 
+    @Test
+    void stoppingAChannelFreezesItsVisualStateAndFadesPromptly() {
+        BeamInstance beam = channel(1, Vec3.ZERO, new Vec3(0, 0, 8));
+        beam.tick();
+        beam.stopChannel();
+        assertTrue(beam.isStopped());
+        assertEquals(3, beam.maxAge());
+        assertEquals(0.2F, beam.computeOpacity(0.0F), 1.0E-6F);
+        beam.tick();
+        beam.tick();
+        assertEquals(0.0F, beam.computeOpacity(0.0F), 1.0E-6F);
+        beam.tick();
+        assertTrue(beam.isExpired());
+    }
+
+    @Test
+    void channelRibbonSideKeepsItsOrientationThroughVerticalAim() {
+        BeamInstance beam = channel(1, Vec3.ZERO, new Vec3(0, 0, 8));
+        Vec3 horizontalSide = beam.ribbonSide(new Vec3(1, 0, 0));
+        Vec3 verticalSide = beam.ribbonSide(new Vec3(0, 1, 0));
+        assertTrue(horizontalSide.dot(verticalSide) > 0.99);
+        assertEquals(0.0, verticalSide.dot(new Vec3(0, 1, 0)), 1.0E-6);
+    }
+
     private static BeamInstance channel(int branch, Vec3 source, Vec3 target) {
         return beam(source, target).withChannel(branch, 16.0);
     }
