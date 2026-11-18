@@ -62,4 +62,9 @@ public interface SpellFx {
     default void beam(Vec3 from, Vec3 to, int color, int ticks, boolean hit) {
         beam(from, to, color, ticks);
     }
+
+    /** A beam with its targeting range, used for live visual tracking of channeled casts. */
+    default void beam(Vec3 from, Vec3 to, int color, int ticks, boolean hit, double range) {
+        beam(from, to, color, ticks, hit);
+    }
 }

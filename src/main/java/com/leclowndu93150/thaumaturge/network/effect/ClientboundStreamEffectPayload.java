@@ -79,6 +79,39 @@ public record ClientboundStreamEffectPayload(
                 kind, sx, sy, sz, tx, ty, tz, color, extraInt, extraInt2, extraFloat, extraFloat2, casterId, wandFlags);
     }
 
+    public ClientboundStreamEffectPayload withChannel(int branch, float range) {
+        if (kind != StreamEffectKind.BEAM
+                || branch <= 0
+                || branch > Integer.MAX_VALUE >>> 2
+                || range <= 0.0F
+                || !Float.isFinite(range)) {
+            throw new IllegalArgumentException("A beam channel requires a positive branch and finite range");
+        }
+        return new ClientboundStreamEffectPayload(
+                kind,
+                sx,
+                sy,
+                sz,
+                tx,
+                ty,
+                tz,
+                color,
+                extraInt,
+                (branch << 2) | (beamType() & 3),
+                extraFloat,
+                range,
+                entityId,
+                flags);
+    }
+
+    public int channelBranch() {
+        return extraFloat2 > 0.0F ? extraInt2 >>> 2 : 0;
+    }
+
+    public int beamType() {
+        return extraFloat2 > 0.0F ? extraInt2 & 3 : extraInt2;
+    }
+
     public @Nullable InteractionHand wandHand() {
         if (!hasFlag(FLAG_WAND)) {
             return null;

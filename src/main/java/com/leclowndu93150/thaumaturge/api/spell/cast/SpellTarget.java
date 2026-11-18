@@ -65,23 +65,28 @@ public record SpellTarget(HitResult hit, Vec3 position, Vec3 direction) {
     }
 
     /**
-     * The approximate world-space tip of a player's held wand, used as the cast origin.
+     * The player's eye ray, used for authoritative wand spell targeting.
      *
      * @param caster the player casting
      * @param hand the hand holding the wand
-     * @return the wand-tip target
+     * @return the eye-ray target
      */
     public static SpellTarget wandOrigin(Player caster, InteractionHand hand) {
+        Vec3 eyes = caster.getEyePosition();
+        return new SpellTarget(new EntityHitResult(caster, eyes), eyes, caster.getLookAngle());
+    }
+
+    /** The approximate held-wand tip, used only for visual effects. */
+    public static Vec3 visualWandOrigin(Player caster, InteractionHand hand) {
         Vec3 look = caster.getLookAngle();
         Vec3 right = Vec3.directionFromRotation(0.0F, caster.getYRot())
                 .cross(new Vec3(0.0, 1.0, 0.0))
                 .normalize();
         boolean rightHand = (hand == InteractionHand.MAIN_HAND) == (caster.getMainArm() == HumanoidArm.RIGHT);
-        Vec3 tip = caster.getEyePosition()
+        return caster.getEyePosition()
                 .add(look.scale(WAND_FORWARD_OFFSET))
                 .add(right.scale(rightHand ? WAND_SIDE_OFFSET : -WAND_SIDE_OFFSET))
                 .add(0.0, -WAND_DROP_OFFSET, 0.0);
-        return new SpellTarget(new EntityHitResult(caster, tip), tip, look);
     }
 
     /**

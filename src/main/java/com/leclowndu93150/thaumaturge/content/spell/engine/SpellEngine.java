@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
@@ -63,6 +64,12 @@ public final class SpellEngine {
             return;
         }
         CastRun run = new CastRun(level, UUID.randomUUID(), Optional.of(caster.getUUID()), caster);
+        if (wandHand != null && spell.style() == CastStyle.CHANNELED && caster instanceof Player player) {
+            var tier = Spells.tierOf(focus).orElse(null);
+            var summary = player.getData(com.leclowndu93150.thaumaturge.registry.TTAttachments.CHANNEL_SUMMARY)
+                    .summaryFor(spell, tier, () -> Spells.analyze(spell, tier, level.registryAccess(), player));
+            run.fx().setChannelInterval(summary.pulseInterval());
+        }
         if (wandHand != null) {
             run.fx()
                     .setWandOrigin(

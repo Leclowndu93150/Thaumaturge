@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayl
 import com.leclowndu93150.thaumaturge.network.effect.StreamEffectKind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jspecify.annotations.Nullable;
@@ -46,7 +47,7 @@ public final class StreamEffectClientHandler {
                         new BoltInstance(source, target, p.color(), p.extraFloat(), localWand(mc.player, p)));
             case BEAM -> {
                 WandSource wand = localWand(mc.player, p);
-                BeamManager.addBeam(new BeamInstance(
+                BeamInstance beam = new BeamInstance(
                         source.x,
                         source.y,
                         source.z,
@@ -55,14 +56,19 @@ public final class StreamEffectClientHandler {
                         target.z,
                         p.color(),
                         p.extraInt(),
-                        p.extraInt2(),
+                        p.beamType(),
                         p.extraFloat(),
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_REVERSE),
                         p.entityId(),
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_WITH_SOURCE),
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT),
-                        p.wandHand() == null && wand == null,
-                        wand));
+                        wand == null,
+                        wand);
+                if (p.extraFloat2() > 0.0F) {
+                    int handBranch = p.wandHand() == InteractionHand.OFF_HAND ? 8 : 0;
+                    beam.withChannel(p.channelBranch() + handBranch, p.extraFloat2());
+                }
+                BeamManager.addBeam(beam);
             }
             case BORE ->
                 BoreVoidStreamManager.addBore(new BoreStreamInstance(

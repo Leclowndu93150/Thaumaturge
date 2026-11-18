@@ -34,8 +34,8 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
     private static final float ARC_CROSS_HALF_WIDTH = ARC_SIZE * Mth.SQRT_OF_TWO;
     private static final float SOURCE_QUAD_SIZE = 0.33F;
     private static final float HIT_QUAD_SIZE = 0.3F;
-    private static final float HIT_WHITE_MIX = 0.5F;
     private static final double MIN_BEAM_LENGTH = 1.0E-3;
+    private static final int CHANNEL_SEGMENTS = 12;
 
     private BeamManager() {}
 
@@ -136,30 +136,34 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
             }
             int color = ARGB32.colorFromFloat(op, beam.colorR(), beam.colorG(), beam.colorB());
 
-            poseStack.pushPose();
-            poseStack.translate(source.x - camPos.x, source.y - camPos.y, source.z - camPos.z);
-            poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(90.0)));
-            poseStack.mulPose(new Quaternionf().rotateZ((float) Math.toRadians(-(180.0F + yaw))));
-            poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(pitch)));
-            poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(rot)));
-            Matrix4f mat = poseStack.last().pose();
+            if (beam.isChannel()) {
+                renderChannel(poseStack, trunk, beam, source, target, camPos, size, texScroll, rot, color, partialTick);
+            } else {
+                poseStack.pushPose();
+                poseStack.translate(source.x - camPos.x, source.y - camPos.y, source.z - camPos.z);
+                poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(90.0)));
+                poseStack.mulPose(new Quaternionf().rotateZ((float) Math.toRadians(-(180.0F + yaw))));
+                poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(pitch)));
+                poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(rot)));
+                Matrix4f mat = poseStack.last().pose();
 
-            double base = 0.15 * size;
-            double baseEnd = base * beam.endMod();
+                double base = 0.15 * size;
+                double baseEnd = base * beam.endMod();
 
-            for (int t = 0; t < 3; t++) {
-                poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(60.0)));
-                Matrix4f stripMat = poseStack.last().pose();
-                float u0 = 0.0F;
-                float u1 = 1.0F;
-                float v0 = -1.0F + texScroll + t / 3.0F;
-                float v1 = length * size + v0;
-                beamVertex(trunk, stripMat, -baseEnd, length * size, 0.0, u1, v1, color);
-                beamVertex(trunk, stripMat, -base, 0.0, 0.0, u1, v0, color);
-                beamVertex(trunk, stripMat, base, 0.0, 0.0, u0, v0, color);
-                beamVertex(trunk, stripMat, baseEnd, length * size, 0.0, u0, v1, color);
+                for (int t = 0; t < 3; t++) {
+                    poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(60.0)));
+                    Matrix4f stripMat = poseStack.last().pose();
+                    float u0 = 0.0F;
+                    float u1 = 1.0F;
+                    float v0 = -1.0F + texScroll + t / 3.0F;
+                    float v1 = length * size + v0;
+                    beamVertex(trunk, stripMat, -baseEnd, length * size, 0.0, u1, v1, color);
+                    beamVertex(trunk, stripMat, -base, 0.0, 0.0, u1, v0, color);
+                    beamVertex(trunk, stripMat, base, 0.0, 0.0, u0, v0, color);
+                    beamVertex(trunk, stripMat, baseEnd, length * size, 0.0, u0, v1, color);
+                }
+                poseStack.popPose();
             }
-            poseStack.popPose();
         }
 
         if (beam.withSource()) {
@@ -173,14 +177,64 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         }
         if (beam.hit()) {
             VertexConsumer node = bufSource.getBuffer(BeamRenderType.NODE_TYPE);
-            int flareColor = ARGB32.colorFromFloat(
-                    1.0F,
-                    Mth.lerp(HIT_WHITE_MIX, beam.colorR(), 1.0F),
-                    Mth.lerp(HIT_WHITE_MIX, beam.colorG(), 1.0F),
-                    Mth.lerp(HIT_WHITE_MIX, beam.colorB(), 1.0F));
+            int flareColor = ARGB32.colorFromFloat(1.0F, beam.colorR(), beam.colorG(), beam.colorB());
             float halfSize = HIT_QUAD_SIZE * beam.hitFactor(partialTick);
             drawNodeQuad(poseStack, node, camPos, target, beam.age(), halfSize, flareColor);
         }
+    }
+
+    private static void renderChannel(
+            PoseStack poseStack,
+            VertexConsumer trunk,
+            BeamInstance beam,
+            Vec3 source,
+            Vec3 target,
+            Vec3 camPos,
+            float size,
+            float scroll,
+            float rotation,
+            int color,
+            float partialTick) {
+        Vec3 span = target.subtract(source);
+        double length = span.length();
+        Vec3 axis = span.normalize();
+        Vec3 side = axis.cross(new Vec3(0.0, 1.0, 0.0));
+        side = side.lengthSqr() < 1.0E-6 ? new Vec3(1.0, 0.0, 0.0) : side.normalize();
+        Vec3 around = axis.cross(side).normalize();
+        Vec3 forward = beam.channelForward(partialTick);
+        poseStack.pushPose();
+        poseStack.translate(source.x - camPos.x, source.y - camPos.y, source.z - camPos.z);
+        Matrix4f matrix = poseStack.last().pose();
+        for (int strip = 0; strip < 3; strip++) {
+            double angle = Math.toRadians(rotation + 60.0 * (strip + 1));
+            Vec3 ribbon = side.scale(Math.cos(angle)).add(around.scale(Math.sin(angle)));
+            float offset = -1.0F + scroll + strip / 3.0F;
+            for (int segment = 0; segment < CHANNEL_SEGMENTS; segment++) {
+                float t0 = size * segment / CHANNEL_SEGMENTS;
+                float t1 = size * (segment + 1) / CHANNEL_SEGMENTS;
+                Vec3 near = channelPoint(Vec3.ZERO, span, forward, t0);
+                Vec3 far = channelPoint(Vec3.ZERO, span, forward, t1);
+                Vec3 nearWidth = ribbon.scale(0.15 * size * Mth.lerp(t0, 1.0F, beam.endMod()));
+                Vec3 farWidth = ribbon.scale(0.15 * size * Mth.lerp(t1, 1.0F, beam.endMod()));
+                float v0 = offset + (float) length * t0;
+                float v1 = offset + (float) length * t1;
+                channelVertex(trunk, matrix, far.subtract(farWidth), 1.0F, v1, color);
+                channelVertex(trunk, matrix, near.subtract(nearWidth), 1.0F, v0, color);
+                channelVertex(trunk, matrix, near.add(nearWidth), 0.0F, v0, color);
+                channelVertex(trunk, matrix, far.add(farWidth), 0.0F, v1, color);
+            }
+        }
+        poseStack.popPose();
+    }
+
+    static Vec3 channelPoint(Vec3 source, Vec3 target, Vec3 forward, float t) {
+        Vec3 span = target.subtract(source);
+        return source.add(span.scale(t * t)).add(forward.normalize().scale(span.length() * t * (1.0F - t)));
+    }
+
+    private static void channelVertex(
+            VertexConsumer consumer, Matrix4f matrix, Vec3 point, float u, float v, int color) {
+        beamVertex(consumer, matrix, point.x, point.y, point.z, u, v, color);
     }
 
     private static void drawNodeQuad(

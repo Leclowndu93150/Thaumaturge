@@ -73,7 +73,7 @@ public record RayDelivery(double range, boolean reach, Visual visual, float widt
     private void show(CastContext ctx, SpellLook look, SpellTarget origin, Vec3 end, boolean hit) {
         switch (visual) {
             case ARC -> ctx.fx().arc(origin.position(), end, look.color(), width * ctx.power());
-            case BEAM -> ctx.fx().beam(origin.position(), end, look.color(), linger, hit);
+            case BEAM -> ctx.fx().beam(origin.position(), end, look.color(), linger, hit, distance(ctx));
             case FLASH ->
                 ctx.fx().burst(look.fx(), origin.position(), origin.direction().scale(FLASH_SPEED), look.color());
         }

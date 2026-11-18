@@ -2,12 +2,14 @@ package com.leclowndu93150.thaumaturge.client.effect.instance;
 
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker.WandSource;
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
+import com.leclowndu93150.thaumaturge.content.spell.world.SpellRayTrace;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -54,6 +56,11 @@ public final class BeamInstance implements IFXInstance {
     private int maxAge;
     private float prevSize;
     private boolean expired;
+    private int channelBranch;
+    private double channelRange;
+    private float channelYawOffset;
+    private float channelPitchOffset;
+    private boolean localChannelHit;
 
     public BeamInstance(
             double sx,
@@ -194,6 +201,9 @@ public final class BeamInstance implements IFXInstance {
         this.prevSourceX = this.sourceX;
         this.prevSourceY = this.sourceY;
         this.prevSourceZ = this.sourceZ;
+        this.prevTargetX = this.targetX;
+        this.prevTargetY = this.targetY;
+        this.prevTargetZ = this.targetZ;
         this.prevYaw = this.rotYaw;
         this.prevPitch = this.rotPitch;
         LivingEntity anchor = this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
@@ -253,7 +263,31 @@ public final class BeamInstance implements IFXInstance {
                 && this.colorB == other.colorB
                 && this.endMod == other.endMod
                 && this.reverse == other.reverse
-                && dx * dx + dy * dy + dz * dz < SAME_TARGET_DISTANCE_SQR;
+                && (isChannel() || other.isChannel()
+                        ? isChannel() && other.isChannel() && this.channelBranch == other.channelBranch
+                        : dx * dx + dy * dy + dz * dz < SAME_TARGET_DISTANCE_SQR);
+    }
+
+    public BeamInstance withChannel(int branch, double range) {
+        this.channelBranch = branch;
+        this.channelRange = range;
+        this.localChannelHit = this.hitTicks > 0;
+        if (isChannel() && this.hitTicks > 0) {
+            this.hitTicks = Math.max(this.hitTicks, this.maxAge);
+        }
+        if (isChannel() && this.wandSource != null) {
+            LocalPlayer player = this.wandSource.player();
+            Vec3 aim = new Vec3(this.targetX, this.targetY, this.targetZ).subtract(player.getEyePosition());
+            this.channelYawOffset =
+                    Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(-aim.x, aim.z)) - player.getYRot());
+            this.channelPitchOffset =
+                    (float) -Math.toDegrees(Math.atan2(aim.y, aim.horizontalDistance())) - player.getXRot();
+        }
+        return this;
+    }
+
+    public boolean isChannel() {
+        return this.channelBranch > 0 && this.channelRange > 0.0 && Double.isFinite(this.channelRange);
     }
 
     public void refresh(BeamInstance newer) {
@@ -272,7 +306,10 @@ public final class BeamInstance implements IFXInstance {
         this.targetY = newer.targetY;
         this.targetZ = newer.targetZ;
         this.maxAge = Math.max(this.maxAge, this.age + newer.maxAge);
-        this.hitTicks = Math.max(this.hitTicks, newer.hitTicks);
+        this.hitTicks = isChannel() ? newer.hitTicks : Math.max(this.hitTicks, newer.hitTicks);
+        this.channelRange = newer.channelRange;
+        this.channelYawOffset = newer.channelYawOffset;
+        this.channelPitchOffset = newer.channelPitchOffset;
         this.expired = false;
         refreshGeometry();
     }
@@ -326,15 +363,20 @@ public final class BeamInstance implements IFXInstance {
     }
 
     public boolean hit() {
-        return this.hitTicks > 0;
+        return isChannel() && this.wandSource != null ? this.localChannelHit : this.hitTicks > 0;
     }
 
     public float hitFactor(float partial) {
+        if (isChannel()) {
+            return Mth.clamp(computeOpacity(partial) / BASE_OPACITY, 0.0F, 1.0F);
+        }
         return Mth.clamp((this.hitTicks - partial) / (float) HIT_DURATION, 0.0F, 1.0F);
     }
 
     public Vec3 sourcePos(float partial) {
-        LivingEntity anchor = this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
+        LivingEntity anchor = this.wandSource != null
+                ? this.wandSource.player()
+                : this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
         if (anchor != null) {
             return BeamAnchor.castPoint(anchor, partial);
         }
@@ -349,10 +391,30 @@ public final class BeamInstance implements IFXInstance {
     }
 
     public Vec3 targetPos(float partial) {
+        if (isChannel() && this.wandSource != null) {
+            LocalPlayer player = this.wandSource.player();
+            Vec3 direction = Vec3.directionFromRotation(
+                    player.getViewXRot(partial) + this.channelPitchOffset,
+                    player.getViewYRot(partial) + this.channelYawOffset);
+            HitResult hit = SpellRayTrace.trace(
+                    player.level(), player, player.getEyePosition(partial), direction, this.channelRange);
+            this.localChannelHit = hit.getType() != HitResult.Type.MISS;
+            return hit.getLocation();
+        }
         return new Vec3(
                 Mth.lerp(partial, this.prevTargetX, this.targetX),
                 Mth.lerp(partial, this.prevTargetY, this.targetY),
                 Mth.lerp(partial, this.prevTargetZ, this.targetZ));
+    }
+
+    public Vec3 channelForward(float partial) {
+        LivingEntity anchor = this.wandSource != null
+                ? this.wandSource.player()
+                : this.entityAnchored ? BeamAnchor.find(this.sourceEntityId) : null;
+        return anchor == null
+                ? new Vec3(this.targetX - this.sourceX, this.targetY - this.sourceY, this.targetZ - this.sourceZ)
+                        .normalize()
+                : anchor.getViewVector(partial);
     }
 
     public float yawAt(float partial) {

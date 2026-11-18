@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFx;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
@@ -32,13 +34,21 @@ final class SpellFxBatch implements SpellFx {
     private @Nullable WandOrigin wandOrigin;
     private int wandEvents;
     private int arcs;
+    private int channelInterval;
 
     SpellFxBatch(ServerLevel level) {
         this.level = level;
     }
 
+    void setChannelInterval(int ticks) {
+        channelInterval = ticks;
+    }
+
     void setWandOrigin(int casterId, InteractionHand hand, Vec3 position) {
-        this.wandOrigin = new WandOrigin(casterId, hand, position);
+        Vec3 visualPosition = level.getEntity(casterId) instanceof Player player
+                ? LevelSpaces.toWorld(level, SpellTarget.visualWandOrigin(player, hand))
+                : position;
+        this.wandOrigin = new WandOrigin(casterId, hand, position, visualPosition);
     }
 
     @Override
@@ -70,20 +80,57 @@ final class SpellFxBatch implements SpellFx {
 
     @Override
     public void beam(Vec3 from, Vec3 to, int color, int ticks, boolean hit) {
+        beam(from, to, color, ticks, hit, 0.0);
+    }
+
+    @Override
+    public void beam(Vec3 from, Vec3 to, int color, int ticks, boolean hit, double range) {
         if (arcs++ < MAX_ARCS) {
             Vec3 source = LevelSpaces.toWorld(level, from);
             Vec3 target = LevelSpaces.toWorld(level, to);
-            sendStream(
-                    source,
-                    ClientboundStreamEffectPayload.beam(
-                            source.x, source.y, source.z, target.x, target.y, target.z, color, ticks, 0, 1.0F, false,
-                            -1, true, hit));
+            boolean channel = channelInterval > 0
+                    && range > 0.0
+                    && wandOrigin != null
+                    && wandOrigin.position().equals(source);
+            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.beam(
+                    source.x,
+                    source.y,
+                    source.z,
+                    target.x,
+                    target.y,
+                    target.z,
+                    color,
+                    channel ? Math.max(ticks, channelInterval + 6) : ticks,
+                    0,
+                    1.0F,
+                    false,
+                    -1,
+                    true,
+                    hit);
+            if (channel) payload = payload.withChannel(arcs, (float) range);
+            sendStream(source, payload);
         }
     }
 
     private void sendStream(Vec3 source, ClientboundStreamEffectPayload payload) {
         if (wandOrigin != null && wandOrigin.position().equals(source)) {
-            payload = payload.withWandSource(wandOrigin.casterId(), wandOrigin.hand());
+            Vec3 tip = wandOrigin.visualPosition();
+            payload = new ClientboundStreamEffectPayload(
+                            payload.kind(),
+                            tip.x,
+                            tip.y,
+                            tip.z,
+                            payload.tx(),
+                            payload.ty(),
+                            payload.tz(),
+                            payload.color(),
+                            payload.extraInt(),
+                            payload.extraInt2(),
+                            payload.extraFloat(),
+                            payload.extraFloat2(),
+                            payload.entityId(),
+                            payload.flags())
+                    .withWandSource(wandOrigin.casterId(), wandOrigin.hand());
         }
         PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, BROADCAST_RADIUS, payload);
     }
@@ -117,6 +164,7 @@ final class SpellFxBatch implements SpellFx {
         at = LevelSpaces.toWorld(level, at);
         if (directed && wandOrigin != null && wandOrigin.position().equals(at)) {
             wandEvents |= 1 << events.size();
+            at = wandOrigin.visualPosition();
         }
         if (anchor == null) {
             anchor = at;
@@ -140,5 +188,5 @@ final class SpellFxBatch implements SpellFx {
         return holder.isPresent() ? holder.get() : TTSpellFx.SPARKLE;
     }
 
-    private record WandOrigin(int casterId, InteractionHand hand, Vec3 position) {}
+    private record WandOrigin(int casterId, InteractionHand hand, Vec3 position, Vec3 visualPosition) {}
 }
