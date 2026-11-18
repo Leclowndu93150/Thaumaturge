@@ -20,11 +20,15 @@ import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispFlameParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundParticleBatchPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -73,6 +77,10 @@ public final class Effects {
 
     public static Bamf bamf(ServerLevel level, BlockPos pos) {
         return new Bamf(level, Vec3.atCenterOf(pos));
+    }
+
+    public static Bamf bamf(ServerLevel level, List<BlockPos> positions) {
+        return new Bamf(level, positions.stream().map(Vec3::atCenterOf).toList());
     }
 
     public static Sparkle sparkle(ServerLevel level, Vec3 pos) {
@@ -254,6 +262,10 @@ public final class Effects {
         return new BlockSparkles(level, pos);
     }
 
+    public static BlockSparkles blockSparkles(ServerLevel level, List<BlockPos> positions) {
+        return new BlockSparkles(level, positions);
+    }
+
     public static PechsCurse pechsCurse(ServerLevel level, Vec3 pos) {
         return new PechsCurse(level, pos);
     }
@@ -300,6 +312,51 @@ public final class Effects {
                 new ClientboundSpawnParticlePayload(options, x, y, z, vx, vy, vz));
     }
 
+    public static void spawnBatch(
+            ServerLevel level, BlockPos anchor, List<ClientboundParticleBatchPayload.Spawn> particles) {
+        if (particles.isEmpty()) return;
+        if (particles.size() > ClientboundParticleBatchPayload.MAX_PARTICLES) {
+            List<ClientboundParticleBatchPayload.Spawn> sampled =
+                    new ArrayList<>(ClientboundParticleBatchPayload.MAX_PARTICLES);
+            RandomSource random = level.getRandom();
+            int seen = 0;
+            for (ClientboundParticleBatchPayload.Spawn particle : particles) {
+                if (seen < ClientboundParticleBatchPayload.MAX_PARTICLES) {
+                    sampled.add(particle);
+                    seen++;
+                    continue;
+                }
+                int index = random.nextInt(++seen);
+                if (index < ClientboundParticleBatchPayload.MAX_PARTICLES) sampled.set(index, particle);
+            }
+            particles = sampled;
+        }
+        var payload = new ClientboundParticleBatchPayload(particles, LevelSpaces.isDetached(level, anchor));
+        if (payload.followsSubLevel()) {
+            LevelSpaces.sendToTrackingPlayers(level, anchor, payload);
+            return;
+        }
+        PacketDistributor.sendToPlayersNear(
+                level, null, anchor.getX() + 0.5, anchor.getY() + 0.5, anchor.getZ() + 0.5, DEFAULT_RADIUS, payload);
+    }
+
+    private static int sampleParticle(
+            List<ClientboundParticleBatchPayload.Spawn> particles,
+            int seen,
+            ClientboundParticleBatchPayload.Spawn candidate,
+            RandomSource random) {
+        int slot;
+        if (seen < ClientboundParticleBatchPayload.MAX_PARTICLES) {
+            slot = seen;
+        } else {
+            slot = random.nextInt(seen + 1);
+            if (slot >= ClientboundParticleBatchPayload.MAX_PARTICLES) return seen + 1;
+        }
+        if (slot == particles.size()) particles.add(candidate);
+        else particles.set(slot, candidate);
+        return seen + 1;
+    }
+
     public static int dustSparkleColor(RandomSource random) {
         float blend = random.nextFloat();
         float red = Mth.lerp(blend, DUST_GOLD_RED, DUST_CREAM_RED);
@@ -334,15 +391,19 @@ public final class Effects {
 
     public static final class Bamf {
         private final ServerLevel level;
-        private final Vec3 pos;
+        private final List<Vec3> positions;
         private float r = 0.5F, g = 0.1F, b = 0.6F;
         private boolean sound = false;
         private boolean fancy = false;
         private Direction side = null;
 
         Bamf(ServerLevel level, Vec3 pos) {
+            this(level, List.of(pos));
+        }
+
+        Bamf(ServerLevel level, List<Vec3> positions) {
             this.level = level;
-            this.pos = pos;
+            this.positions = List.copyOf(positions);
         }
 
         public Bamf color(float r, float g, float b) {
@@ -368,70 +429,118 @@ public final class Effects {
         }
 
         public void send() {
+            if (positions.isEmpty()) return;
             RandomSource rand = level.getRandom();
-            if (sound) {
-                level.playSound(
-                        null,
-                        pos.x,
-                        pos.y,
-                        pos.z,
-                        TTSounds.POOF.get(),
-                        SoundSource.BLOCKS,
-                        0.35F,
-                        1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.1F);
-            }
-            Vec3 sidePush =
-                    side == null ? Vec3.ZERO : new Vec3(side.getStepX(), side.getStepY(), side.getStepZ()).scale(0.12);
-            for (int a = 0; a < 10; a++) {
-                Vec3 launch = new Vec3(
-                                signedSpeed(rand, 0.04, 0.07),
-                                signedSpeed(rand, 0.04, 0.07),
-                                signedSpeed(rand, 0.04, 0.07))
-                        .add(sidePush);
-                Vec3 start = pos.add(launch.scale(1.5));
-                float pr = Mth.clamp(r + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
-                float pg = Mth.clamp(g + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
-                float pb = Mth.clamp(b + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
-                Vec3 drift = launch.scale(0.5);
-                spawn(
-                        level,
-                        TTParticles.colorOf(TTParticles.PUFF, pr, pg, pb),
-                        start.x,
-                        start.y,
-                        start.z,
-                        drift.x,
-                        drift.y,
-                        drift.z);
-            }
-            if (fancy) {
-                for (int a = 0; a < 4; a++) {
-                    float heading = rand.nextFloat() * Mth.TWO_PI;
-                    wispyMotes(level, pos)
-                            .motion(Mth.cos(heading) * 0.025, 0.01, Mth.sin(heading) * 0.025)
-                            .age(30)
-                            .randomColor()
-                            .gravity(-0.012F)
-                            .send();
+            List<ClientboundParticleBatchPayload.Spawn> particles =
+                    new ArrayList<>(Math.min(positions.size() * 16, ClientboundParticleBatchPayload.MAX_PARTICLES));
+            int candidates = 0;
+            for (Vec3 pos : positions) {
+                if (sound) {
+                    level.playSound(
+                            null,
+                            pos.x,
+                            pos.y,
+                            pos.z,
+                            TTSounds.POOF.get(),
+                            SoundSource.BLOCKS,
+                            0.35F,
+                            1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.1F);
                 }
-                spawn(level, TTParticles.colorOf(TTParticles.FLASH, 0.93F, 0.86F, 1.0F), pos.x, pos.y, pos.z);
+                Vec3 sidePush = side == null
+                        ? Vec3.ZERO
+                        : new Vec3(side.getStepX(), side.getStepY(), side.getStepZ()).scale(0.12);
+                for (int a = 0; a < 10; a++) {
+                    Vec3 launch = new Vec3(
+                                    signedSpeed(rand, 0.04, 0.07),
+                                    signedSpeed(rand, 0.04, 0.07),
+                                    signedSpeed(rand, 0.04, 0.07))
+                            .add(sidePush);
+                    Vec3 start = pos.add(launch.scale(1.5));
+                    float pr = Mth.clamp(r + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
+                    float pg = Mth.clamp(g + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
+                    float pb = Mth.clamp(b + (float) (rand.nextGaussian() * 0.06), 0.0F, 1.0F);
+                    Vec3 drift = launch.scale(0.5);
+                    candidates = sampleParticle(
+                            particles,
+                            candidates,
+                            new ClientboundParticleBatchPayload.Spawn(
+                                    TTParticles.colorOf(TTParticles.PUFF, pr, pg, pb),
+                                    start.x,
+                                    start.y,
+                                    start.z,
+                                    drift.x,
+                                    drift.y,
+                                    drift.z),
+                            rand);
+                }
+                if (fancy) {
+                    for (int a = 0; a < 4; a++) {
+                        float heading = rand.nextFloat() * Mth.TWO_PI;
+                        float cr = 0.25F + rand.nextFloat() * 0.75F;
+                        float cg = 0.25F + rand.nextFloat() * 0.75F;
+                        float cb = 0.25F + rand.nextFloat() * 0.75F;
+                        candidates = sampleParticle(
+                                particles,
+                                candidates,
+                                new ClientboundParticleBatchPayload.Spawn(
+                                        new WispyMoteParticleOptions(
+                                                ARGB32.colorFromFloat(1.0F, cr, cg, cb),
+                                                30,
+                                                -0.012F,
+                                                WispyMoteParticleOptions.NO_ENTITY),
+                                        pos.x,
+                                        pos.y,
+                                        pos.z,
+                                        Mth.cos(heading) * 0.025,
+                                        0.01,
+                                        Mth.sin(heading) * 0.025),
+                                rand);
+                    }
+                    candidates = sampleParticle(
+                            particles,
+                            candidates,
+                            new ClientboundParticleBatchPayload.Spawn(
+                                    TTParticles.colorOf(TTParticles.FLASH, 0.93F, 0.86F, 1.0F),
+                                    pos.x,
+                                    pos.y,
+                                    pos.z,
+                                    0.0,
+                                    0.0,
+                                    0.0),
+                            rand);
+                }
+                int wisps = rand.nextInt(fancy ? 5 : 3);
+                float wr = Mth.lerp(0.5F, r, 1.0F);
+                float wg = Mth.lerp(0.5F, g, 0.22F);
+                float wb = Mth.lerp(0.5F, b, 0.72F);
+                for (int a = 0; a < wisps; a++) {
+                    double vx = signedSpeed(rand, 0.02, 0.04);
+                    double vy = signedSpeed(rand, 0.02, 0.04);
+                    double vz = signedSpeed(rand, 0.02, 0.04);
+                    double dx = vx + (0.0025F + rand.nextFloat() * 0.005F) * (rand.nextBoolean() ? -1 : 1);
+                    double dy = vy + (0.0025F + rand.nextFloat() * 0.005F) * (rand.nextBoolean() ? -1 : 1);
+                    double dz = vz + (0.0025F + rand.nextFloat() * 0.005F) * (rand.nextBoolean() ? -1 : 1);
+                    if (side != null) {
+                        dx += side.getStepX() * 0.025F;
+                        dy += side.getStepY() * 0.025F;
+                        dz += side.getStepZ() * 0.025F;
+                    }
+                    candidates = sampleParticle(
+                            particles,
+                            candidates,
+                            new ClientboundParticleBatchPayload.Spawn(
+                                    new CurlyWispParticleOptions(
+                                            ARGB32.colorFromFloat(1.0F, wr, wg, wb), 0.65F, 0.55F, 0, a),
+                                    pos.x + dx * 5.0,
+                                    pos.y + dy * 5.0,
+                                    pos.z + dz * 5.0,
+                                    dx,
+                                    dy,
+                                    dz),
+                            rand);
+                }
             }
-            int wisps = rand.nextInt(fancy ? 5 : 3);
-            float wr = Mth.lerp(0.5F, r, 1.0F);
-            float wg = Mth.lerp(0.5F, g, 0.22F);
-            float wb = Mth.lerp(0.5F, b, 0.72F);
-            for (int a = 0; a < wisps; a++) {
-                curlyWisp(level, pos)
-                        .motion(
-                                signedSpeed(rand, 0.02, 0.04),
-                                signedSpeed(rand, 0.02, 0.04),
-                                signedSpeed(rand, 0.02, 0.04))
-                        .color(wr, wg, wb)
-                        .alpha(0.65F)
-                        .scale(0.55F)
-                        .side(side)
-                        .seed(a)
-                        .send();
-            }
+            spawnBatch(level, BlockPos.containing(positions.getFirst()), particles);
         }
 
         private static double signedSpeed(RandomSource random, double base, double spread) {
@@ -1706,12 +1815,16 @@ public final class Effects {
 
     public static final class BlockSparkles {
         private final ServerLevel level;
-        private final BlockPos pos;
+        private final List<BlockPos> positions;
         private Vec3 source = null;
 
         BlockSparkles(ServerLevel level, BlockPos pos) {
+            this(level, List.of(pos));
+        }
+
+        BlockSparkles(ServerLevel level, List<BlockPos> positions) {
             this.level = level;
-            this.pos = pos;
+            this.positions = List.copyOf(positions);
         }
 
         public BlockSparkles from(Vec3 source) {
@@ -1720,42 +1833,60 @@ public final class Effects {
         }
 
         public void send() {
+            if (positions.isEmpty()) return;
             RandomSource rand = level.getRandom();
-            VoxelShape shape = level.getBlockState(pos).getShape(level, pos);
-            AABB shell = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds())
-                    .move(pos)
-                    .inflate(SPARKLE_SHELL_GROWTH);
-            Vec3 start = source != null ? source : new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            for (Direction face : Direction.values()) {
-                if (!isFaceVisible(level, pos, face)) {
-                    continue;
-                }
-                Axis normal = face.getAxis();
-                double area = 1.0;
-                for (Axis axis : Axis.values()) {
-                    if (axis != normal) {
-                        area *= shell.max(axis) - shell.min(axis);
+            List<ClientboundParticleBatchPayload.Spawn> particles = new ArrayList<>();
+            int candidates = 0;
+            for (BlockPos pos : positions) {
+                VoxelShape shape = level.getBlockState(pos).getShape(level, pos);
+                AABB shell = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds())
+                        .move(pos)
+                        .inflate(SPARKLE_SHELL_GROWTH);
+                Vec3 start = source != null ? source : new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                for (Direction face : Direction.values()) {
+                    if (!isFaceVisible(level, pos, face)) {
+                        continue;
+                    }
+                    Axis normal = face.getAxis();
+                    double area = 1.0;
+                    for (Axis axis : Axis.values()) {
+                        if (axis != normal) {
+                            area *= shell.max(axis) - shell.min(axis);
+                        }
+                    }
+                    int count = Math.max(SPARKLE_FACE_MINIMUM, (int) Math.round(area * SPARKLE_FACE_DENSITY));
+                    for (int index = 0; index < count; index++) {
+                        Vec3 point = pointOnFace(shell, face, rand);
+                        int slot;
+                        if (candidates < ClientboundParticleBatchPayload.MAX_PARTICLES) {
+                            slot = candidates++;
+                        } else {
+                            int selected = rand.nextInt(++candidates);
+                            if (selected >= ClientboundParticleBatchPayload.MAX_PARTICLES) continue;
+                            slot = selected;
+                        }
+                        int delay = (int) (point.distanceTo(start) * SHELL_TICKS_PER_BLOCK)
+                                + rand.nextInt(SPARKLE_DELAY_JITTER);
+                        float blend = rand.nextFloat();
+                        float green = Mth.lerp(blend, DUST_GOLD_GREEN, DUST_CREAM_GREEN);
+                        float blue = Mth.lerp(blend, DUST_GOLD_BLUE, DUST_CREAM_BLUE);
+                        SparkleParticleOptions options = new SparkleParticleOptions(
+                                ARGB32.colorFromFloat(
+                                        1.0F, Mth.lerp(blend, DUST_GOLD_RED, DUST_CREAM_RED), green, blue),
+                                SPARKLE_SCALE,
+                                delay,
+                                SPARKLE_DECAY,
+                                0.0F,
+                                SPARKLE_BASE_AGE,
+                                false);
+                        var spawn = new ClientboundParticleBatchPayload.Spawn(
+                                options, point.x, point.y, point.z, 0.0, SPARKLE_RISE, 0.0);
+                        if (slot == particles.size()) particles.add(spawn);
+                        else particles.set(slot, spawn);
                     }
                 }
-                int count = Math.max(SPARKLE_FACE_MINIMUM, (int) Math.round(area * SPARKLE_FACE_DENSITY));
-                for (int index = 0; index < count; index++) {
-                    Vec3 point = pointOnFace(shell, face, rand);
-                    int delay = (int) (point.distanceTo(start) * SHELL_TICKS_PER_BLOCK)
-                            + rand.nextInt(SPARKLE_DELAY_JITTER);
-                    float blend = rand.nextFloat();
-                    float green = Mth.lerp(blend, DUST_GOLD_GREEN, DUST_CREAM_GREEN);
-                    float blue = Mth.lerp(blend, DUST_GOLD_BLUE, DUST_CREAM_BLUE);
-                    simpleSparkle(level, point)
-                            .motion(0.0, SPARKLE_RISE, 0.0)
-                            .scale(SPARKLE_SCALE)
-                            .color(Mth.lerp(blend, DUST_GOLD_RED, DUST_CREAM_RED), green, blue)
-                            .delay(delay)
-                            .decay(SPARKLE_DECAY)
-                            .gravity(0.0F)
-                            .baseAge(SPARKLE_BASE_AGE)
-                            .send();
-                }
             }
+            spawnBatch(level, positions.getFirst(), particles);
         }
 
         static boolean isFaceVisible(ServerLevel level, BlockPos pos, Direction face) {

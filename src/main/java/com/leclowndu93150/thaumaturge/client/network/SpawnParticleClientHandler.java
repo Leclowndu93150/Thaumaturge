@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.network;
 
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundParticleBatchPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,20 @@ public final class SpawnParticleClientHandler {
                 at = ClientSpaces.renderPosition(level, at);
             }
             level.addParticle(options, at.x, at.y, at.z, payload.vx(), payload.vy(), payload.vz());
+        });
+    }
+
+    public static void handle(ClientboundParticleBatchPayload payload, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level == null) return;
+            for (ClientboundParticleBatchPayload.Spawn spawn : payload.particles()) {
+                Vec3 at = new Vec3(spawn.x(), spawn.y(), spawn.z());
+                if (!payload.followsSubLevel()) {
+                    at = ClientSpaces.renderPosition(level, at);
+                }
+                level.addParticle(spawn.options(), at.x, at.y, at.z, spawn.vx(), spawn.vy(), spawn.vz());
+            }
         });
     }
 }

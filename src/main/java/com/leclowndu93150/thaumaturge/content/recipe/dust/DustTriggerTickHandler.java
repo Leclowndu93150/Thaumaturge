@@ -72,27 +72,31 @@ public final class DustTriggerTickHandler {
     private static void tickChunk(ServerLevel level, LevelChunk chunk, DustTriggerSwapQueue queue) {
         List<PendingSwap> entries = queue.entries();
         List<PendingSwap> next = new ArrayList<>(entries.size());
+        List<BlockPos> changed = new ArrayList<>();
         for (PendingSwap entry : entries) {
             int remaining = entry.ticksRemaining() - 1;
             if (remaining <= 0) {
-                complete(level, entry);
+                if (complete(level, entry)) changed.add(entry.pos());
                 continue;
             }
             next.add(entry.withTicks(remaining));
         }
         entries.clear();
         entries.addAll(next);
+        if (!changed.isEmpty()) {
+            Effects.bamf(level, changed).withSound().fancy().send();
+        }
         chunk.setUnsaved(true);
         if (queue.isEmpty()) {
             DustTriggerSwapQueue.markChunkClear(level, chunk.getPos());
         }
     }
 
-    private static void complete(ServerLevel level, PendingSwap entry) {
+    private static boolean complete(ServerLevel level, PendingSwap entry) {
         BlockPos pos = entry.pos();
         if (!level.getBlockState(pos).is(entry.originalState().getBlock())) {
             DustTriggerSwapQueue.clearBlocked(level, pos);
-            return;
+            return false;
         }
         BlockState resultState = entry.stateResult();
         ItemStack resultStack = entry.stackResult();
@@ -109,7 +113,7 @@ public final class DustTriggerTickHandler {
                 level.addFreshEntity(drop);
             }
         }
-        Effects.bamf(level, pos).withSound().fancy().send();
         DustTriggerSwapQueue.clearBlocked(level, pos);
+        return true;
     }
 }

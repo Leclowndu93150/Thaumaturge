@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.client.warding.WardClientHandler;
 import com.leclowndu93150.thaumaturge.client.warp.WarpFXClientHandler;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePayload;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundParticleBatchPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
@@ -143,6 +144,10 @@ public final class TTPayloads {
         registrar.playToClient(
                 ClientboundSpawnParticlePayload.TYPE,
                 ClientboundSpawnParticlePayload.STREAM_CODEC,
+                (payload, context) -> SpawnParticleClientHandler.handle(payload, context));
+        registrar.playToClient(
+                ClientboundParticleBatchPayload.TYPE,
+                ClientboundParticleBatchPayload.STREAM_CODEC,
                 (payload, context) -> SpawnParticleClientHandler.handle(payload, context));
         registrar.playToClient(
                 ClientboundBoreDigPayload.TYPE,

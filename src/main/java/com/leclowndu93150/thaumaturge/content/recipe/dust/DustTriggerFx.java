@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundParticleBatchPayload;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -57,6 +59,7 @@ public final class DustTriggerFx {
         RandomSource rand = level.getRandom();
         Vec3 handPos = posToHand(player, hand);
         Vec3 toBlock = Vec3.atCenterOf(pos).subtract(handPos);
+        List<ClientboundParticleBatchPayload.Spawn> particles = new ArrayList<>(BURST_COUNT);
         for (int i = 0; i < BURST_COUNT; i++) {
             boolean floaty = rand.nextInt(BURST_FLOATY_ODDS) == 0;
             float decay =
@@ -71,8 +74,10 @@ public final class DustTriggerFx {
             int delay = rand.nextInt(BURST_DELAY_BOUND);
             SparkleParticleOptions options = new SparkleParticleOptions(
                     Effects.dustSparkleColor(rand), BURST_SCALE, delay, decay, gravity, BURST_BASE_AGE, true);
-            Effects.spawn(level, options, handPos.x, handPos.y, handPos.z, velocity.x, velocity.y, velocity.z);
+            particles.add(new ClientboundParticleBatchPayload.Spawn(
+                    options, handPos.x, handPos.y, handPos.z, velocity.x, velocity.y, velocity.z));
         }
+        Effects.spawnBatch(level, pos, particles);
     }
 
     public static void emitTriggerSparkles(
@@ -90,9 +95,7 @@ public final class DustTriggerFx {
         if (sparkles == null || sparkles.isEmpty()) {
             return;
         }
-        for (BlockPos p : sparkles) {
-            emitBlockSparkles(level, p, hitStart);
-        }
+        Effects.blockSparkles(level, sparkles).from(hitStart).send();
     }
 
     public static void emitBlockSparkles(ServerLevel level, BlockPos p, Vec3 start) {
