@@ -48,7 +48,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final int RENDER_BOUNDS_HEIGHT = 2;
 
     private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(TTIds.rl("textures/misc/white.png"));
-    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.ORB_GLOW);
+    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAlphaAdditiveBlurred(ParticleTextures.ORB_GLOW);
 
     public FocalManipulatorRenderer(BlockEntityRendererProvider.Context context) {}
 
