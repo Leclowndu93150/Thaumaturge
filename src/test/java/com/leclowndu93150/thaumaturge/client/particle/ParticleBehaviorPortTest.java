@@ -49,6 +49,16 @@ import org.junit.jupiter.api.Test;
 
 final class ParticleBehaviorPortTest {
     @Test
+    void spellGlowsBlendWithoutOccludingEachOtherWhileNitorKeepsItsCore() {
+        for (String name : List.of("sparkle", "wisp_flame", "shield_spark")) {
+            ParticleSheet sheet = TTParticleSheets.sheet(name);
+            assertSame(sheet.layer(ParticleSheet.Mode.ADDITIVE_SOFT), TTParticleLayers.additive(sheet));
+        }
+        ParticleSheet core = TTParticleSheets.sheet("nitor_core");
+        assertSame(core.layer(ParticleSheet.Mode.ADDITIVE), TTParticleLayers.additive(core));
+    }
+
+    @Test
     void nitorCoreDrawsBeforeFlamesWithoutMovingOtherLayers() {
         ParticleRenderType core = TTParticleLayers.additive(TTParticleSheets.sheet("nitor_core"));
         ParticleRenderType flame = TTParticleLayers.additiveSoft(TTParticleSheets.sheet("wisp_flame"));

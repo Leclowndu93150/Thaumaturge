@@ -34,7 +34,7 @@ public final class TTParticleLayers {
     }
 
     public static ParticleRenderType additive(ParticleSheet sheet) {
-        return sheet.layer(ParticleSheet.Mode.ADDITIVE);
+        return sheet.layer(sheet == NITOR_CORE ? ParticleSheet.Mode.ADDITIVE : ParticleSheet.Mode.ADDITIVE_SOFT);
     }
 
     public static ParticleRenderType additiveSoft(ParticleSheet sheet) {
