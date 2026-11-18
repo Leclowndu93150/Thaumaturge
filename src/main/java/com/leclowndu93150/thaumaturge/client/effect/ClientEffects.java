@@ -32,7 +32,16 @@ public final class ClientEffects {
                 20 + rand.nextInt(10),
                 0.01F,
                 false);
-        spawn(options, x, y, z, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005);
+        Minecraft.getInstance()
+                .particleEngine
+                .createParticle(
+                        options,
+                        x,
+                        y,
+                        z,
+                        rand.nextGaussian() * 0.005,
+                        rand.nextGaussian() * 0.005,
+                        rand.nextGaussian() * 0.005);
     }
 
     public static void smokeSpiral(

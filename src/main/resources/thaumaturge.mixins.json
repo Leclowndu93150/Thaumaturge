@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "sable.api.SubLevelAssemblyHelperMixin",
+    "sable.plot.RunicHeatMapMixin",
     "sable.plot.ServerLevelPlotSealsMixin",
     "sable.plot.SubLevelPlayerChunkSenderMixin",
     "server.network.ServerGamePacketListenerImplAccessor",
@@ -23,6 +24,7 @@
     "world.level.block.piston.PistonBaseBlockMixin"
   ],
   "client": [
+    "sable.particle.AttachedParticleMixin",
     "client.gui.GuiGraphicsAccessor",
     "client.lighting.BlockLightEngineMixin",
     "client.model.AgeableListModelMixin",

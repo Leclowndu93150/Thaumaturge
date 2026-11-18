@@ -89,6 +89,8 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     private float stabilityReplenish;
     private @Nullable InfusionCraftJob job;
     private int count;
+    private long activeSince = -1L;
+    private long craftStartedAt = -1L;
     private int itemPullCountdown;
     private boolean checkSurroundings = true;
     private @Nullable MatrixEnvironment environment;
@@ -96,6 +98,8 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     public float clientStartUp;
     public int clientCraftTicks;
+    private boolean receivedAnimationState;
+    private boolean restoreClientAnimation;
     private final Map<BlockPos, Integer> clientSourceFX = new HashMap<>();
 
     public BlockEntityInfusionMatrix(BlockPos pos, BlockState state) {
@@ -238,6 +242,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         } else if (!active && MatrixEnvironment.validLocation(level, worldPosition)) {
             level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             active = true;
+            activeSince = level.getGameTime();
             setChanged();
             syncToClient();
         }
@@ -274,6 +279,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             return false;
         }
         job = pendingJob;
+        craftStartedAt = level.getGameTime();
         level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
@@ -536,6 +542,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     }
 
     private void tickClient() {
+        restoreClientAnimation();
         boolean crafting = isCrafting();
         if (crafting && clientCraftTicks == 0 && level != null) {
             level.playLocalSound(worldPosition, TTSounds.INFUSERSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F, false);
@@ -543,6 +550,16 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         clientCraftTicks = InfusionClientAnimator.craftTicks(clientCraftTicks, crafting);
         clientStartUp = InfusionClientAnimator.startUp(clientStartUp, active);
         tickClientSourceFX();
+    }
+
+    public void restoreClientAnimation() {
+        if (!restoreClientAnimation || level == null || !level.isClientSide()) return;
+        restoreClientAnimation = false;
+        long now = level.getGameTime();
+        clientStartUp = !active ? 0.0F : activeSince < 0 ? 1.0F : InfusionClientAnimator.startUpAt(now - activeSince);
+        if (isCrafting() && craftStartedAt >= 0) {
+            clientCraftTicks = (int) Math.clamp(now - craftStartedAt, 0L, Integer.MAX_VALUE - 1L);
+        }
     }
 
     public void addClientSourceFX(BlockPos source, int ticks) {
@@ -628,10 +645,12 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         output.putBoolean("Active", active);
+        if (active && activeSince >= 0) output.putLong("ActiveSince", activeSince);
         output.putFloat("Stability", stability);
         output.putFloat("Replenish", stabilityReplenish);
         if (job != null) {
             TTNbt.store(output, "Job", InfusionCraftJob.CODEC, registries, job);
+            if (craftStartedAt >= 0) output.putLong("CraftStartedAt", craftStartedAt);
         }
     }
 
@@ -639,8 +658,14 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         active = (input.contains("Active") ? input.getBoolean("Active") : false);
+        activeSince = input.contains("ActiveSince") ? input.getLong("ActiveSince") : -1L;
         stability = (input.contains("Stability") ? input.getFloat("Stability") : 0.0F);
         stabilityReplenish = (input.contains("Replenish") ? input.getFloat("Replenish") : 0.0F);
         job = TTNbt.read(input, "Job", InfusionCraftJob.CODEC, registries).orElse(null);
+        craftStartedAt = input.contains("CraftStartedAt") ? input.getLong("CraftStartedAt") : -1L;
+        if (!receivedAnimationState) {
+            receivedAnimationState = true;
+            restoreClientAnimation = true;
+        }
     }
 }

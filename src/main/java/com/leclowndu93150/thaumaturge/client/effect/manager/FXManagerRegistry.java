@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.effect.manager;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 import net.minecraft.client.Camera;
@@ -31,14 +32,31 @@ public final class FXManagerRegistry {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
+        var stage = event.getStage();
+        if (stage != RenderLevelStageEvent.Stage.AFTER_PARTICLES && stage != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
-        WandTipTracker.setWorldProjection(event.getProjectionMatrix());
         Camera camera = mc.gameRenderer.getMainCamera();
-        PoseStack poseStack = event.getPoseStack();
         float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
-        for (AbstractFXManager<?> m : MANAGERS) m.renderAll(poseStack, camera, partialTick);
+        if (stage == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+            PoseStack poseStack = event.getPoseStack();
+            WandTipTracker.setWorldProjection(event.getProjectionMatrix());
+            for (AbstractFXManager<?> manager : MANAGERS) {
+                if (manager != EssentiaStreamManager.INSTANCE) {
+                    manager.renderAll(poseStack, camera, partialTick);
+                }
+            }
+        }
+        if (Minecraft.useShaderTransparency()) {
+            if (stage == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+                EssentiaStreamManager.INSTANCE.renderAll(event.getPoseStack(), camera, partialTick);
+            }
+        } else if (stage == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
+            // The main target now contains the clouds' color and depth.
+            EssentiaStreamManager.INSTANCE.renderAll(LateWorldRenderQueue.renderPose(event), camera, partialTick);
+        }
     }
 
     public static void clearAll() {

@@ -73,6 +73,7 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
             MultiBufferSource buffers,
             int light,
             int overlay) {
+        matrix.restoreClientAnimation();
         var viewEntity = Minecraft.getInstance().getCameraEntity();
         float animationTime = viewEntity == null ? partialTick : viewEntity.tickCount + partialTick;
         float startUp = matrix.clientStartUp;

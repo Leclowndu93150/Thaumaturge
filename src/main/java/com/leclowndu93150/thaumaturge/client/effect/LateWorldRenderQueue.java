@@ -175,7 +175,7 @@ public final class LateWorldRenderQueue {
         RenderSystem.applyModelViewMatrix();
     }
 
-    static PoseStack renderPose(RenderLevelStageEvent event) {
+    public static PoseStack renderPose(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
             return event.getPoseStack();
         }

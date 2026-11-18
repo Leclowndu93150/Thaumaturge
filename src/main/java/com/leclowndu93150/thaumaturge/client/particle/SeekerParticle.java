@@ -1,11 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.particle;
 
+import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public abstract class SeekerParticle extends TTParticle {
     private static final double APPROACH_CAP = 0.25;
@@ -22,6 +25,8 @@ public abstract class SeekerParticle extends TTParticle {
 
     private final int targetEntityId;
     private final float driftStrength;
+    private final Vec3 targetInLevel;
+    private @Nullable BlockPos infusionMatrix;
     private Vec3 target;
     private Entity targetEntity;
 
@@ -37,7 +42,7 @@ public abstract class SeekerParticle extends TTParticle {
             float driftStrength) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         this.targetEntityId = targetEntityId;
-        this.target = target;
+        this.targetInLevel = this.target = target;
         this.driftStrength = driftStrength;
         initSeeker(x, y, z, spawnVelocity);
     }
@@ -54,7 +59,7 @@ public abstract class SeekerParticle extends TTParticle {
             float driftStrength) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sprite);
         this.targetEntityId = targetEntityId;
-        this.target = target;
+        this.targetInLevel = this.target = target;
         this.driftStrength = driftStrength;
         initSeeker(x, y, z, spawnVelocity);
     }
@@ -64,12 +69,25 @@ public abstract class SeekerParticle extends TTParticle {
         this.xd = spawnVelocity.x + this.random.nextGaussian() * SPAWN_JITTER;
         this.yd = spawnVelocity.y + this.random.nextGaussian() * SPAWN_JITTER;
         this.zd = spawnVelocity.z + this.random.nextGaussian() * SPAWN_JITTER;
-        int travel = Math.max(1, (int) (this.target.distanceTo(new Vec3(x, y, z)) * LIFETIME_PER_BLOCK));
+        Vec3 start = LevelSpaces.toWorld(this.level, new Vec3(x, y, z));
+        int travel = Math.max(1, (int) (this.target.distanceTo(start) * LIFETIME_PER_BLOCK));
         this.lifetime = travel / 2 + this.random.nextInt(travel);
+    }
+
+    protected final void endWhenMatrixMoves() {
+        BlockPos matrix = BlockPos.containing(this.targetInLevel).above();
+        if (this.level.getBlockEntity(matrix) instanceof BlockEntityInfusionMatrix) {
+            this.infusionMatrix = matrix;
+        }
     }
 
     @Override
     public void tick() {
+        if (this.infusionMatrix != null
+                && !(this.level.getBlockEntity(this.infusionMatrix) instanceof BlockEntityInfusionMatrix)) {
+            remove();
+            return;
+        }
         super.tick();
         if (this.removed || delayed()) {
             return;
@@ -87,6 +105,7 @@ public abstract class SeekerParticle extends TTParticle {
 
     private void refreshTarget() {
         if (this.targetEntityId == NO_ENTITY) {
+            this.target = LevelSpaces.toWorld(this.level, this.targetInLevel);
             return;
         }
         if (this.targetEntity == null) {

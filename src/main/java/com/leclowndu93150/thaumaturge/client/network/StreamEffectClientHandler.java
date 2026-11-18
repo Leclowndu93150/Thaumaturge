@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.client.effect.manager.BoreVoidStreamManage
 import com.leclowndu93150.thaumaturge.client.effect.manager.EssentiaStreamManager;
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
+import com.leclowndu93150.thaumaturge.network.effect.StreamEffectKind;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
@@ -27,8 +28,15 @@ public final class StreamEffectClientHandler {
 
     private static void dispatch(ClientboundStreamEffectPayload p) {
         Minecraft mc = Minecraft.getInstance();
-        Vec3 source = ClientSpaces.renderPosition(mc.level, new Vec3(p.sx(), p.sy(), p.sz()));
-        Vec3 target = ClientSpaces.renderPosition(mc.level, new Vec3(p.tx(), p.ty(), p.tz()));
+        Vec3 rawSource = new Vec3(p.sx(), p.sy(), p.sz());
+        Vec3 rawTarget = new Vec3(p.tx(), p.ty(), p.tz());
+        if (p.kind() == StreamEffectKind.ESSENTIA) {
+            EssentiaStreamManager.spawn(
+                    rawSource, rawTarget, p.color(), p.extraInt(), p.extraFloat(), p.extraInt2(), p.extraFloat2());
+            return;
+        }
+        Vec3 source = ClientSpaces.renderPosition(mc.level, rawSource);
+        Vec3 target = ClientSpaces.renderPosition(mc.level, rawTarget);
         switch (p.kind()) {
             case ARC ->
                 BeamManager.addArc(new ArcInstance(
@@ -56,19 +64,6 @@ public final class StreamEffectClientHandler {
                         p.wandHand() == null && wand == null,
                         wand));
             }
-            case ESSENTIA ->
-                EssentiaStreamManager.spawn(
-                        source.x,
-                        source.y,
-                        source.z,
-                        target.x,
-                        target.y,
-                        target.z,
-                        p.color(),
-                        p.extraInt(),
-                        p.extraFloat(),
-                        p.extraInt2(),
-                        p.extraFloat2());
             case BORE ->
                 BoreVoidStreamManager.addBore(new BoreStreamInstance(
                         source.x,

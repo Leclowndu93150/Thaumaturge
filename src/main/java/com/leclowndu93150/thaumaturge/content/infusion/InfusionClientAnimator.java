@@ -28,4 +28,12 @@ final class InfusionClientAnimator {
         }
         return current;
     }
+
+    static float startUpAt(long ticks) {
+        float startUp = 0.0F;
+        for (long tick = 0; tick < ticks && startUp < FULLY_AWAKE; tick++) {
+            startUp = startUp(startUp, true);
+        }
+        return startUp;
+    }
 }
