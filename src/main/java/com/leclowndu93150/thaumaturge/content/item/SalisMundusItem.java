@@ -92,9 +92,6 @@ public final class SalisMundusItem extends Item {
             return InteractionResult.PASS;
         }
         ItemStack consumed = stack.copyWithCount(1);
-        if (!player.getAbilities().instabuild) {
-            stack.shrink(1);
-        }
         DustTriggerPlacement placement = null;
         if (trigger.isMultiblock()) {
             placement = trigger.findPlacement(input);
@@ -107,6 +104,9 @@ public final class SalisMundusItem extends Item {
                     serverLevel, pos, clicked, blockItem.getBlock().defaultBlockState(), SWAP_DELAY_TICKS);
         } else {
             DustTriggerSwapQueue.enqueueDrop(serverLevel, pos, clicked, result, SWAP_DELAY_TICKS);
+        }
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
         }
         if (player instanceof ServerPlayer serverPlayer) {
             Vec3 hitWorld = context.getClickLocation();

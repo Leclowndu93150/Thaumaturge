@@ -2,9 +2,7 @@ package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -17,39 +15,34 @@ public final class MultiblockMatcher {
     private MultiblockMatcher() {}
 
     public static @Nullable DustTriggerPlacement find(Level level, BlockPos clicked, Blueprint blueprint) {
-        int ys = blueprint.ySize();
-        int horizontal = Math.max(blueprint.xSize(), blueprint.zSize());
-        Map<Direction, List<BlueprintCell>> orientations = new EnumMap<>(Direction.class);
-        for (Direction face : HORIZONTALS) {
-            orientations.put(face, new RotatedBlueprint(blueprint, rotationsFor(face)).cells());
-        }
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int yy = -ys; yy <= 0; yy++) {
-            for (int xx = -horizontal; xx <= 0; xx++) {
-                for (int zz = -horizontal; zz <= 0; zz++) {
-                    cursor.set(clicked.getX() + xx, clicked.getY() + yy, clicked.getZ() + zz);
-                    Direction facing = fitMultiblock(level, cursor, orientations);
-                    if (facing != null) {
-                        return new DustTriggerPlacement(xx, yy, zz, facing);
-                    }
+        var clickedState = level.getBlockState(clicked);
+        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
+        for (Direction facing : HORIZONTALS) {
+            List<BlueprintCell> cells = new RotatedBlueprint(blueprint, rotationsFor(facing)).cells();
+            // The clicked block must be one of the blueprint's occupied cells.
+            // Search only those candidate origins, not an entire cubic volume.
+            for (BlueprintCell anchor : cells) {
+                if (!anchor.part().source().matches(clickedState)) continue;
+                BlockPos origin = clicked.subtract(anchor.offset());
+                if (fits(level, origin, cells, probe)) {
+                    return new DustTriggerPlacement(
+                            origin.getX() - clicked.getX(),
+                            origin.getY() - clicked.getY(),
+                            origin.getZ() - clicked.getZ(),
+                            facing);
                 }
             }
         }
         return null;
     }
 
-    private static @Nullable Direction fitMultiblock(
-            Level level, BlockPos origin, Map<Direction, List<BlueprintCell>> orientations) {
-        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
-        for (Direction face : HORIZONTALS) {
-            if (orientations.get(face).stream()
-                    .allMatch(cell -> cell.part()
-                            .source()
-                            .matches(level.getBlockState(probe.setWithOffset(origin, cell.offset()))))) {
-                return face;
-            }
+    private static boolean fits(
+            Level level, BlockPos origin, List<BlueprintCell> cells, BlockPos.MutableBlockPos probe) {
+        for (BlueprintCell cell : cells) {
+            probe.setWithOffset(origin, cell.offset());
+            if (!cell.part().source().matches(level.getBlockState(probe))) return false;
         }
-        return null;
+        return true;
     }
 
     public static int horizontalIndex(Direction d) {

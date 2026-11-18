@@ -22,6 +22,8 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class DustTriggerTickHandler {
+    private static final int MAX_SWAPS_PER_LEVEL_TICK = 32;
+
     private DustTriggerTickHandler() {}
 
     @SubscribeEvent
@@ -55,6 +57,7 @@ public final class DustTriggerTickHandler {
         if (active.isEmpty()) {
             return;
         }
+        int budget = MAX_SWAPS_PER_LEVEL_TICK;
         for (ChunkPos cp : active) {
             if (!level.hasChunk(cp.x, cp.z)) {
                 continue;
@@ -65,20 +68,23 @@ public final class DustTriggerTickHandler {
                 DustTriggerSwapQueue.markChunkClear(level, cp);
                 continue;
             }
-            tickChunk(level, chunk, queue);
+            budget -= tickChunk(level, chunk, queue, budget);
         }
     }
 
-    private static void tickChunk(ServerLevel level, LevelChunk chunk, DustTriggerSwapQueue queue) {
+    private static int tickChunk(ServerLevel level, LevelChunk chunk, DustTriggerSwapQueue queue, int budget) {
         List<PendingSwap> entries = queue.entries();
         List<PendingSwap> next = new ArrayList<>(entries.size());
         List<BlockPos> changed = new ArrayList<>();
+        int processed = 0;
         for (PendingSwap entry : entries) {
-            int remaining = entry.ticksRemaining() - 1;
-            if (remaining <= 0) {
+            int remaining = Math.max(0, entry.ticksRemaining() - 1);
+            if (remaining == 0 && processed < budget) {
+                processed++;
                 if (complete(level, entry)) changed.add(entry.pos());
                 continue;
             }
+            // Due entries can wait at zero until the next tick without losing their order.
             next.add(entry.withTicks(remaining));
         }
         entries.clear();
@@ -90,6 +96,7 @@ public final class DustTriggerTickHandler {
         if (queue.isEmpty()) {
             DustTriggerSwapQueue.markChunkClear(level, chunk.getPos());
         }
+        return processed;
     }
 
     private static boolean complete(ServerLevel level, PendingSwap entry) {

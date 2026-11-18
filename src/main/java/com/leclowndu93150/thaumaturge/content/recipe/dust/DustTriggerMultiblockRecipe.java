@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -64,6 +65,8 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
     private final ResourceLocation blueprintId;
     private final ItemStack result;
     private final Optional<ResearchGate> research;
+    private WeakReference<DustTriggerInput> matchedInput = new WeakReference<>(null);
+    private @Nullable DustTriggerPlacement matchedPlacement;
 
     public DustTriggerMultiblockRecipe(
             ResourceLocation blueprintId, ItemStack result, Optional<ResearchGate> research) {
@@ -92,11 +95,22 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
 
     @Override
     public boolean matches(DustTriggerInput input, Level level) {
-        return findPlacement(input) != null;
+        Blueprint blueprint = lookupBlueprint(input.level());
+        DustTriggerPlacement placement =
+                blueprint == null ? null : MultiblockMatcher.find(input.level(), input.pos(), blueprint);
+        matchedInput = new WeakReference<>(placement == null ? null : input);
+        matchedPlacement = placement;
+        return placement != null;
     }
 
     @Override
     public @Nullable DustTriggerPlacement findPlacement(DustTriggerInput input) {
+        if (matchedInput.get() == input && matchedPlacement != null) {
+            DustTriggerPlacement placement = matchedPlacement;
+            matchedInput.clear();
+            matchedPlacement = null;
+            return placement;
+        }
         Blueprint blueprint = lookupBlueprint(input.level());
         if (blueprint == null) {
             return null;
