@@ -97,6 +97,8 @@ public final class SealWorldRenderer {
         if (ClientSealHolder.all().isEmpty()) {
             return;
         }
+        // Iris defers chest batches past this stage; establish their depth before drawing seals.
+        mc.renderBuffers().bufferSource().endBatch();
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(SEAL_BUFFERS);
