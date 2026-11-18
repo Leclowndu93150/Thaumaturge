@@ -31,7 +31,6 @@ import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -383,20 +382,28 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     }
 
     private TTButton createReturnControl() {
-        TTButton control = new TTImageButton(
-                width / 2 - BACK_W / 2,
-                sh + ARROW_Y_OFFSET - 4,
-                BACK_W,
-                21,
-                TTScreenTextures.RESEARCH_BOOK,
-                BACK_U,
-                BACK_V,
-                BACK_W,
-                BACK_H,
-                TTScreenTextures.TEX_SIZE,
-                TTScreenTextures.TEX_SIZE,
-                Component.translatable("gui.thaumaturge.thaumonomicon.return_control"),
-                this::returnToBrowser);
+        TTButton control =
+                new TTButton(
+                        width / 2 - BACK_W / 2,
+                        sh + ARROW_Y_OFFSET - 4,
+                        BACK_W,
+                        21,
+                        Component.translatable("gui.thaumaturge.thaumonomicon.return_control"),
+                        this::returnToBrowser) {
+                    @Override
+                    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+                        boolean returnsToMap = history.isEmpty() && !insertOpen();
+                        drawTexturedRectScaled(
+                                graphics,
+                                getX(),
+                                getY() + (getHeight() - BACK_H) / 2,
+                                BACK_U,
+                                BACK_V,
+                                BACK_W,
+                                BACK_H,
+                                returnsToMap ? 0.0F : bob());
+                    }
+                };
         control.setDescription(Component.translatable("gui.thaumaturge.thaumonomicon.return_control.description"));
         return control;
     }
