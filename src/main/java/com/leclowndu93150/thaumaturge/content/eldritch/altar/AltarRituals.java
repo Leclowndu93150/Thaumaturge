@@ -13,27 +13,21 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.PortalLink;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 final class AltarRituals {
-    private static final int PARTICLE_INTERVAL = 4;
-    private static final int PARTICLE_COUNT = 8;
-    private static final double PARTICLE_SPREAD = 0.6;
-    private static final double PARTICLE_SPEED = 0.05;
-    private static final double PARTICLE_RISE = 1.5;
     private static final int CHANT_INTERVAL = 40;
     private static final float MIN_DRAIN_FRACTION = 0.5F;
 
@@ -77,7 +71,7 @@ final class AltarRituals {
         if (caster == null
                 || !caster.isAlive()
                 || caster.level() != level
-                || caster.distanceToSqr(Vec3.atCenterOf(pos)) > reach * reach) {
+                || caster.distanceToSqr(LevelSpaces.worldCenter(level, pos)) > reach * reach) {
             fizzle(level, altar, caster, "gui.thaumaturge.altar.ritual_broken");
             return;
         }
@@ -90,18 +84,6 @@ final class AltarRituals {
         }
         altar.replaceRitual(ritual.drain(drained));
         long elapsed = level.getGameTime() - ritual.start();
-        if (elapsed % PARTICLE_INTERVAL == 0) {
-            level.sendParticles(
-                    ParticleTypes.REVERSE_PORTAL,
-                    pos.getX() + 0.5,
-                    pos.getY() + PARTICLE_RISE,
-                    pos.getZ() + 0.5,
-                    PARTICLE_COUNT,
-                    PARTICLE_SPREAD,
-                    PARTICLE_SPREAD,
-                    PARTICLE_SPREAD,
-                    PARTICLE_SPEED);
-        }
         if (elapsed % CHANT_INTERVAL == 0) {
             level.playSound(null, pos, TTSounds.CHANT.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }

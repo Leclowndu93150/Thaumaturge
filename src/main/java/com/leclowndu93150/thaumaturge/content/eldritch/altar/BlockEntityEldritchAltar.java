@@ -2,7 +2,9 @@ package com.leclowndu93150.thaumaturge.content.eldritch.altar;
 
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSite;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -45,7 +47,12 @@ public final class BlockEntityEldritchAltar extends AbstractSyncedBlockEntity {
             return;
         }
         AltarRituals.updateSeal(serverLevel, this);
-        if (!portalOpen()) {
+        if (portalOpen()) {
+            // Also registers portals from older saves when their altar first ticks.
+            link.ifPresent(id -> LabyrinthService.byId(serverLevel.getServer(), id)
+                    .ifPresent(record ->
+                            LevelSpaces.rememberBlock(serverLevel, LabyrinthService.originTrackingId(id), pos)));
+        } else {
             AltarSite.tick(serverLevel, this);
         }
     }
@@ -85,6 +92,10 @@ public final class BlockEntityEldritchAltar extends AbstractSyncedBlockEntity {
         return ritual;
     }
 
+    public long ritualStart() {
+        return ritual.map(AltarRitual::start).orElse(-1L);
+    }
+
     void replaceRitual(AltarRitual ritual) {
         this.ritual = Optional.of(ritual);
         setChanged();
@@ -95,7 +106,7 @@ public final class BlockEntityEldritchAltar extends AbstractSyncedBlockEntity {
         setChangedAndSync();
     }
 
-    Optional<MazeId> link() {
+    public Optional<MazeId> link() {
         return link;
     }
 

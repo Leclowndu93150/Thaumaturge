@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -42,6 +43,11 @@ public final class SafeSpot {
     }
 
     public static Optional<BlockPos> near(ServerLevel level, BlockPos center, int horizontal, int vertical) {
+        return near(level, center, horizontal, vertical, pos -> LoadedChunks.contains(level, pos));
+    }
+
+    static Optional<BlockPos> near(
+            ServerLevel level, BlockPos center, int horizontal, int vertical, Predicate<BlockPos> available) {
         List<BlockPos> candidates = new ArrayList<>();
         for (BlockPos pos : BlockPos.betweenClosed(
                 center.offset(-horizontal, -vertical, -horizontal), center.offset(horizontal, vertical, horizontal))) {
@@ -50,7 +56,7 @@ public final class SafeSpot {
         candidates.sort(Comparator.comparingDouble((BlockPos pos) -> pos.distSqr(center))
                 .thenComparingLong(BlockPos::asLong));
         for (BlockPos pos : candidates) {
-            if (LoadedChunks.contains(level, pos) && standable(level, pos)) {
+            if (available.test(pos) && standable(level, pos)) {
                 return Optional.of(pos);
             }
         }

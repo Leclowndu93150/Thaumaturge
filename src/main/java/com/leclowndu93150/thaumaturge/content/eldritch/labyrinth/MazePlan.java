@@ -59,6 +59,23 @@ public record MazePlan(
         return id.value() ^ Integer.reverse(generation);
     }
 
+    MazePlan withOrigin(GlobalPos movedOrigin) {
+        return new MazePlan(
+                id,
+                generation,
+                movedOrigin,
+                geometry,
+                seed,
+                definition,
+                encounter,
+                tuning,
+                roomPalette,
+                templatePalette,
+                rooms,
+                cells,
+                landmarks);
+    }
+
     public int cell(int cellX, int cellZ) {
         return cells[geometry.index(cellX, cellZ)];
     }

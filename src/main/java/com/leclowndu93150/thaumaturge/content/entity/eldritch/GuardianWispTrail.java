@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.eldritch;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,10 +24,12 @@ public final class GuardianWispTrail {
             return;
         }
         RandomSource random = guardian.getRandom();
-        double x = guardian.getX() + random.triangle(0.0, JITTER);
-        double y = guardian.getY() + guardian.getBbHeight() * ANCHOR_HEIGHT_FRACTION + random.triangle(0.0, JITTER);
-        double z = guardian.getZ() + random.triangle(0.0, JITTER);
-        Effects.wispyMotes(level, new Vec3(x, y, z))
+        Vec3 feet = LevelSpaces.trackedFrame(guardian).toLocal(guardian.position());
+        Vec3 origin = feet.add(
+                random.triangle(0.0, JITTER),
+                guardian.getBbHeight() * ANCHOR_HEIGHT_FRACTION + random.triangle(0.0, JITTER),
+                random.triangle(0.0, JITTER));
+        Effects.wispyMotes(level, origin)
                 .color(RED, GREEN, BLUE)
                 .motion(0.0, RISE_SPEED, 0.0)
                 .gravity(DRIFT)

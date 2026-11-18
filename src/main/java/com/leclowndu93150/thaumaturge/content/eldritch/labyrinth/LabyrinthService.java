@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
+import com.leclowndu93150.thaumaturge.content.eldritch.altar.BlockEntityEldritchAltar;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.layout.LayoutContext;
@@ -14,8 +15,12 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.layout.LayoutRe
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.SocketProfile;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.OuterLandsChunkGenerator;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.RoomStamper;
+import com.leclowndu93150.thaumaturge.content.world.space.BlocksMovedEvent;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -33,7 +38,10 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class LabyrinthService {
     private LabyrinthService() {}
 
@@ -70,6 +78,38 @@ public final class LabyrinthService {
         return outer(server).flatMap(outer -> LabyrinthData.get(outer).get(id));
     }
 
+    public static UUID originTrackingId(MazeId id) {
+        return UUID.nameUUIDFromBytes(
+                (TTIds.MODID + ":labyrinth_origin/" + id.value()).getBytes(StandardCharsets.UTF_8));
+    }
+
+    @SubscribeEvent
+    public static void onBlocksMoved(BlocksMovedEvent event) {
+        outer(event.from().getServer()).ifPresent(outer -> {
+            LabyrinthData data = LabyrinthData.get(outer);
+            boolean changed = false;
+            for (MazeRecord record : data.records()) {
+                MazePlan plan = record.plan();
+                if (plan.origin().dimension() != event.from().dimension()) continue;
+                BlockPos destination = event.moves().get(plan.origin().pos());
+                if (destination == null
+                        || !(event.to().getBlockEntity(destination) instanceof BlockEntityEldritchAltar altar)
+                        || altar.link().filter(plan.id()::equals).isEmpty()) {
+                    continue;
+                }
+                UUID trackingId = originTrackingId(plan.id());
+                if (!event.withinLevel()) {
+                    LevelSpaces.forgetBlock(event.from(), trackingId);
+                }
+                LevelSpaces.rememberBlock(event.to(), trackingId, destination);
+                data.replace(new MazeRecord(
+                        plan.withOrigin(GlobalPos.of(event.to().dimension(), destination)), record.state()));
+                changed = true;
+            }
+            if (changed) publish(outer);
+        });
+    }
+
     public static boolean atCapacity(MinecraftServer server) {
         return outer(server)
                 .map(outer -> LabyrinthData.get(outer).size() >= ThaumaturgeServerConfig.LABYRINTH.maxActiveMazes.get())
@@ -103,7 +143,15 @@ public final class LabyrinthService {
     }
 
     public static boolean retire(ServerLevel outer, MazeId id) {
-        boolean removed = LabyrinthData.get(outer).remove(id);
+        LabyrinthData data = LabyrinthData.get(outer);
+        data.get(id).ifPresent(record -> {
+            ServerLevel originLevel =
+                    outer.getServer().getLevel(record.plan().origin().dimension());
+            if (originLevel != null) {
+                LevelSpaces.forgetBlock(originLevel, originTrackingId(id));
+            }
+        });
+        boolean removed = data.remove(id);
         runtime(outer).ifPresent(runtime -> runtime.encounters().forget(id.value()));
         publish(outer);
         return removed;
@@ -208,6 +256,11 @@ public final class LabyrinthService {
                 OptionalInt.empty());
         record.ifPresent(built -> {
             data.commit(built);
+            ServerLevel originLevel = server.getLevel(origin.dimension());
+            if (originLevel != null) {
+                LevelSpaces.rememberBlock(
+                        originLevel, originTrackingId(built.plan().id()), origin.pos());
+            }
             publish(outer.get());
             queueLoadedChunks(
                     outer.get(),

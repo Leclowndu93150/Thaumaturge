@@ -7,6 +7,8 @@ import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaceProvider.TrackedBlock;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTTicketTypes;
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public final class LabyrinthTransit {
         if (now < state.cooldownUntil()) {
             return false;
         }
-        Optional<Target> target = link.flatMap(value -> resolve(level.getServer(), value));
+        Optional<Target> target = link.flatMap(value -> resolve(level.getServer(), value, false));
         if (target.isEmpty()) {
             if (state.noticeDue(now, NOTICE_INTERVAL)) {
                 TTActionBar.sendPurple(player, CLOSED);
@@ -47,13 +49,16 @@ public final class LabyrinthTransit {
             return false;
         }
         Optional<TransitState.Pending> pending = state.pending();
+        ServerLevel destination = target.get().level();
+        ChunkPos chunk = new ChunkPos(target.get().worldAnchor());
+        int radius = ThaumaturgeServerConfig.LABYRINTH.preloadRadiusChunks.get();
         if (pending.isEmpty()
                 || !pending.get().link().equals(link.get())
+                || pending.get().level() != destination.dimension()
+                || pending.get().chunk().getChessboardDistance(chunk)
+                        > pending.get().radius()
                 || now - pending.get().started() > TTTicketTypes.TRANSIT_LIFETIME) {
             release(level.getServer(), state);
-            ServerLevel destination = target.get().level();
-            ChunkPos chunk = new ChunkPos(target.get().anchor());
-            int radius = ThaumaturgeServerConfig.LABYRINTH.preloadRadiusChunks.get();
             CompletableFuture<?> loaded = preload(destination, chunk, radius);
             state.setPending(Optional.of(
                     new TransitState.Pending(link.get(), destination.dimension(), chunk, radius, loaded, now)));
@@ -100,7 +105,7 @@ public final class LabyrinthTransit {
             return Optional.empty();
         }
         PortalLink link = pending.get().link();
-        Optional<Target> target = resolve(level.getServer(), link);
+        Optional<Target> target = resolve(level.getServer(), link, true);
         if (target.isEmpty()) {
             return Optional.empty();
         }
@@ -113,13 +118,17 @@ public final class LabyrinthTransit {
                     new DimensionTransition(target.get().level(), arrival.pos(), Vec3.ZERO, arrival.yaw(), 0.0F, post));
         }
         return Optional.of(ReturnPointFinder.find(
-                player, target.get().level(), target.get().anchor(), post));
+                player,
+                target.get().level(),
+                target.get().anchor(),
+                target.get().worldAnchor(),
+                post));
     }
 
     public static DimensionTransition returnTransition(
             ServerPlayer player, Optional<MazeRecord> record, DimensionTransition.PostDimensionTransition post) {
-        Target target = origin(player.level().getServer(), record);
-        return ReturnPointFinder.find(player, target.level(), target.anchor(), post);
+        Target target = origin(player.level().getServer(), record, true);
+        return ReturnPointFinder.find(player, target.level(), target.anchor(), target.worldAnchor(), post);
     }
 
     public static void abandon(ServerPlayer player) {
@@ -147,7 +156,7 @@ public final class LabyrinthTransit {
         state.setPending(Optional.empty());
     }
 
-    private static Optional<Target> resolve(MinecraftServer server, PortalLink link) {
+    private static Optional<Target> resolve(MinecraftServer server, PortalLink link, boolean loadSubLevel) {
         Optional<MazeRecord> record = LabyrinthService.byId(server, link.maze());
         return switch (link.kind()) {
             case TO_LABYRINTH ->
@@ -156,23 +165,31 @@ public final class LabyrinthTransit {
                                 .flatMap(outer -> maze.plan()
                                         .landmarks()
                                         .point(LabyrinthLandmarks.ARRIVAL)
-                                        .map(anchor -> new Target(outer, anchor, record))));
-            case TO_ORIGIN -> Optional.of(origin(server, record));
+                                        .map(anchor -> new Target(outer, anchor, anchor, record))));
+            case TO_ORIGIN -> Optional.of(origin(server, record, loadSubLevel));
         };
     }
 
-    private static Target origin(MinecraftServer server, Optional<MazeRecord> record) {
+    private static Target origin(MinecraftServer server, Optional<MazeRecord> record, boolean loadSubLevel) {
         Optional<GlobalPos> origin = record.map(maze -> maze.plan().origin());
         Optional<ServerLevel> level = origin.flatMap(pos -> Optional.ofNullable(server.getLevel(pos.dimension())));
         if (level.isPresent()) {
-            return new Target(level.get(), origin.get().pos(), record);
+            ServerLevel originLevel = level.get();
+            BlockPos stored = origin.get().pos();
+            TrackedBlock anchor = LevelSpaces.trackedBlock(
+                            originLevel,
+                            LabyrinthService.originTrackingId(
+                                    record.orElseThrow().plan().id()),
+                            loadSubLevel)
+                    .orElseGet(() -> new TrackedBlock(stored, LevelSpaces.worldBlock(originLevel, stored)));
+            return new Target(originLevel, anchor.position(), anchor.worldPosition(), record);
         }
         GlobalPos spawn =
                 GlobalPos.of(server.overworld().dimension(), server.overworld().getSharedSpawnPos());
         ServerLevel spawnLevel =
                 Optional.ofNullable(server.getLevel(spawn.dimension())).orElseGet(server::overworld);
-        return new Target(spawnLevel, spawn.pos(), record);
+        return new Target(spawnLevel, spawn.pos(), spawn.pos(), record);
     }
 
-    private record Target(ServerLevel level, BlockPos anchor, Optional<MazeRecord> maze) {}
+    private record Target(ServerLevel level, BlockPos anchor, BlockPos worldAnchor, Optional<MazeRecord> maze) {}
 }

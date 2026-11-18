@@ -137,8 +137,11 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
-        if (!state.is(next.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityEldritchAltar altar)
+        if (!moving
+                && !state.is(next.getBlock())
+                && level.getBlockEntity(pos) instanceof BlockEntityEldritchAltar altar) {
             altar.removePortal();
+        }
         super.onRemove(state, level, pos, next, moving);
     }
 }
