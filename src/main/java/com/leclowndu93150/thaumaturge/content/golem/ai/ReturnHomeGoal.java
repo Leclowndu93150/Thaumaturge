@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.ai;
 
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.EnumSet;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
@@ -37,13 +38,17 @@ public final class ReturnHomeGoal extends Goal {
             return false;
         }
         wait = CHECK_INTERVAL;
-        double awaySqr = golem.distanceToSqr(Vec3.atCenterOf(golem.getRestrictCenter()));
+        double awaySqr = golem.distanceToSqr(LevelSpaces.worldCenter(golem.level(), golem.getRestrictCenter()));
         if (awaySqr < AT_HOME_SQR) {
             return false;
         }
         heading = awaySqr > FAR_AWAY_SQR
                 ? DefaultRandomPos.getPosTowards(
-                        golem, STEP_RANGE, STEP_HEIGHT, Vec3.atLowerCornerOf(golem.getRestrictCenter()), Math.PI / 2.0)
+                        golem,
+                        STEP_RANGE,
+                        STEP_HEIGHT,
+                        LevelSpaces.toWorld(golem.level(), Vec3.atLowerCornerOf(golem.getRestrictCenter())),
+                        Math.PI / 2.0)
                 : Vec3.atLowerCornerOf(golem.getRestrictCenter());
         return heading != null;
     }
@@ -59,7 +64,7 @@ public final class ReturnHomeGoal extends Goal {
     public boolean canContinueToUse() {
         return golem.getTask() == null
                 && !golem.getNavigation().isDone()
-                && golem.distanceToSqr(Vec3.atCenterOf(golem.getRestrictCenter())) > ARRIVED_SQR;
+                && golem.distanceToSqr(LevelSpaces.worldCenter(golem.level(), golem.getRestrictCenter())) > ARRIVED_SQR;
     }
 
     @Override

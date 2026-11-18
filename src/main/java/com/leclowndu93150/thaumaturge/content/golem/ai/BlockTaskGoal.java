@@ -45,7 +45,7 @@ public final class BlockTaskGoal extends TaskGoal {
 
     @Override
     protected double distanceSqrTo(Task task) {
-        return golem.distanceToSqr(Vec3.atCenterOf(destination(task)));
+        return golem.distanceToSqr(LevelSpaces.worldCenter(golem.level(), destination(task)));
     }
 
     private BlockPos destination(Task task) {
@@ -75,7 +75,8 @@ public final class BlockTaskGoal extends TaskGoal {
     }
 
     private boolean pathEndsNear(BlockPos pos) {
-        if (golem.distanceToSqr(Vec3.atCenterOf(pos)) < reachSqr) {
+        Vec3 worldTarget = LevelSpaces.worldCenter(golem.level(), pos);
+        if (golem.distanceToSqr(worldTarget) < reachSqr) {
             return true;
         }
         Path path = golem.getNavigation().createPath(pos, 0);
@@ -83,9 +84,11 @@ public final class BlockTaskGoal extends TaskGoal {
         if (end == null) {
             return false;
         }
-        int dx = end.x - pos.getX();
-        int dy = end.y - pos.getY();
-        int dz = end.z - pos.getZ();
+        BlockPos targetInPath = BlockPos.containing(
+                LevelSpaces.frameOf(golem.level(), end.asBlockPos()).toLocal(worldTarget));
+        int dx = end.x - targetInPath.getX();
+        int dy = end.y - targetInPath.getY();
+        int dz = end.z - targetInPath.getZ();
         if (dx == 0 && dz == 0 && dy == HEAD_HEIGHT) {
             dy--;
         }

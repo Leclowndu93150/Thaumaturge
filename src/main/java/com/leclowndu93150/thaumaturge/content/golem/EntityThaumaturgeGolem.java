@@ -481,6 +481,14 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     private PathNavigation createGolemNavigation() {
+        PathNavigation nativeNavigation = createNativeGolemNavigation();
+        return LevelSpaces.isWorldOnly()
+                ? nativeNavigation
+                : new com.leclowndu93150.thaumaturge.content.golem.ai.GolemSpaceNavigation(
+                        this, level(), nativeNavigation, properties().hasTrait(TTGolemTraits.FLYER.get()));
+    }
+
+    private PathNavigation createNativeGolemNavigation() {
         if (properties().hasTrait(TTGolemTraits.FLYER.get())) {
             FlyingPathNavigation nav = new FlyingPathNavigation(this, level());
             nav.setCanFloat(true);

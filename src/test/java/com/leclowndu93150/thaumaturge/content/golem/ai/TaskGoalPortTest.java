@@ -15,6 +15,7 @@ class TaskGoalPortTest {
     void stoppingReleasesAndClearsTheTaskItStillOwns() {
         EntityThaumaturgeGolem golem = mock(EntityThaumaturgeGolem.class);
         Task task = mock(Task.class);
+        when(golem.getNavigation()).thenReturn(mock(net.minecraft.world.entity.ai.navigation.PathNavigation.class));
         when(golem.getTask()).thenReturn(task);
 
         goal(golem).stop();
@@ -28,6 +29,7 @@ class TaskGoalPortTest {
         EntityThaumaturgeGolem golem = mock(EntityThaumaturgeGolem.class);
         Task task = mock(Task.class);
         Task replacement = mock(Task.class);
+        when(golem.getNavigation()).thenReturn(mock(net.minecraft.world.entity.ai.navigation.PathNavigation.class));
         when(golem.getTask()).thenReturn(task, replacement);
 
         goal(golem).stop();

@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -125,8 +126,12 @@ public abstract class TaskGoal extends Goal {
     }
 
     private void detour(Task task) {
+        if (golem.getNavigation() instanceof GolemSpaceNavigation) {
+            approach(task);
+            return;
+        }
         Vec3 aside = DefaultRandomPos.getPosTowards(
-                golem, DETOUR_RANGE, DETOUR_HEIGHT, Vec3.atLowerCornerOf(task.pos()), Math.PI / 2.0);
+                golem, DETOUR_RANGE, DETOUR_HEIGHT, LevelSpaces.worldCenter(golem.level(), task.pos()), Math.PI / 2.0);
         if (aside != null) {
             golem.getNavigation()
                     .moveTo(
@@ -150,6 +155,7 @@ public abstract class TaskGoal extends Goal {
 
     @Override
     public void stop() {
+        golem.getNavigation().stop();
         Task task = golem.getTask();
         if (task == null) {
             return;
