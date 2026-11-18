@@ -1,12 +1,30 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
+import net.minecraft.world.InteractionHand;
 import org.junit.jupiter.api.Test;
 
 class BeamImpactPortTest {
+    @Test
+    void wandSourceCarriesTheCastHandWithoutReplacingTheServerOrigin() {
+        ClientboundStreamEffectPayload beam = beamPayload(true);
+        assertNull(beam.wandHand());
+        for (InteractionHand hand : InteractionHand.values()) {
+            ClientboundStreamEffectPayload tagged = beam.withWandSource(17, hand);
+            assertEquals(17, tagged.entityId());
+            assertEquals(hand, tagged.wandHand());
+            assertEquals(beam.sx(), tagged.sx());
+            assertEquals(beam.sy(), tagged.sy());
+            assertEquals(beam.sz(), tagged.sz());
+            assertTrue(tagged.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT));
+        }
+    }
+
     @Test
     void hitFlagIsEncodedWithoutChangingLegacyBeamPayloads() {
         ClientboundStreamEffectPayload hit = beamPayload(true);

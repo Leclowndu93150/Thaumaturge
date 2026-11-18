@@ -56,23 +56,19 @@ public final class SpellFxStyles {
     }
 
     public static void flame(Level level, Vec3 at, Vec3 motion, int color, RandomSource random) {
-        add(
-                level,
-                new FlameFanParticleOptions((float) (1.4 + random.nextGaussian() * 0.2), -0.2F, 0.7F),
-                at,
-                Vec3.ZERO);
+        add(level, new FlameFanParticleOptions((float) (1.4 + random.nextGaussian() * 0.2), -0.2F, 0.7F), at, motion);
     }
 
     public static void frost(Level level, Vec3 at, Vec3 motion, int color, RandomSource random) {
-        add(level, new FrostFlakeParticleOptions((float) (0.7 + random.nextGaussian() * 0.25)), at, Vec3.ZERO);
+        add(level, new FrostFlakeParticleOptions((float) (0.7 + random.nextGaussian() * 0.25)), at, motion);
     }
 
     public static void gust(Level level, Vec3 at, Vec3 motion, int color, RandomSource random) {
-        add(level, new AirGustParticleOptions((float) (1.8 + random.nextGaussian() * 0.4)), at, Vec3.ZERO);
+        add(level, new AirGustParticleOptions((float) (1.8 + random.nextGaussian() * 0.4)), at, motion);
     }
 
     public static void pebble(Level level, Vec3 at, Vec3 motion, int color, RandomSource random) {
-        add(level, new EarthPebbleParticleOptions((float) (1.0 + random.nextGaussian() * 0.2)), at, Vec3.ZERO);
+        add(level, new EarthPebbleParticleOptions((float) (1.0 + random.nextGaussian() * 0.2)), at, motion);
     }
 
     public static void flux(Level level, Vec3 at, Vec3 motion, int color, RandomSource random) {

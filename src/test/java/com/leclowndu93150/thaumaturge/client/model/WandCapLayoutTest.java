@@ -41,6 +41,13 @@ class WandCapLayoutTest {
         assertEquals(1.1F, WandCapLayout.outerScaleY(true), EPSILON);
     }
 
+    @Test
+    void emittingEndIsOnTheSelectedCapFace() {
+        assertEquals(-1.0F / 16, WandCapLayout.emittingEndY(false, false), EPSILON);
+        assertEquals(-1.1F / 16, WandCapLayout.emittingEndY(true, false), EPSILON);
+        assertEquals(-1.3F / 16, WandCapLayout.emittingEndY(false, true), EPSILON);
+    }
+
     private static void assertPlacement(WandCapLayout.Placement placement, float offsetY, float scaleXZ, float scaleY) {
         assertEquals(offsetY, placement.offsetY(), EPSILON);
         assertEquals(scaleXZ, placement.scaleXZ(), EPSILON);

@@ -23,10 +23,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
+import org.jspecify.annotations.Nullable;
 
 public final class SpellEngine {
     private static final int MAX_CAST_SOUNDS = 3;
@@ -42,10 +45,31 @@ public final class SpellEngine {
 
     public static void execute(
             LivingEntity caster, ItemStack focus, Spell spell, List<SpellTarget> origin, float power) {
+        execute(caster, focus, spell, origin, power, null);
+    }
+
+    public static void executeWand(Player caster, InteractionHand hand, ItemStack focus, Spell spell, float power) {
+        execute(caster, focus, spell, List.of(SpellTarget.wandOrigin(caster, hand)), power, hand);
+    }
+
+    private static void execute(
+            LivingEntity caster,
+            ItemStack focus,
+            Spell spell,
+            List<SpellTarget> origin,
+            float power,
+            @Nullable InteractionHand wandHand) {
         if (!(caster.level() instanceof ServerLevel level)) {
             return;
         }
         CastRun run = new CastRun(level, UUID.randomUUID(), Optional.of(caster.getUUID()), caster);
+        if (wandHand != null) {
+            run.fx()
+                    .setWandOrigin(
+                            caster.getId(),
+                            wandHand,
+                            LevelSpaces.toWorld(level, origin.getFirst().position()));
+        }
         playCastSounds(level, caster, spell);
         runNode(run, spell.root(), origin, SpellState.DEFAULT.with(SpellStats.POWER, power));
         run.finish();

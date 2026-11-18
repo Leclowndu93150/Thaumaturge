@@ -3,17 +3,18 @@ package com.leclowndu93150.thaumaturge.client.item;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.wands.render.WandRenderers;
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
 import com.leclowndu93150.thaumaturge.client.model.WandItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
+import com.leclowndu93150.thaumaturge.content.spell.delivery.RayDelivery;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
-import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
@@ -24,6 +25,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WandHandRenderer {
@@ -49,9 +54,9 @@ public final class WandHandRenderer {
     @SubscribeEvent
     public static void onRenderHand(RenderHandEvent event) {
         Minecraft mc = Minecraft.getInstance();
-        AbstractClientPlayer player = mc.player;
+        LocalPlayer player = mc.player;
         ItemStack stack = event.getItemStack();
-        if (player == null || !(stack.getItem() instanceof ItemWand)) {
+        if (player == null || !(stack.getItem() instanceof ItemWand wand)) {
             return;
         }
         event.setCanceled(true);
@@ -77,10 +82,19 @@ public final class WandHandRenderer {
         }
         applyModelBasis(poseStack, mirror, arg.rod().staff());
         if (using) {
+            Spell spell = FocusItems.spell(wand.socketedFocus(stack));
+            boolean charged = spell != null && spell.style() == CastStyle.CHARGED;
+            boolean aimingBeam = spell != null
+                    && spell.style() == CastStyle.CHANNELED
+                    && spell.nodes().stream()
+                            .anyMatch(node -> Spells.part(player.registryAccess(), node.part())
+                                    .filter(part -> part.behavior() instanceof RayDelivery ray
+                                            && ray.visual() == RayDelivery.Visual.BEAM)
+                                    .isPresent());
             applyUseWave(
-                    poseStack, mirror, arg.rod().staff(), chargesOnUse(stack), player.getTicksUsingItem() + partial);
+                    poseStack, mirror, arg.rod().staff(), charged, aimingBeam, player.getTicksUsingItem() + partial);
         }
-        WandTipTracker.capture(poseStack, WandItemSpecialRenderer.tipModelY(arg));
+        WandTipTracker.capture(player, event.getHand(), stack, poseStack, WandItemSpecialRenderer.tipModelY(arg));
         WandRenderers.render(WandItemSpecialRenderer.context(
                 stack, arg, poseStack, buffers, event.getPackedLight(), OverlayTexture.NO_OVERLAY, null, true));
         poseStack.popPose();
@@ -136,7 +150,7 @@ public final class WandHandRenderer {
     }
 
     private static void applyUseWave(
-            PoseStack poseStack, float mirror, boolean staff, boolean charged, float useTicks) {
+            PoseStack poseStack, float mirror, boolean staff, boolean charged, boolean aimingBeam, float useTicks) {
         float settle = useSettle(useTicks);
         float pitch;
         float roll;
@@ -152,7 +166,14 @@ public final class WandHandRenderer {
         }
         float grip = staff ? STAFF_GRIP_Y : WAND_GRIP_Y;
         poseStack.translate(0.0F, grip, 0.0F);
-        poseStack.mulPose(Axis.XP.rotationDegrees(TIP_DEGREES * settle + pitch * settle));
+        if (aimingBeam) {
+            Matrix4f modelView = new Matrix4f(RenderSystem.getModelViewMatrix())
+                    .mul(poseStack.last().pose());
+            poseStack.mulPose(beamAimRotation(modelView, settle));
+        } else {
+            pitch += TIP_DEGREES;
+        }
+        poseStack.mulPose(Axis.XP.rotationDegrees(pitch * settle));
         poseStack.mulPose(Axis.ZP.rotationDegrees(mirror * roll * settle));
         poseStack.translate(0.0F, -grip, 0.0F);
     }
@@ -162,12 +183,13 @@ public final class WandHandRenderer {
         return ramp * ramp * (3.0F - 2.0F * ramp);
     }
 
-    private static boolean chargesOnUse(ItemStack wand) {
-        SocketedFocus socketed = wand.get(TTDataComponents.SOCKETED_FOCUS.get());
-        if (socketed == null) {
-            return false;
-        }
-        Spell spell = FocusItems.spell(socketed.focus());
-        return spell != null && spell.style() == CastStyle.CHARGED;
+    static Quaternionf beamAimRotation(Matrix4fc modelView, float settle) {
+        // The emitting end is along model -Y. Turn that axis toward the camera's forward direction.
+        Vector3f forward = modelView
+                .invert(new Matrix4f())
+                .transformDirection(new Vector3f(0, 0, -1))
+                .normalize();
+        Quaternionf aim = new Quaternionf().rotationTo(0, -1, 0, forward.x, forward.y, forward.z);
+        return new Quaternionf().slerp(aim, settle);
     }
 }

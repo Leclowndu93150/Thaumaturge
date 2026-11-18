@@ -1,12 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
+import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker.WandSource;
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public final class BeamInstance implements IFXInstance {
     private static final int HIT_DURATION = 6;
@@ -15,9 +18,11 @@ public final class BeamInstance implements IFXInstance {
     private static final float BASE_OPACITY = 0.4F;
     private static final float FADE_STEP = 0.1F;
     private static final double SAME_SOURCE_DISTANCE_SQR = 0.01;
+    private static final double SAME_TARGET_DISTANCE_SQR = 0.01;
 
     private final int sourceEntityId;
     private final boolean entityAnchored;
+    private final @Nullable WandSource wandSource;
     private final boolean withSource;
     private final int beamType;
     private final Vec3 requestedSource;
@@ -82,6 +87,76 @@ public final class BeamInstance implements IFXInstance {
             int sourceEntityId,
             boolean withSource,
             boolean hit) {
+        this(
+                sx,
+                sy,
+                sz,
+                tx,
+                ty,
+                tz,
+                color,
+                age,
+                beamType,
+                endMod,
+                reverse,
+                sourceEntityId,
+                withSource,
+                hit,
+                sourceEntityId != BeamPayloadIds.NO_ENTITY);
+    }
+
+    public BeamInstance(
+            double sx,
+            double sy,
+            double sz,
+            double tx,
+            double ty,
+            double tz,
+            int color,
+            int age,
+            int beamType,
+            float endMod,
+            boolean reverse,
+            int sourceEntityId,
+            boolean withSource,
+            boolean hit,
+            boolean anchorToEntity) {
+        this(
+                sx,
+                sy,
+                sz,
+                tx,
+                ty,
+                tz,
+                color,
+                age,
+                beamType,
+                endMod,
+                reverse,
+                sourceEntityId,
+                withSource,
+                hit,
+                anchorToEntity,
+                null);
+    }
+
+    public BeamInstance(
+            double sx,
+            double sy,
+            double sz,
+            double tx,
+            double ty,
+            double tz,
+            int color,
+            int age,
+            int beamType,
+            float endMod,
+            boolean reverse,
+            int sourceEntityId,
+            boolean withSource,
+            boolean hit,
+            boolean anchorToEntity,
+            @Nullable WandSource wandSource) {
         this.colorR = ((color >> 16) & 0xFF) / 255.0F;
         this.colorG = ((color >> 8) & 0xFF) / 255.0F;
         this.colorB = (color & 0xFF) / 255.0F;
@@ -91,7 +166,8 @@ public final class BeamInstance implements IFXInstance {
         this.reverse = reverse;
         this.rotationSpeed = 5;
         this.sourceEntityId = sourceEntityId;
-        this.entityAnchored = sourceEntityId != BeamPayloadIds.NO_ENTITY;
+        this.entityAnchored = anchorToEntity && sourceEntityId != BeamPayloadIds.NO_ENTITY;
+        this.wandSource = wandSource;
         this.withSource = withSource;
         this.requestedSource = new Vec3(sx, sy, sz);
         this.sourceX = sx;
@@ -159,13 +235,36 @@ public final class BeamInstance implements IFXInstance {
         if (this.beamType != other.beamType || this.withSource != other.withSource) {
             return false;
         }
-        if (this.entityAnchored || other.entityAnchored) {
-            return this.entityAnchored && other.entityAnchored && this.sourceEntityId == other.sourceEntityId;
+        if (this.sourceEntityId != BeamPayloadIds.NO_ENTITY || other.sourceEntityId != BeamPayloadIds.NO_ENTITY) {
+            return this.sourceEntityId == other.sourceEntityId
+                    && this.entityAnchored == other.entityAnchored
+                    && Objects.equals(this.wandSource, other.wandSource);
         }
         return this.requestedSource.distanceToSqr(other.requestedSource) < SAME_SOURCE_DISTANCE_SQR;
     }
 
+    public boolean sameBeamAs(BeamInstance other) {
+        double dx = this.targetX - other.targetX;
+        double dy = this.targetY - other.targetY;
+        double dz = this.targetZ - other.targetZ;
+        return sameSourceAs(other)
+                && this.colorR == other.colorR
+                && this.colorG == other.colorG
+                && this.colorB == other.colorB
+                && this.endMod == other.endMod
+                && this.reverse == other.reverse
+                && dx * dx + dy * dy + dz * dz < SAME_TARGET_DISTANCE_SQR;
+    }
+
     public void refresh(BeamInstance newer) {
+        if (!this.entityAnchored) {
+            this.prevSourceX = this.sourceX;
+            this.prevSourceY = this.sourceY;
+            this.prevSourceZ = this.sourceZ;
+            this.sourceX = newer.sourceX;
+            this.sourceY = newer.sourceY;
+            this.sourceZ = newer.sourceZ;
+        }
         this.prevTargetX = this.targetX;
         this.prevTargetY = this.targetY;
         this.prevTargetZ = this.targetZ;
@@ -243,6 +342,10 @@ public final class BeamInstance implements IFXInstance {
                 Mth.lerp(partial, this.prevSourceX, this.sourceX),
                 Mth.lerp(partial, this.prevSourceY, this.sourceY),
                 Mth.lerp(partial, this.prevSourceZ, this.sourceZ));
+    }
+
+    public @Nullable Vec3 wandTip() {
+        return this.wandSource == null ? null : this.wandSource.tip();
     }
 
     public Vec3 targetPos(float partial) {

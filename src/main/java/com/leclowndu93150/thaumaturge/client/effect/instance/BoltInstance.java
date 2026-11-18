@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
+import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker.WandSource;
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public final class BoltInstance implements IFXInstance {
     static final int MAX_AGE = 3;
@@ -19,35 +22,30 @@ public final class BoltInstance implements IFXInstance {
     private static final float THIN_DECAY = 0.25F;
     private static final int THIN_CHANCE = 4;
 
-    public final double startX;
-    public final double startY;
-    public final double startZ;
     public final float colorR;
     public final float colorG;
     public final float colorB;
     public final float width;
-    public final float length;
-    private final double spanX;
-    private final double spanY;
-    private final double spanZ;
+    private final Vec3 source;
+    private final Vec3 target;
+    private final @Nullable WandSource wandSource;
     private final float phaseOffset;
     private final long seed;
     private int age;
     private boolean expired;
 
     public BoltInstance(double sx, double sy, double sz, double tx, double ty, double tz, int color, float width) {
-        this.startX = sx;
-        this.startY = sy;
-        this.startZ = sz;
-        this.spanX = tx - sx;
-        this.spanY = ty - sy;
-        this.spanZ = tz - sz;
+        this(new Vec3(sx, sy, sz), new Vec3(tx, ty, tz), color, width, null);
+    }
+
+    public BoltInstance(Vec3 source, Vec3 target, int color, float width, @Nullable WandSource wandSource) {
+        this.source = source;
+        this.target = target;
+        this.wandSource = wandSource;
         this.colorR = ((color >> 16) & 0xFF) / 255.0F;
         this.colorG = ((color >> 8) & 0xFF) / 255.0F;
         this.colorB = (color & 0xFF) / 255.0F;
         this.width = width;
-        double span = Math.sqrt(this.spanX * this.spanX + this.spanY * this.spanY + this.spanZ * this.spanZ);
-        this.length = (float) (span * Math.PI);
         ClientLevel level = Minecraft.getInstance().level;
         RandomSource random = level != null ? level.getRandom() : RandomSource.create();
         this.phaseOffset = (float) (random.nextInt(50) * Math.PI);
@@ -67,26 +65,44 @@ public final class BoltInstance implements IFXInstance {
     }
 
     public List<PathStep> computePath(float partialTick) {
-        if (!Float.isFinite(this.length)) {
+        return computePath(partialTick, null);
+    }
+
+    public Vec3 source() {
+        return this.source;
+    }
+
+    public @Nullable Vec3 wandTip() {
+        return this.wandSource == null ? null : this.wandSource.tip();
+    }
+
+    public List<PathStep> computePath(float partialTick, @Nullable Vec3 wandTip) {
+        Vec3 span = this.target.subtract(wandTip == null ? this.source : wandTip);
+        float length = (float) (span.length() * Math.PI);
+        if (!Float.isFinite(length)) {
             return List.of();
         }
-        int steps = Mth.clamp((int) this.length, 3, 512);
+        int steps = Mth.clamp((int) length, 3, 512);
         float amplitude = (this.age + partialTick) * AMPLITUDE_PER_TICK;
-        float stride = this.length / steps;
+        float stride = length / steps;
         Random noise = new Random(this.seed);
         List<PathStep> path = new ArrayList<>(steps);
         path.add(new PathStep(0.0, 0.0, 0.0, this.width));
         for (int i = 1; i < steps - 1; i++) {
             float phase = i * stride + this.phaseOffset;
-            double x = this.spanX * i / steps + Mth.sin(phase / WAVE_PERIOD_X) * amplitude + sway(noise);
-            double y = this.spanY * i / steps + Mth.sin(phase / WAVE_PERIOD_Y) * amplitude + sway(noise);
-            double z = this.spanZ * i / steps + Mth.sin(phase / WAVE_PERIOD_Z) * amplitude + sway(noise);
+            double x = span.x * i / steps + Mth.sin(phase / WAVE_PERIOD_X) * amplitude + sway(noise);
+            double y = span.y * i / steps + Mth.sin(phase / WAVE_PERIOD_Y) * amplitude + sway(noise);
+            double z = span.z * i / steps + Mth.sin(phase / WAVE_PERIOD_Z) * amplitude + sway(noise);
             float thin = noise.nextInt(THIN_CHANCE) == 0 ? 1.0F - this.age * THIN_DECAY : 1.0F;
             path.add(new PathStep(x, y, z, thin * this.width));
         }
-        PathStep target = new PathStep(this.spanX, this.spanY, this.spanZ, this.width);
+        PathStep target = new PathStep(span.x, span.y, span.z, this.width);
         path.add(target);
         path.add(extrapolateEnd(path.get(path.size() - 2), target));
+        if (wandTip != null) {
+            // TubeMesh uses the first and last samples as tangents and draws between the interior samples.
+            path.addFirst(extrapolateEnd(path.get(1), path.getFirst()));
+        }
         return path;
     }
 

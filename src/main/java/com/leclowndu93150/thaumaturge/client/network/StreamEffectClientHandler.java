@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.network;
 
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
+import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker.WandSource;
 import com.leclowndu93150.thaumaturge.client.effect.instance.ArcInstance;
 import com.leclowndu93150.thaumaturge.client.effect.instance.BeamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.instance.BoltInstance;
@@ -12,8 +13,10 @@ import com.leclowndu93150.thaumaturge.client.effect.manager.EssentiaStreamManage
 import com.leclowndu93150.thaumaturge.client.space.ClientSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jspecify.annotations.Nullable;
 
 public final class StreamEffectClientHandler {
     private StreamEffectClientHandler() {}
@@ -30,18 +33,11 @@ public final class StreamEffectClientHandler {
             case ARC ->
                 BeamManager.addArc(new ArcInstance(
                         source.x, source.y, source.z, target.x, target.y, target.z, p.color(), p.extraFloat()));
-            case BOLT -> {
-                Vec3 from = source;
-                if (p.entityId() == mc.player.getId()) {
-                    Vec3 tip = WandTipTracker.firstPersonTip();
-                    if (tip != null) {
-                        from = tip;
-                    }
-                }
-                BeamManager.addBolt(new BoltInstance(
-                        from.x, from.y, from.z, target.x, target.y, target.z, p.color(), p.extraFloat()));
-            }
-            case BEAM ->
+            case BOLT ->
+                BeamManager.addBolt(
+                        new BoltInstance(source, target, p.color(), p.extraFloat(), localWand(mc.player, p)));
+            case BEAM -> {
+                WandSource wand = localWand(mc.player, p);
                 BeamManager.addBeam(new BeamInstance(
                         source.x,
                         source.y,
@@ -56,7 +52,10 @@ public final class StreamEffectClientHandler {
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_REVERSE),
                         p.entityId(),
                         p.hasFlag(ClientboundStreamEffectPayload.FLAG_WITH_SOURCE),
-                        p.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT)));
+                        p.hasFlag(ClientboundStreamEffectPayload.FLAG_HIT),
+                        p.wandHand() == null && wand == null,
+                        wand));
+            }
             case ESSENTIA ->
                 EssentiaStreamManager.spawn(
                         source.x,
@@ -85,5 +84,13 @@ public final class StreamEffectClientHandler {
                 BoreVoidStreamManager.addVoid(new VoidStreamInstance(
                         source.x, source.y, source.z, target.x, target.y, target.z, p.extraInt(), p.extraFloat()));
         }
+    }
+
+    private static @Nullable WandSource localWand(@Nullable LocalPlayer player, ClientboundStreamEffectPayload p) {
+        if (player == null || p.entityId() != player.getId()) {
+            return null;
+        }
+        var hand = p.wandHand();
+        return hand == null ? WandTipTracker.heldWand(player) : WandTipTracker.heldWand(player, hand);
     }
 }

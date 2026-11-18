@@ -46,10 +46,11 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     private static final float FOCUS_ALPHA = 0.95F;
     private static final int SCRIPT_GLYPHS = 16;
     private static final float STAFF_MODEL_SHIFT = 0.2F;
+    private static final float STAFF_ROD_SHIFT = -0.1F;
     private static final float FOCUS_STAFF_LIFT = -0.0475F;
     private static final float FOCUS_STAFF_SCALE_Y = 0.5525F;
     private static final float FOCUS_SCALE = 0.5F;
-    private static final float FOCUS_TOP_PX = 6.0F;
+    private static final int FOCUS_HEIGHT_PX = 6;
 
     public WandItemSpecialRenderer() {
         super(
@@ -128,7 +129,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
                 : TTFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
         poseStack.pushPose();
         if (staff) {
-            poseStack.translate(0.0F, -0.1F, 0.0F);
+            poseStack.translate(0.0F, STAFF_ROD_SHIFT, 0.0F);
             poseStack.scale(1.2F, 2.0F, 1.2F);
         }
         box(poseStack.last(), buffers.getBuffer(rodType), -1.0F, 0.0F, -1.0F, 2, 18, 2, 0, 8, rodTint, rodLight);
@@ -172,25 +173,35 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         }
         int tint = ARGB32.color((int) (FOCUS_ALPHA * 255.0F), arg.focusColor());
         int focusLight = WandLightMath.focus(ticks);
-        box(poseStack.last(), buffers.getBuffer(focusType), -3.0F, -6.0F, -3.0F, 6, 6, 6, 0, 0, tint, focusLight);
+        box(
+                poseStack.last(),
+                buffers.getBuffer(focusType),
+                -3.0F,
+                -FOCUS_HEIGHT_PX,
+                -3.0F,
+                6,
+                FOCUS_HEIGHT_PX,
+                6,
+                0,
+                0,
+                tint,
+                focusLight);
         poseStack.popPose();
     }
 
     public static float tipModelY(WandArg arg) {
         boolean staff = arg.rod().staff();
-        if (arg.hasFocus()) {
-            if (staff) {
-                return STAFF_MODEL_SHIFT + FOCUS_STAFF_LIFT - FOCUS_TOP_PX * PX * FOCUS_STAFF_SCALE_Y;
-            }
-            return -FOCUS_TOP_PX * PX * FOCUS_SCALE;
-        }
+        float tip = WandCapLayout.emittingEndY(staff, arg.sceptre());
         if (staff) {
-            return STAFF_MODEL_SHIFT - WandCapLayout.outerScaleY(true) * PX;
+            tip = Math.min(tip, STAFF_ROD_SHIFT);
         }
-        if (arg.sceptre()) {
-            return -1.3F * PX;
+        if (arg.hasFocus()) {
+            float focusTip = staff
+                    ? FOCUS_STAFF_LIFT - FOCUS_HEIGHT_PX * PX * FOCUS_STAFF_SCALE_Y
+                    : -FOCUS_HEIGHT_PX * PX * FOCUS_SCALE;
+            tip = Math.min(tip, focusTip);
         }
-        return -PX;
+        return (staff ? STAFF_MODEL_SHIFT : 0.0F) + tip;
     }
 
     private static float clientTicks() {

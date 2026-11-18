@@ -2,8 +2,11 @@ package com.leclowndu93150.thaumaturge.api.spell.cast;
 
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -22,6 +25,9 @@ import net.minecraft.world.phys.Vec3;
  */
 public record SpellTarget(HitResult hit, Vec3 position, Vec3 direction) {
     private static final double EYE_OFFSET = 0.1;
+    private static final double WAND_FORWARD_OFFSET = 0.35;
+    private static final double WAND_SIDE_OFFSET = 0.3;
+    private static final double WAND_DROP_OFFSET = 0.45;
 
     /**
      * A target at a hit's location.
@@ -56,6 +62,26 @@ public record SpellTarget(HitResult hit, Vec3 position, Vec3 direction) {
     public static SpellTarget origin(LivingEntity caster) {
         Vec3 eyes = caster.position().add(0.0, caster.getEyeHeight() - EYE_OFFSET, 0.0);
         return new SpellTarget(new EntityHitResult(caster, eyes), eyes, caster.getLookAngle());
+    }
+
+    /**
+     * The approximate world-space tip of a player's held wand, used as the cast origin.
+     *
+     * @param caster the player casting
+     * @param hand the hand holding the wand
+     * @return the wand-tip target
+     */
+    public static SpellTarget wandOrigin(Player caster, InteractionHand hand) {
+        Vec3 look = caster.getLookAngle();
+        Vec3 right = Vec3.directionFromRotation(0.0F, caster.getYRot())
+                .cross(new Vec3(0.0, 1.0, 0.0))
+                .normalize();
+        boolean rightHand = (hand == InteractionHand.MAIN_HAND) == (caster.getMainArm() == HumanoidArm.RIGHT);
+        Vec3 tip = caster.getEyePosition()
+                .add(look.scale(WAND_FORWARD_OFFSET))
+                .add(right.scale(rightHand ? WAND_SIDE_OFFSET : -WAND_SIDE_OFFSET))
+                .add(0.0, -WAND_DROP_OFFSET, 0.0);
+        return new SpellTarget(new EntityHitResult(caster, tip), tip, look);
     }
 
     /**

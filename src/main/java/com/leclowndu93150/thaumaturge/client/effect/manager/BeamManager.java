@@ -56,7 +56,7 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
             return;
         }
         for (BeamInstance existing : BEAMS) {
-            if (existing.sameSourceAs(instance)) {
+            if (existing.sameBeamAs(instance)) {
                 existing.refresh(instance);
                 return;
             }
@@ -117,7 +117,8 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
 
     private static void renderBeam(
             PoseStack poseStack, MultiBufferSource bufSource, BeamInstance beam, Vec3 camPos, float partialTick) {
-        Vec3 source = beam.sourcePos(partialTick);
+        Vec3 wandTip = beam.wandTip();
+        Vec3 source = wandTip == null ? beam.sourcePos(partialTick) : wandTip;
         Vec3 target = beam.targetPos(partialTick);
         float size = beam.computeSize(partialTick);
         float op = beam.computeOpacity(partialTick);
@@ -128,6 +129,11 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
             float rot = beam.worldRotation(partialTick);
             float yaw = beam.yawAt(partialTick);
             float pitch = beam.pitchAt(partialTick);
+            if (wandTip != null) {
+                Vec3 span = source.subtract(target);
+                yaw = (float) Math.toDegrees(Math.atan2(span.x, span.z));
+                pitch = (float) Math.toDegrees(Math.atan2(span.y, span.horizontalDistance()));
+            }
             int color = ARGB32.colorFromFloat(op, beam.colorR(), beam.colorG(), beam.colorB());
 
             poseStack.pushPose();
@@ -283,10 +289,12 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
 
     private static void renderBolt(
             PoseStack poseStack, VertexConsumer consumer, BoltInstance bolt, Vec3 camPos, float partialTick) {
-        List<BoltInstance.PathStep> path = bolt.computePath(partialTick);
+        Vec3 wandTip = bolt.wandTip();
+        Vec3 source = wandTip == null ? bolt.source() : wandTip;
+        List<BoltInstance.PathStep> path = bolt.computePath(partialTick, wandTip);
         if (path.size() < 3) return;
         poseStack.pushPose();
-        poseStack.translate(bolt.startX - camPos.x, bolt.startY - camPos.y, bolt.startZ - camPos.z);
+        poseStack.translate(source.x - camPos.x, source.y - camPos.y, source.z - camPos.z);
         float alpha = bolt.alpha(partialTick);
         if (alpha <= 0.0F) {
             poseStack.popPose();

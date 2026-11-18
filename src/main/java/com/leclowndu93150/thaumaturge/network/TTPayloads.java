@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePa
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundWandSpellFxPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -187,6 +188,12 @@ public final class TTPayloads {
                 ClientboundSpellFxPayload.TYPE,
                 ClientboundSpellFxPayload.STREAM_CODEC,
                 (payload, context) -> SpellFxClientHandler.handle(payload, context));
+        registrar
+                .optional()
+                .playToClient(
+                        ClientboundWandSpellFxPayload.TYPE,
+                        ClientboundWandSpellFxPayload.STREAM_CODEC,
+                        (payload, context) -> SpellFxClientHandler.handle(payload, context));
         registrar.playToServer(
                 ServerboundFocusChangePayload.TYPE,
                 ServerboundFocusChangePayload.STREAM_CODEC,

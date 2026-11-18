@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellProblem;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
-import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
@@ -17,7 +16,6 @@ import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceKey;
@@ -56,7 +54,7 @@ public final class SpellCasting {
             }
             return InteractionResult.FAIL;
         }
-        if (level instanceof ServerLevel && cast(player, wand, focus, spell, summary, 1.0F, 1.0F)) {
+        if (level instanceof ServerLevel && cast(player, hand, wand, focus, spell, summary, 1.0F, 1.0F)) {
             startCooldown(player, wand, summary.cooldown());
             player.swing(hand);
         }
@@ -80,7 +78,7 @@ public final class SpellCasting {
             return;
         }
         float share = summary.pulseInterval() / TICKS_PER_SECOND;
-        if (!cast(player, wand, focus, spell, summary, share * CHANNEL_POWER_BONUS, share)) {
+        if (!cast(player, player.getUsedItemHand(), wand, focus, spell, summary, share * CHANNEL_POWER_BONUS, share)) {
             player.stopUsingItem();
         }
     }
@@ -97,6 +95,7 @@ public final class SpellCasting {
         }
         if (cast(
                 player,
+                player.getUsedItemHand(),
                 wand,
                 focus,
                 spell,
@@ -113,6 +112,7 @@ public final class SpellCasting {
 
     private static boolean cast(
             Player player,
+            InteractionHand hand,
             ItemStack wand,
             ItemStack focus,
             Spell spell,
@@ -140,7 +140,7 @@ public final class SpellCasting {
             }
             return false;
         }
-        SpellEngine.execute(player, focus, spell, List.of(SpellTarget.origin(player)), pre.power());
+        SpellEngine.executeWand(player, hand, focus, spell, pre.power());
         return true;
     }
 

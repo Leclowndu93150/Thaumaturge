@@ -15,7 +15,17 @@ class BeamRefreshTest {
         BeamInstance distant = beam(0.2, 0.0, 0.0, 1, BeamPayloadIds.NO_ENTITY);
 
         assertTrue(first.sameSourceAs(nearby));
+        assertTrue(first.sameBeamAs(nearby));
         assertFalse(first.sameSourceAs(distant));
+    }
+
+    @Test
+    void splitBeamsFromOneSourceKeepSeparateTargets() {
+        BeamInstance left = new BeamInstance(0, 0, 0, -2, 0, 4, 0x80C0FF, 2, 0, 1.0F, false, 17, false);
+        BeamInstance right = new BeamInstance(0, 0, 0, 2, 0, 4, 0x80C0FF, 2, 0, 1.0F, false, 17, false);
+
+        assertTrue(left.sameSourceAs(right));
+        assertFalse(left.sameBeamAs(right));
     }
 
     @Test

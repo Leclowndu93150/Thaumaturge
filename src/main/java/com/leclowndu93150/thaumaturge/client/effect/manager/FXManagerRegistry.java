@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect.manager;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 import net.minecraft.client.Camera;
@@ -33,6 +34,7 @@ public final class FXManagerRegistry {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
+        WandTipTracker.setWorldProjection(event.getProjectionMatrix());
         Camera camera = mc.gameRenderer.getMainCamera();
         PoseStack poseStack = event.getPoseStack();
         float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
