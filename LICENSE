@@ -71,10 +71,34 @@ Subject to section 3, You may:
 
 3. RESTRICTIONS
 
-3.1 You may not Publish the Software or any modified version of it, in source or
-    binary form, without prior written permission from the Author. This includes
-    but is not limited to CurseForge, Modrinth, GitHub Releases on a fork,
-    Discord servers, file hosts, and modpacks.
+3.1 Distribution Restrictions. You may not Publish the Software or any modified
+    version of it, in source or binary form, without prior written permission
+    from the Author, except as expressly permitted below.
+
+    Notwithstanding the above, You may include the Software in modpacks
+    distributed through CurseForge, Modrinth, or other modpack distribution
+    platforms, provided that:
+
+    (a) The Software is obtained from the Canonical Repository or an official
+        distribution page designated by the Author.
+
+    (b) The Software is not separately reuploaded, mirrored, or hosted as an
+        independent download.
+
+    (c) The original project name, authorship credits, and copyright notices
+        are preserved.
+
+    (d) The modpack does not charge specifically for access to the Software or
+        place it behind advertising, link shorteners, or other revenue
+        mechanisms.
+
+    This permission applies to both public and private modpacks and does not
+    require individual written permission from the Author.
+
+    For clarity, this exception does not permit standalone redistribution of
+    the Software, including uploading the Software itself to CurseForge,
+    Modrinth, GitHub Releases on a fork, Discord servers, or file-hosting
+    services.
 
 3.2 You may not sell the Software, charge for access to it, or place it behind
     advertising, link shorteners, or any other revenue mechanism.
