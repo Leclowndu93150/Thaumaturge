@@ -452,7 +452,7 @@ public final class TTModelProvider implements DataProvider {
         handheldItem(TTItems.ELEMENTAL_AXE.get());
         handheldItem(TTItems.ELEMENTAL_SHOVEL.get());
         handheldItem(TTItems.ELEMENTAL_HOE.get());
-        groundedHandheldItem(TTItems.PRIMAL_CRUSHER.get());
+        // Primal Crusher is a manually authored, solid extruded model in main/resources.
         flatItem(TTItems.THAUMOSTATIC_HARNESS.get());
         flatItem(TTItems.TRAVELLER_BOOTS.get());
         registerTrimmableArmor(TTItems.THAUMIUM_HELM.get(), ArmorItem.Type.HELMET);
@@ -828,30 +828,6 @@ public final class TTModelProvider implements DataProvider {
     private void handheldItem(Item item) {
         ModelTemplates.FLAT_HANDHELD_ITEM.create(
                 ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(item), modelOutput);
-    }
-
-    private void groundedHandheldItem(Item item) {
-        JsonObject model = new JsonObject();
-        model.addProperty("parent", "minecraft:item/handheld");
-        JsonObject textures = new JsonObject();
-        textures.addProperty("layer0", ModelLocationUtils.getModelLocation(item).toString());
-        model.add("textures", textures);
-        JsonObject ground = new JsonObject();
-        ground.add("rotation", jsonArray(90, 0, 0));
-        ground.add("translation", jsonArray(0, 2, 0));
-        ground.add("scale", jsonArray(0.5, 0.5, 0.5));
-        JsonObject display = new JsonObject();
-        display.add("ground", ground);
-        model.add("display", display);
-        modelOutput.accept(ModelLocationUtils.getModelLocation(item), () -> model);
-    }
-
-    private static JsonArray jsonArray(double... values) {
-        JsonArray array = new JsonArray();
-        for (double value : values) {
-            array.add(value);
-        }
-        return array;
     }
 
     private record ItemOverride(ResourceLocation predicate, float threshold, ResourceLocation model) {}
