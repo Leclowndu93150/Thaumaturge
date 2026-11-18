@@ -75,6 +75,13 @@ public final class SparkleParticle extends TTParticle {
     }
 
     @Override
+    protected void tickWhileDelayed() {
+        // Sable's sub-level attachment is updated in Particle.move(), even for zero movement.
+        // Without this call, delayed shell sparkles remain at their old world positions.
+        this.move(0.0, 0.0, 0.0);
+    }
+
+    @Override
     protected void update() {
         frame(this.loopStart + this.age % LOOP_FRAMES);
         float t = progress();

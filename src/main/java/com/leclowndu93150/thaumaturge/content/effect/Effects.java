@@ -434,8 +434,10 @@ public final class Effects {
             List<ClientboundParticleBatchPayload.Spawn> particles =
                     new ArrayList<>(Math.min(positions.size() * 16, ClientboundParticleBatchPayload.MAX_PARTICLES));
             int candidates = 0;
+            boolean playedSound = false;
             for (Vec3 pos : positions) {
-                if (sound) {
+                if (sound && !playedSound) {
+                    playedSound = true;
                     level.playSound(
                             null,
                             pos.x,

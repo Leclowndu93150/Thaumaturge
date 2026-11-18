@@ -67,6 +67,8 @@ public abstract class TTParticle extends SingleQuadParticle {
         this.yo = this.y;
         this.zo = this.z;
         if (this.delay > 0) {
+            // Delayed particles remain invisible, but attached effects still need a position update.
+            tickWhileDelayed();
             this.delay--;
             return;
         }
@@ -81,6 +83,9 @@ public abstract class TTParticle extends SingleQuadParticle {
     }
 
     protected abstract void update();
+
+    /** Allows attached particles to follow moving structures without advancing their effect. */
+    protected void tickWhileDelayed() {}
 
     protected float progress() {
         return Mth.clamp((float) this.age / this.lifetime, 0.0F, 1.0F);

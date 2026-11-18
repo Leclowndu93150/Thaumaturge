@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
+import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundParticleBatchPayload;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public final class DustTriggerFx {
 
     public static void emitUseBurst(ServerLevel level, ServerPlayer player, InteractionHand hand, BlockPos pos) {
         RandomSource rand = level.getRandom();
-        Vec3 handPos = posToHand(player, hand);
+        Vec3 handPos = LevelSpaces.frameOf(level, pos).toLocal(posToHand(player, hand));
         Vec3 toBlock = Vec3.atCenterOf(pos).subtract(handPos);
         List<ClientboundParticleBatchPayload.Spawn> particles = new ArrayList<>(BURST_COUNT);
         for (int i = 0; i < BURST_COUNT; i++) {
