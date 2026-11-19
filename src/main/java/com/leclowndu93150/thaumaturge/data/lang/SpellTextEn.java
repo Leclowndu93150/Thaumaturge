@@ -162,6 +162,8 @@ public final class SpellTextEn {
         add.accept(problem + "misplaced_origin", "The caster can only be the root");
         add.accept(problem + "hidden_part", "%s cannot be inscribed");
         add.accept(problem + "repeated", "%s at most %s times");
+        add.accept(problem + "spread_conflict", "Fan and Scatter cannot be combined");
+        add.accept(problem + "spread_needs_delivery", "%s must lead to a directional delivery before any effect");
         add.accept(problem + "part_locked", "%s needs %s");
         add.accept(problem + "too_many_children", "%s holds at most %s");
         add.accept(problem + "empty_branch", "A branch is empty");

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.SpellProblem;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.TTSpellParts;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.api.spell.part.SettingSpec;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
@@ -108,6 +109,17 @@ public final class SpellAnalyzer {
             return;
         }
         SpellPart part = found.get();
+        if (node.part().equals(TTSpellParts.FAN) || node.part().equals(TTSpellParts.SCATTER)) {
+            ResourceKey<SpellPart> other =
+                    node.part().equals(TTSpellParts.FAN) ? TTSpellParts.SCATTER : TTSpellParts.FAN;
+            if (occurrences.containsKey(other)) {
+                problems.add(SpellProblem.at(node, SpellText.problem("spread_conflict"), true));
+            }
+            if (!node.children().stream().allMatch(this::leadsToDelivery)) {
+                problems.add(SpellProblem.at(
+                        node, SpellText.problem("spread_needs_delivery", SpellText.partName(node.part())), true));
+            }
+        }
         if (node.part().equals(Spell.ORIGIN)) {
             problems.add(SpellProblem.at(node, SpellText.problem("misplaced_origin"), true));
         } else if (part.hidden()) {
@@ -165,6 +177,16 @@ public final class SpellAnalyzer {
         for (SpellNode child : node.children()) {
             visit(child);
         }
+    }
+
+    private boolean leadsToDelivery(SpellNode node) {
+        Optional<SpellPart> part = Spells.part(registries, node.part());
+        if (part.isEmpty()) return false;
+        if (part.get().kind() == SpellPartKind.DELIVERY) {
+            return !node.part().equals(TTSpellParts.CLOUD) && !node.part().equals(TTSpellParts.SPRITE);
+        }
+        if (part.get().kind() == SpellPartKind.EFFECT) return false;
+        return node.children().stream().allMatch(this::leadsToDelivery);
     }
 
     private void checkAspect(SpellNode node, SpellPart part) {

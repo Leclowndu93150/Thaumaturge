@@ -48,7 +48,7 @@ public record DamageAction(
         if (waterSensitiveOnly && !(entity instanceof LivingEntity living && living.isSensitiveToWater())) {
             return;
         }
-        float amount = ActionTargets.magnitude(base, perPower, ctx) * (undead ? undeadMultiplier : 1.0F);
+        float amount = damage(ctx) * (undead ? undeadMultiplier : 1.0F);
         if (amount > 0.0F) {
             entity.hurt(
                     ctx.cast()
@@ -57,5 +57,10 @@ public record DamageAction(
                             .source(damageType, ctx.cast().caster()),
                     amount);
         }
+    }
+
+    float damage(ActionContext ctx) {
+        float setting = Math.max(1, ctx.cast().setting("power"));
+        return (base / setting + perPower) * ctx.power();
     }
 }
