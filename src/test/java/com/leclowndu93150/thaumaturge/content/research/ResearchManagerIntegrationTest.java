@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
@@ -12,6 +13,7 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEvent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
+import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
 import com.leclowndu93150.thaumaturge.content.research.link.ResearchLinkData;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.mojang.serialization.Lifecycle;
@@ -108,6 +110,33 @@ final class ResearchManagerIntegrationTest {
         assertEquals(112, knowledge.knowledgePoints(KnowledgeType.OBSERVATION, null));
         assertFalse(knowledge.takeSyncPending());
         verify(player, times(2)).giveExperiencePoints(5);
+    }
+
+    @Test
+    void discoveredAspectSatisfiesItsResearchRequirementWithoutScan() {
+        ResourceLocation id = TTIds.rl("vitium");
+        ResourceLocation requirement = TTIds.rl("scanned/aspect/thaumaturge/vitium");
+        MappedRegistry<IAspect> aspects = new MappedRegistry<>(IAspect.REGISTRY_KEY, Lifecycle.stable());
+        Holder.Reference<IAspect> aspect = Registry.registerForHolder(aspects, id, mock(IAspect.class));
+        ServerPlayer player = mock(ServerPlayer.class);
+        when(player.registryAccess()).thenReturn(new RegistryAccess.ImmutableRegistryAccess(List.of(aspects)));
+        PlayerKnowledge knowledge = new PlayerKnowledge();
+        try (var pools = mockStatic(AspectPoolAccess.class)) {
+            assertFalse(ResearchManager.requirementSatisfied(player, knowledge, requirement));
+            pools.when(() -> AspectPoolAccess.isDiscovered(player, aspect)).thenReturn(true);
+            assertTrue(ResearchManager.requirementSatisfied(player, knowledge, requirement));
+            IResearchStage stage = mock(IResearchStage.class);
+            IResearchEntry entry = mock(IResearchEntry.class);
+            when(stage.requiredResearch()).thenReturn(List.of(requirement));
+            when(stage.requiredKnowledge()).thenReturn(List.of());
+            when(stage.obtain()).thenReturn(List.of());
+            when(stage.craft()).thenReturn(List.of());
+            when(entry.stages()).thenReturn(List.of(stage));
+            assertTrue(ResearchManager.stageRequirementsMet(player, knowledge, entry, CHILD, 0));
+            assertFalse(ResearchManager.requirementSatisfied(
+                    player, knowledge, TTIds.rl("scanned/item/thaumaturge/vitium")));
+            assertFalse(knowledge.hasCompleted(requirement));
+        }
     }
 
     @Test

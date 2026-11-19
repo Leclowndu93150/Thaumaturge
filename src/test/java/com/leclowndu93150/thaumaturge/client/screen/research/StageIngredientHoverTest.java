@@ -91,8 +91,13 @@ class StageIngredientHoverTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void renderedAspectPrerequisiteSupportsLookupWithoutRevealingUnknownAspects() throws ReflectiveOperationException {
         Holder<IAspect> aspect = Holder.direct(mock(IAspect.class));
+        RegistryAccess registries = mock(RegistryAccess.class);
+        HolderLookup.RegistryLookup<IAspect> registry = mock(HolderLookup.RegistryLookup.class);
+        when(minecraft.player.registryAccess()).thenReturn(registries);
+        when(registries.lookupOrThrow(IAspect.REGISTRY_KEY)).thenReturn(registry);
         ResourceLocation prerequisite =
                 ResourceLocation.fromNamespaceAndPath("thaumaturge", "scanned/aspect/thaumaturge/aer");
         ResourceKey<IAspect> aspectKey =

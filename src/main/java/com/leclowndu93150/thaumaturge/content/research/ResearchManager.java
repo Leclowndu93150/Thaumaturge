@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.research;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearch;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
@@ -264,13 +265,29 @@ public final class ResearchManager {
         return entry.parents().stream().allMatch(parent -> parent.isSatisfiedBy(knowledge));
     }
 
+    public static boolean requirementSatisfied(Player player, PlayerResearch knowledge, ResourceLocation required) {
+        if (knowledge.hasCompleted(required)) return true;
+        String prefix = "scanned/aspect/";
+        if (!required.getNamespace().equals(TTIds.MODID) || !required.getPath().startsWith(prefix)) return false;
+        String[] parts = required.getPath().substring(prefix.length()).split("/", 2);
+        if (parts.length != 2) return false;
+        ResourceLocation aspect = ResourceLocation.tryBuild(parts[0], parts[1]);
+        if (aspect == null) return false;
+        return player.registryAccess()
+                .lookupOrThrow(IAspect.REGISTRY_KEY)
+                .get(ResourceKey.create(IAspect.REGISTRY_KEY, aspect))
+                .map(holder -> AspectPoolAccess.isDiscovered(player, holder))
+                .orElse(false);
+    }
+
     public static boolean stageRequirementsMet(
             Player player, PlayerResearch knowledge, IResearchEntry entry, ResourceLocation id, int stageIndex) {
         if (stageIndex < 0 || stageIndex >= entry.stages().size()) {
             return false;
         }
         IResearchStage stage = entry.stages().get(stageIndex);
-        boolean prerequisitesDone = stage.requiredResearch().stream().allMatch(knowledge::hasCompleted);
+        boolean prerequisitesDone = stage.requiredResearch().stream()
+                .allMatch(required -> requirementSatisfied(player, knowledge, required));
         boolean itemsHeld = stage.obtain().stream()
                 .allMatch(requirement -> countMatching(player, requirement) >= requirement.amount());
         boolean craftsDone =

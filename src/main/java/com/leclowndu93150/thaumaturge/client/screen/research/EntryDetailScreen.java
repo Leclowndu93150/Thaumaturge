@@ -1036,7 +1036,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             } else {
                 drawPrereqIcon(graphics, slotX, y, prereq);
             }
-            boolean met = completedStage || knowledge.hasCompleted(prereq);
+            boolean met = completedStage || ResearchManager.requirementSatisfied(minecraft.player, knowledge, prereq);
             satisfied[i] = met;
             if (met) {
                 renderCheckmark(graphics, slotX, y);
@@ -2613,8 +2613,8 @@ public final class EntryDetailScreen extends AbstractTTScreen {
         boolean[] craftSatisfied = new boolean[stage.craft().size()];
         boolean[] knowSatisfied = new boolean[stage.requiredKnowledge().size()];
         for (int i = 0; i < stage.requiredResearch().size(); i++) {
-            researchSatisfied[i] =
-                    knowledge.hasCompleted(stage.requiredResearch().get(i));
+            researchSatisfied[i] = ResearchManager.requirementSatisfied(
+                    player, knowledge, stage.requiredResearch().get(i));
         }
         for (int i = 0; i < stage.obtain().size(); i++) {
             obtainSatisfied[i] = countMatching(player, stage.obtain().get(i))
