@@ -59,6 +59,8 @@ public final class TTSpellParts {
     public static final ResourceKey<SpellPart> CURSE = key("curse");
     /** Effect: victus strike. */
     public static final ResourceKey<SpellPart> HEAL = key("heal");
+    /** Effect: a single-target strike of a chosen aspect. */
+    public static final ResourceKey<SpellPart> ELEMENTAL_STRIKE = key("elemental_strike");
     /** Effect: an explosion of any chosen aspect. */
     public static final ResourceKey<SpellPart> BURST = key("burst");
     /** Effect: the boon of any chosen aspect. */

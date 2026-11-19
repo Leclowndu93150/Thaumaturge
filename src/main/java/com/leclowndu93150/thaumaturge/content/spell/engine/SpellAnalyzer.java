@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
 public final class SpellAnalyzer {
     public static final float VIS_PER_COMPLEXITY = 0.2F;
     private static final float COOLDOWN_BASE = 5.0F;
-    private static final float COOLDOWN_EXPONENT = 1.5F;
+    private static final float COOLDOWN_EXPONENT = 1.3F;
     private static final float COOLDOWN_DIVISOR = 6.0F;
     private static final int CHARGE_BASE = 10;
     private static final int CHARGE_DIVISOR = 2;

@@ -57,7 +57,7 @@ public final class SpellResearchTextEn {
                 "Focus Effect: Elemental Burst",
                 "The elemental effects strike a single target. With a little more vis it should be possible to release the same energy outward instead.",
                 "The Elemental Burst effect detonates the chosen aspect in a sphere around the point of impact. Its strength falls off toward the edge of the blast.<BR>"
-                        + "It accepts any aspect I have learned to weave into a spell. Each one bursts in its own way.");
+                        + "It accepts any aspect I have learned to weave into a spell. Each one bursts in its own way. Elemental Strike channels the same aspects into a single target.");
         entry(
                 add,
                 "focus_imbue",

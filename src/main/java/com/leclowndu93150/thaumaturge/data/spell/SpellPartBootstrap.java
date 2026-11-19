@@ -280,12 +280,12 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.FLUX);
         PartBuilder.of(new AspectStrikeEffect(2.0F))
                 .glyph("curse")
-                .complexity(3)
+                .complexity(4)
                 .aspect(TTAspects.MORTUUS)
                 .research("focus_curse")
                 .fx("curse")
                 .setting("power", 1, 5, 1, 1, 3.0F)
-                .setting("duration", 1, 10, 1, 3, 1.0F)
+                .setting("duration", 1, 10, 1, 3, 2.0F)
                 .register(ctx, TTSpellParts.CURSE);
         PartBuilder.of(new AspectStrikeEffect(2.0F))
                 .glyph("heal")
@@ -298,6 +298,14 @@ public final class SpellPartBootstrap {
     }
 
     private static void effects(BootstrapContext<SpellPart> ctx) {
+        PartBuilder.of(new AspectStrikeEffect(2.0F))
+                .glyph("burst")
+                .complexity(4)
+                .chooses(AffinityReaction.STRIKE, TTAspects.IGNIS)
+                .research("focus_burst")
+                .setting("power", 1, 5, 1, 1, 2.0F)
+                .setting("duration", 1, 10, 1, 2, 1.0F)
+                .register(ctx, TTSpellParts.ELEMENTAL_STRIKE);
         PartBuilder.of(new AspectBurstEffect(2.0F, 0.75F))
                 .glyph("burst")
                 .complexity(6)
@@ -308,10 +316,10 @@ public final class SpellPartBootstrap {
                 .register(ctx, TTSpellParts.BURST);
         PartBuilder.of(new ImbueEffect(3.0F))
                 .glyph("imbue")
-                .complexity(4)
+                .complexity(3)
                 .chooses(AffinityReaction.IMBUE, TTAspects.VICTUS)
                 .research("focus_imbue")
-                .setting("potency", 1, 3, 1, 1, 3.0F)
+                .setting("potency", 1, 3, 1, 1, 2.0F)
                 .setting("duration", 1, 10, 1, 3, 1.0F)
                 .register(ctx, TTSpellParts.IMBUE);
         PartBuilder.of(new BreakEffect(0.25F, 0.25F, 0.1F))
@@ -441,9 +449,10 @@ public final class SpellPartBootstrap {
                 .glyph("quicken")
                 .color(MODIFIER)
                 .complexity(2)
-                .cooldownMultiplier(0.8F)
+                .cooldownMultiplier(0.5F)
                 .aspect(TTAspects.MOTUS)
                 .research("focus_amplify")
+                .max(1)
                 .register(ctx, TTSpellParts.QUICKEN);
         PartBuilder.of(new StatModifier(
                         List.of(change(SpellStats.POWER, StatChange.Operation.MULTIPLY, 0.85F, 0.0F, false))))

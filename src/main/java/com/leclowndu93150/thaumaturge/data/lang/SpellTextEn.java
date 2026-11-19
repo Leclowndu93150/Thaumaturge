@@ -47,6 +47,7 @@ public final class SpellTextEn {
         part(add, "flux", "Flux", "Vitium. Corrupting energy. Leaves taint in the air.");
         part(add, "curse", "Curse", "Mortuus. Poisons and weakens. Saps the life from the ground.");
         part(add, "heal", "Heal", "Victus. Mends living creatures and sears the undead.");
+        part(add, "elemental_strike", "Elemental Strike", "Channels a chosen aspect into a single target.");
         part(add, "burst", "Elemental Burst", "Releases the chosen aspect in an explosion around the target.");
         part(add, "imbue", "Imbue", "Grants the boon of the chosen aspect to the target.");
         part(add, "break", "Break", "Disruptive energy that breaks down most materials.");

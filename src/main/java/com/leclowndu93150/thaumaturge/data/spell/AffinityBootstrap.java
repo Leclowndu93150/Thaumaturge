@@ -259,7 +259,7 @@ public final class AffinityBootstrap {
 
     private static List<SpellAction> curse() {
         return List.of(
-                new DamageAction(DamageTypes.INDIRECT_MAGIC, 1.0F, 1.0F, 1.0F, false),
+                new DamageAction(DamageTypes.INDIRECT_MAGIC, 0.5F, 0.5F, 1.0F, false),
                 new MobEffectAction(MobEffects.POISON, 0.0F, SECOND, 0.0F, 0.5F, 3, 1.0F),
                 new MobEffectAction(MobEffects.MOVEMENT_SLOWDOWN, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.85F),
                 new MobEffectAction(MobEffects.WEAKNESS, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.7F),
