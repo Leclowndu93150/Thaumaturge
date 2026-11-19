@@ -12,7 +12,7 @@ import net.minecraft.util.Mth;
  * One integer knob on a part, shown as a spinner in the focal manipulator.
  *
  * <p>The values run from {@link #min()} to {@link #max()} in increments of {@link #step()}. Every
- * step above the minimum adds {@link #complexity()} complexity and {@link #vis()} vis per cast.
+ * step above the minimum changes complexity by {@link #complexity()} and vis per cast by {@link #vis()}.
  * With {@link #labels()} present the spinner cycles named options instead of numbers.
  *
  * @param key          the setting id, unique within the part
