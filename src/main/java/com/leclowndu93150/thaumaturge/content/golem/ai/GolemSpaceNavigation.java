@@ -82,8 +82,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
         if (path instanceof SpacePath current
                 && !current.isDone()
                 && current.getTarget().equals(target)
-                && routeAge < REPATH_TICKS
-                && valid(current)) {
+                && (routeAge < REPATH_TICKS || !flying && !mob.onGround())
+                && valid(current, flying || mob.onGround())) {
             return current;
         }
         return findPath(target, worldTarget, accuracy, followRange);
@@ -167,10 +167,6 @@ public final class GolemSpaceNavigation extends PathNavigation {
         super.stop();
         nativeNavigation.stop();
         mob.getMoveControl().setWantedPosition(mob.getX(), mob.getY(), mob.getZ(), 0.0);
-    }
-
-    private boolean valid(SpacePath route) {
-        return valid(route, true);
     }
 
     private boolean valid(SpacePath route, boolean checkCollision) {

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.golem.ai;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -26,10 +27,32 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 class GolemSpaceNavigationTest {
+    @Test
+    void ordinaryWorldUsesNativeNavigationWithoutSublevelSearch() {
+        Level level = mock(Level.class);
+        Mob mob = mock(Mob.class);
+        PathNavigation nativeNavigation = mock(PathNavigation.class);
+        Path nativePath = mock(Path.class);
+        BlockPos target = new BlockPos(5, 1, 0);
+        when(mob.position()).thenReturn(new Vec3(0.5, 1, 0.5));
+        when(nativeNavigation.createPath(target, 1)).thenReturn(nativePath);
+        try (var spaces = mockStatic(LevelSpaces.class);
+                var geometry = mockStatic(GolemPathGeometry.class)) {
+            spaces.when(() -> LevelSpaces.trackedFrame(mob)).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.frameOf(eq(level), eq(target))).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(eq(level), eq(target))).thenReturn(Vec3.atCenterOf(target));
+            spaces.when(() -> LevelSpaces.framesTouching(eq(level), any())).thenReturn(List.of(WorldFrame.INSTANCE));
+            var navigation = new GolemSpaceNavigation(mob, level, nativeNavigation, false);
+            assertSame(nativePath, navigation.createPath(Set.of(target), 0, false, 1, 16));
+            geometry.verifyNoInteractions();
+        }
+    }
+
     @Test
     void findsRouteUpRealFullBlockStairs() {
         Level level = mock(Level.class);
@@ -77,6 +100,46 @@ class GolemSpaceNavigationTest {
     @Test
     void anUnsupportedGapHasNoRoute() {
         runScenario(false, true);
+    }
+
+    @Test
+    void keepsAnExistingRouteWhenRepathingDuringAJump() {
+        Level level = mock(Level.class);
+        Mob mob = mock(Mob.class);
+        PathNavigation nativeNavigation = mock(PathNavigation.class);
+        var airborne = new java.util.concurrent.atomic.AtomicBoolean();
+        when(mob.position()).thenReturn(new Vec3(0.5, 1, 0.5));
+        when(mob.getBbWidth()).thenReturn(0.4F);
+        when(mob.getBbHeight()).thenReturn(0.9F);
+        when(mob.maxUpStep()).thenReturn(0.6F);
+        when(mob.getMaxFallDistance()).thenReturn(3);
+        when(mob.getMoveControl()).thenReturn(mock(MoveControl.class));
+        try (var spaces = mockStatic(LevelSpaces.class);
+                var geometry = mockStatic(GolemPathGeometry.class)) {
+            spaces.when(() -> LevelSpaces.trackedFrame(mob)).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.frameOf(eq(level), any(BlockPos.class)))
+                    .thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> Vec3.atCenterOf(call.getArgument(1)));
+            spaces.when(() -> LevelSpaces.framesTouching(eq(level), any()))
+                    .thenReturn(List.of(WorldFrame.INSTANCE, mock(SpaceFrame.class)));
+            geometry.when(() -> GolemPathGeometry.clear(eq(level), eq(mob), any()))
+                    .thenReturn(true);
+            geometry.when(() -> GolemPathGeometry.surface(
+                            eq(level), eq(mob), anyDouble(), anyDouble(), anyDouble(), anyDouble()))
+                    .thenAnswer(call -> airborne.get()
+                            ? null
+                            : new GolemPathGeometry.Surface(
+                                    WorldFrame.INSTANCE, new Vec3(call.getArgument(2), 1, call.getArgument(3))));
+            var navigation = new GolemSpaceNavigation(mob, level, nativeNavigation, false);
+            var target = new BlockPos(3, 1, 0);
+            var route = navigation.createPath(Set.of(target), 0, false, 1, 16);
+            assertNotNull(route);
+            assertTrue(navigation.moveTo(route, 1));
+            airborne.set(true);
+            for (int tick = 0; tick < 11; tick++) navigation.tick();
+            assertSame(route, navigation.createPath(Set.of(target), 0, false, 1, 16));
+        }
     }
 
     @Test
