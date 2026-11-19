@@ -896,6 +896,7 @@ public final class TTEnglishProvider extends LanguageProvider {
                 "gui.thaumaturge.altar.ritual_unknown",
                 "The keystone hums with power, but its purpose escapes you... for now.");
         add("gui.thaumaturge.labyrinth.unavailable", "The way beyond is sealed. Nothing answers from the other side.");
+        add("gui.thaumaturge.labyrinth.disabled", "The labyrinth is disabled in the server configuration.");
         add("gui.thaumaturge.labyrinth.closed", "The way beyond has closed.");
         add(
                 "gui.thaumaturge.labyrinth.lock.peaceful",

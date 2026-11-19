@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "thaumaturge:biome_generation",
+      "biome": "magical_forest"
+    }
+  ],
   "type": "lithostitched:replace_partially",
   "dimension": "minecraft:overworld",
   "targets": [

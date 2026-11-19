@@ -6,6 +6,9 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue WUSS_MODE;
+    public static final ModConfigSpec.BooleanValue GENERATE_MAGICAL_FOREST;
+    public static final ModConfigSpec.BooleanValue GENERATE_MAGICAL_FOREST_CAVES;
+    public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
     public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
     public static final ModConfigSpec.IntValue TAINT_FEED_RADIUS;
@@ -61,6 +64,15 @@ public final class ThaumaturgeCommonConfig {
 
         WUSS_MODE = builder.comment("Setting this to true disables Warp, Taint spread and similar mechanics. You wuss.")
                 .define("wussMode", false);
+        GENERATE_MAGICAL_FOREST = builder.comment(
+                        "Generate Magical Forest biomes. Takes effect when world data is loaded; existing chunks are unchanged.")
+                .define("generateMagicalForest", true);
+        GENERATE_MAGICAL_FOREST_CAVES = builder.comment(
+                        "Generate Magical Forest Caves biomes. Takes effect when world data is loaded; existing chunks are unchanged.")
+                .define("generateMagicalForestCaves", true);
+        GENERATE_TAINTED_LANDS = builder.comment(
+                        "Generate natural Tainted Lands biomes. Does not disable taint spread. Takes effect when world data is loaded; existing chunks are unchanged.")
+                .define("generateTaintedLands", true);
         TAINT_SPREAD_RATE = builder.comment(
                         "The % chance of taint fibres spreading on a block tick. Setting this to 0 will effectively stop taint fibre spread.")
                 .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);

@@ -50,7 +50,7 @@ final class AltarRituals {
             TTActionBar.sendPurple(player, "gui.thaumaturge.altar.already_open");
             return;
         }
-        if (LabyrinthService.atCapacity(level.getServer())) {
+        if (ThaumaturgeServerConfig.LABYRINTH.enabled.get() && LabyrinthService.atCapacity(level.getServer())) {
             TTActionBar.sendPurple(player, "gui.thaumaturge.altar.labyrinth_full");
             return;
         }
@@ -94,6 +94,22 @@ final class AltarRituals {
 
     private static void complete(ServerLevel level, BlockEntityEldritchAltar altar, ServerPlayer caster) {
         BlockPos pos = altar.getBlockPos();
+        if (!ThaumaturgeServerConfig.LABYRINTH.enabled.get()) {
+            altar.setRitual(Optional.empty());
+            altar.setEyes(0);
+            altar.link().ifPresent(previous -> LabyrinthService.unlink(level.getServer(), previous));
+            altar.setLink(Optional.empty());
+            EldritchPlacement.place(
+                            level,
+                            pos.above(),
+                            TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(),
+                            TTBlockEntities.ELDRITCH_PORTAL.get())
+                    .ifPresent(portal -> portal.clearLink());
+            altar.setGarrison(altar.garrison().quell());
+            level.playSound(null, pos, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            TTActionBar.sendPurple(caster, "gui.thaumaturge.altar.ritual_complete");
+            return;
+        }
         Optional<ResourceKey<LabyrinthDefinition>> definition = AltarSite.definition(level, altar)
                 .flatMap(site -> site.labyrinths().getRandomValue(level.getRandom()));
         Optional<MazeRecord> record = LabyrinthService.open(

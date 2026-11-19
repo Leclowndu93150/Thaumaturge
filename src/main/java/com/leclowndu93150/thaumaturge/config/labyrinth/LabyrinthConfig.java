@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class LabyrinthConfig {
+    public final ModConfigSpec.BooleanValue enabled;
     public final ModConfigSpec.DoubleValue sizeScale;
     public final ModConfigSpec.DoubleValue loopScale;
     public final ModConfigSpec.DoubleValue decorationDensity;
@@ -75,6 +76,9 @@ public final class LabyrinthConfig {
     public LabyrinthConfig(ModConfigSpec.Builder builder) {
         builder.push("labyrinth");
 
+        enabled = builder.comment(
+                        "Allow entry to and generation of new labyrinths. Existing occupants can still leave.")
+                .define("enabled", true);
         builder.push("generation");
         sizeScale = builder.comment(
                         "Multiplier on the maze size rolled from the labyrinth definition. The result is clamped to 9..41 cells and kept odd.")

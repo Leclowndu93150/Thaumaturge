@@ -67,6 +67,11 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         setChanged();
     }
 
+    public void clearLink() {
+        this.link = Optional.empty();
+        setChanged();
+    }
+
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);

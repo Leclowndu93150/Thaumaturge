@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "thaumaturge:biome_generation",
+      "biome": "tainted_lands"
+    }
+  ],
   "dimension": "minecraft:overworld",
   "biomes": [
     "minecraft:forest",

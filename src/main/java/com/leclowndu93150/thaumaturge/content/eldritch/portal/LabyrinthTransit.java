@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthLandmarks;
 import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
+import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
@@ -18,12 +19,14 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
@@ -36,8 +39,18 @@ public final class LabyrinthTransit {
     private LabyrinthTransit() {}
 
     public static boolean touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link) {
+        return touch(level, player, link, ThaumaturgeServerConfig.LABYRINTH.enabled.get());
+    }
+
+    static boolean touch(ServerLevel level, ServerPlayer player, Optional<PortalLink> link, boolean enabled) {
         TransitState state = player.getData(TTAttachments.LABYRINTH_TRANSIT);
         long now = level.getGameTime();
+        if (entryDisabled(enabled, link, level.dimension())) {
+            release(level.getServer(), state);
+            if (state.noticeDue(now, NOTICE_INTERVAL))
+                TTActionBar.sendPurple(player, "gui.thaumaturge.labyrinth.disabled");
+            return false;
+        }
         if (now < state.cooldownUntil()) {
             return false;
         }
@@ -64,6 +77,12 @@ public final class LabyrinthTransit {
                     new TransitState.Pending(link.get(), destination.dimension(), chunk, radius, loaded, now)));
         }
         return true;
+    }
+
+    static boolean entryDisabled(boolean enabled, Optional<PortalLink> link, ResourceKey<Level> dimension) {
+        return !enabled
+                && link.map(value -> value.kind() == PortalLink.Kind.TO_LABYRINTH)
+                        .orElse(!dimension.equals(OuterLands.DIMENSION));
     }
 
     private static CompletableFuture<Void> preload(ServerLevel level, ChunkPos center, int radius) {
@@ -105,6 +124,10 @@ public final class LabyrinthTransit {
             return Optional.empty();
         }
         PortalLink link = pending.get().link();
+        if (!ThaumaturgeServerConfig.LABYRINTH.enabled.get() && link.kind() == PortalLink.Kind.TO_LABYRINTH) {
+            release(level.getServer(), player.getData(TTAttachments.LABYRINTH_TRANSIT));
+            return Optional.empty();
+        }
         Optional<Target> target = resolve(level.getServer(), link, true);
         if (target.isEmpty()) {
             return Optional.empty();

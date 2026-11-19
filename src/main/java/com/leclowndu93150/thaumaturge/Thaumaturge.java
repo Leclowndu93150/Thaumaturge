@@ -24,6 +24,7 @@ import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.compat.sable.SableLevelSpaces;
+import com.leclowndu93150.thaumaturge.config.BiomeGenerationCondition;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -74,6 +75,7 @@ public final class Thaumaturge {
     public Thaumaturge(IEventBus modBus, ModContainer container) {
         NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
         NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
+        BiomeGenerationCondition.register(modBus);
         TTFluidTypes.register(modBus);
         TTFluids.register(modBus);
         TTBlocks.register(modBus);
