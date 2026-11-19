@@ -772,7 +772,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
             Holder<IAspect> palette = paletteAspectAt(mx, my);
             if (palette != null) {
                 if (Minecraft.getInstance().player != null)
-                    if (Minecraft.getInstance().player.isShiftKeyDown()
+                    if (hasShiftDown()
                             && !palette.value().isPrimal()
                             && PlayerResearchAccess.of(minecraft.player)
                                     .hasCompleted(BlockEntityResearchTable.RESEARCH_MASTERY)) {
