@@ -135,6 +135,17 @@ public final class CollectBehavior implements ISealBehavior {
             task.end();
             return false;
         }
-        return golem.hands().canTake(item.getItem(), true);
+        boolean canTake = golem.hands().canTake(item.getItem(), true);
+        if (!canTake && Thaumaturge.LOGGER.isDebugEnabled()) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} collect rejected=hands_full item={} stack={} hands={}",
+                    golem.level().getGameTime(),
+                    golem.asEntity().getUUID(),
+                    task.id(),
+                    item.getUUID(),
+                    item.getItem(),
+                    golem.hands().contents());
+        }
+        return canTake;
     }
 }

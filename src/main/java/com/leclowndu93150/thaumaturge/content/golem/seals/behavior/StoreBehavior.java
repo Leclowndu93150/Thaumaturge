@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals.behavior;
 
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.GolemDispatch;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
@@ -49,6 +50,8 @@ public final class StoreBehavior implements ISealBehavior {
         task.setPriority(seal.priority());
         GolemDispatch.postTask(level, task);
         pendingTask = task.id();
+        Thaumaturge.LOGGER.debug(
+                "[golem-task] tick={} posted store task={} seal={}", level.getGameTime(), task.id(), seal.pos());
     }
 
     @Override
@@ -132,22 +135,81 @@ public final class StoreBehavior implements ISealBehavior {
         ItemMatch matching = ItemMatchSettings.of(seal);
         InvHelper.FilterMatch carried = carriedMatch(seal, golem, matching);
         if (carried.stack().isEmpty()) {
+            if (Thaumaturge.LOGGER.isDebugEnabled()) {
+                ISealFilter filter = seal.filter().orElseThrow();
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} task={} store seal={} rejected=no_matching_carried_item hands={} filter={} blacklist={} limits={} match={}",
+                        golem.level().getGameTime(),
+                        golem.asEntity().getUUID(),
+                        task.id(),
+                        seal.pos(),
+                        golem.hands().contents(),
+                        filter.stacks(),
+                        filter.isBlacklist(),
+                        filter.limits(),
+                        matching);
+            }
             return false;
         }
         SealPos at = seal.pos();
         Level level = golem.level();
         IItemHandler inventory = InvHelper.handlerAt(level, at.pos(), at.face());
         if (inventory == null) {
-            return !limited(seal, carried)
-                    || InvHelper.countDropped(level, at.pos(), carried.stack(), NEARBY_RANGE, matching)
-                            < carried.sizeLimit();
+            if (!limited(seal, carried)) return true;
+            int present = InvHelper.countDropped(level, at.pos(), carried.stack(), NEARBY_RANGE, matching);
+            if (present >= carried.sizeLimit()) {
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} task={} store seal={} rejected=dropped_limit item={} present={} limit={}",
+                        level.getGameTime(),
+                        golem.asEntity().getUUID(),
+                        task.id(),
+                        at,
+                        carried.stack(),
+                        present,
+                        carried.sizeLimit());
+                return false;
+            }
+            return true;
         }
         if (seal.setting(ONLY_EXISTING) && InvHelper.count(inventory, carried.stack(), matching) <= 0) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} store seal={} rejected=only_existing item={}",
+                    level.getGameTime(),
+                    golem.asEntity().getUUID(),
+                    task.id(),
+                    at,
+                    carried.stack());
             return false;
         }
         if (!InvHelper.acceptsAny(level, at.pos(), at.face(), carried.stack())) {
+            if (Thaumaturge.LOGGER.isDebugEnabled()) {
+                java.util.List<ItemStack> slots = new java.util.ArrayList<>();
+                for (int i = 0; i < inventory.getSlots(); i++) slots.add(inventory.getStackInSlot(i));
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} task={} store seal={} rejected=inventory_refused item={} slots={}",
+                        level.getGameTime(),
+                        golem.asEntity().getUUID(),
+                        task.id(),
+                        at,
+                        carried.stack(),
+                        slots);
+            }
             return false;
         }
-        return !limited(seal, carried) || InvHelper.count(inventory, carried.stack(), matching) < carried.sizeLimit();
+        if (!limited(seal, carried)) return true;
+        int present = InvHelper.count(inventory, carried.stack(), matching);
+        if (present >= carried.sizeLimit()) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} store seal={} rejected=inventory_limit item={} present={} limit={}",
+                    level.getGameTime(),
+                    golem.asEntity().getUUID(),
+                    task.id(),
+                    at,
+                    carried.stack(),
+                    present,
+                    carried.sizeLimit());
+            return false;
+        }
+        return true;
     }
 }
