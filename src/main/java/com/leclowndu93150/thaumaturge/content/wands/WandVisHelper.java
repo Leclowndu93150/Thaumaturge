@@ -54,20 +54,34 @@ public final class WandVisHelper {
     }
 
     public static int addVis(ItemStack stack, ResourceKey<IAspect> aspect, int vis, boolean doit) {
-        return addRealVis(stack, aspect, vis * WandEconomy.CENTIVIS_PER_VIS, doit) / WandEconomy.CENTIVIS_PER_VIS;
+        // Keep whole-vis transfers atomic: a half-vis gap cannot accept one whole vis.
+        long offered = (long) vis * WandEconomy.CENTIVIS_PER_VIS;
+        return (int) (addCentivis(stack, aspect, offered, WandEconomy.CENTIVIS_PER_VIS, doit)
+                / WandEconomy.CENTIVIS_PER_VIS);
     }
 
     public static int addRealVis(ItemStack stack, ResourceKey<IAspect> aspect, int centivis, boolean doit) {
+        return (int) addCentivis(stack, aspect, centivis, 1, doit);
+    }
+
+    private static long addCentivis(
+            ItemStack stack, ResourceKey<IAspect> aspect, long offered, int step, boolean doit) {
         if (!TTAspects.PRIMALS.contains(aspect)) {
-            return 0;
+            return 0L;
         }
-        int stored = getVis(stack, aspect) + centivis;
-        int max = getMaxVis(stack);
-        int leftover = Math.max(stored - max, 0);
-        if (doit) {
-            storeVis(stack, aspect, Math.min(stored, max));
+        int stored = getVis(stack, aspect);
+        if (offered < 0L) {
+            // Preserve the historical negative-add (drain) behavior without wrapping below zero.
+            if (doit) {
+                storeVis(stack, aspect, WandVisNumbers.clampToStorage((long) stored + offered));
+            }
+            return 0L;
         }
-        return leftover;
+        long accepted = WandVisNumbers.accepted(stored, getMaxVis(stack), offered, step);
+        if (doit && accepted > 0L) {
+            storeVis(stack, aspect, (int) (stored + accepted));
+        }
+        return offered - accepted;
     }
 
     public static float getConsumptionModifier(
@@ -85,18 +99,18 @@ public final class WandVisHelper {
 
     public static boolean drainOne(
             ItemStack stack, @Nullable Player player, ResourceKey<IAspect> aspect, int centivis, boolean crafting) {
-        int owed = scaledCost(stack, player, aspect, centivis, crafting);
+        long owed = scaledCost(stack, player, aspect, centivis, crafting);
         int available = getVis(stack, aspect);
         boolean affordable = available >= owed;
         if (affordable) {
-            storeVis(stack, aspect, available - owed);
+            storeVis(stack, aspect, WandVisNumbers.clampToStorage((long) available - owed));
         }
         return affordable;
     }
 
-    private static int scaledCost(
+    private static long scaledCost(
             ItemStack stack, @Nullable Player player, ResourceKey<IAspect> aspect, int base, boolean crafting) {
-        return (int) (base * getConsumptionModifier(stack, player, aspect, crafting));
+        return WandVisNumbers.scaledCost(base, getConsumptionModifier(stack, player, aspect, crafting));
     }
 
     public static boolean payCosts(
@@ -112,12 +126,12 @@ public final class WandVisHelper {
         WandVis after = before;
         for (Map.Entry<ResourceKey<IAspect>, Integer> entry : centivisCosts.entrySet()) {
             ResourceKey<IAspect> aspect = entry.getKey();
-            int owed = scaledCost(stack, player, aspect, entry.getValue(), crafting);
+            long owed = scaledCost(stack, player, aspect, entry.getValue(), crafting);
             int held = before.amount(aspect);
             if (held < owed) {
                 return false;
             }
-            after = after.with(aspect, after.amount(aspect) - owed);
+            after = after.with(aspect, WandVisNumbers.clampToStorage((long) after.amount(aspect) - owed));
         }
         if (doit) {
             setAllVis(stack, after);
@@ -137,7 +151,7 @@ public final class WandVisHelper {
             if (before.amount(aspect) < entry.getValue()) {
                 return false;
             }
-            after = after.with(aspect, after.amount(aspect) - entry.getValue());
+            after = after.with(aspect, WandVisNumbers.clampToStorage((long) after.amount(aspect) - entry.getValue()));
         }
         if (!simulate) {
             setAllVis(stack, after);
@@ -214,7 +228,11 @@ public final class WandVisHelper {
                         .get(aspect)
                         .map(holder -> AspectList.EMPTY.add(holder, 1))
                         .orElse(AspectList.EMPTY);
-        Map<ResourceKey<IAspect>, Integer> split = primalSplit(Math.round(vis * WandEconomy.CENTIVIS_PER_VIS), aspects);
+        double centivis = (double) vis * WandEconomy.CENTIVIS_PER_VIS;
+        if (!Double.isFinite(centivis) || centivis > Integer.MAX_VALUE) {
+            return false;
+        }
+        Map<ResourceKey<IAspect>, Integer> split = primalSplit((int) Math.round(centivis), aspects);
         for (int slot = 0; slot < HOTBAR_SIZE; slot++) {
             ItemStack stack = player.getInventory().getItem(slot);
             if (stack.getItem() instanceof ItemWand && payCosts(stack, player, split, doit, false)) {

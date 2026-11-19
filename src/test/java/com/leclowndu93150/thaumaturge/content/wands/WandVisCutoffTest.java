@@ -53,9 +53,13 @@ class WandVisCutoffTest {
     }
 
     private static ItemStack customWand(Storage storage) {
+        return customWand(storage, 50, false);
+    }
+
+    private static ItemStack customWand(Storage storage, int capacity, boolean sceptre) {
         WandCap cap = new WandCap(0.5F, Map.of(), 1, TTIds.rl("test_cap"));
-        WandRod rod = new WandRod(50, 1, TTIds.rl("test_rod"), null, false, false, false, null, storage);
-        ItemStack stack = ItemWand.create(TTItems.WAND.get(), cap, rod, false);
+        WandRod rod = new WandRod(capacity, 1, TTIds.rl("test_rod"), null, false, false, false, null, storage);
+        ItemStack stack = ItemWand.create(TTItems.WAND.get(), cap, rod, sceptre);
         stack.set(TTDataComponents.WAND_VIS.get(), WandVis.EMPTY);
         return stack;
     }
@@ -142,6 +146,75 @@ class WandVisCutoffTest {
         assertTrue(WandVisHelper.drainOne(stack, null, TTAspects.AER, -7, true));
         assertEquals(103, storage.charge.amount(TTAspects.AER));
         assertEquals(1, storage.writes.size());
+    }
+
+    @Test
+    void fillingAnExtremelyLargeSceptrePreservesItsExactCapacity() {
+        Storage storage = new Storage(WandVis.EMPTY);
+        ItemStack stack = customWand(storage, 9_999_999, true);
+        assertEquals(1_499_999_850, WandVisHelper.getMaxVis(stack));
+        WandVisHelper.fill(stack);
+        TTAspects.PRIMALS.forEach(aspect -> assertEquals(1_499_999_850, storage.charge.amount(aspect)));
+    }
+
+    @Test
+    void chargingAtIntegerLimitCannotWrapOrEraseExistingVis() {
+        Storage storage = new Storage(WandVis.EMPTY.with(TTAspects.AER, Integer.MAX_VALUE - 10));
+        ItemStack stack = customWand(storage, Integer.MAX_VALUE, true);
+        assertEquals(Integer.MAX_VALUE, WandVisHelper.getMaxVis(stack));
+        assertEquals(15, WandVisHelper.addRealVis(stack, TTAspects.AER, 25, true));
+        assertEquals(Integer.MAX_VALUE, storage.charge.amount(TTAspects.AER));
+        assertEquals(Integer.MAX_VALUE, WandVisHelper.addRealVis(stack, TTAspects.AER, Integer.MAX_VALUE, true));
+        assertEquals(Integer.MAX_VALUE, storage.charge.amount(TTAspects.AER));
+    }
+
+    @Test
+    void wholeVisTransfersDoNotRoundAwayTheHalfVisLeftInALargeSceptre() {
+        Storage storage = new Storage(WandVis.EMPTY.with(TTAspects.AER, 1_499_999_800));
+        ItemStack stack = customWand(storage, 9_999_999, true);
+        assertEquals(1, WandVisHelper.addVis(stack, TTAspects.AER, 1, true));
+        assertEquals(1_499_999_800, storage.charge.amount(TTAspects.AER));
+        assertEquals(50, WandVisHelper.addRealVis(stack, TTAspects.AER, 100, true));
+        assertEquals(1_499_999_850, storage.charge.amount(TTAspects.AER));
+    }
+
+    @Test
+    void hugeWholeVisOffersReturnTheRealLeftoverWithoutIntMultiplicationOverflow() {
+        Storage storage = new Storage(WandVis.EMPTY);
+        ItemStack stack = customWand(storage);
+        assertEquals(Integer.MAX_VALUE - 50, WandVisHelper.addVis(stack, TTAspects.AER, Integer.MAX_VALUE, true));
+        assertEquals(5_000, storage.charge.amount(TTAspects.AER));
+    }
+
+    @Test
+    void negativeCostCreditsClampInsteadOfWrappingStoredVis() {
+        Storage storage = new Storage(WandVis.EMPTY.with(TTAspects.AER, Integer.MAX_VALUE - 1));
+        ItemStack stack = customWand(storage);
+        assertTrue(WandVisHelper.payExact(stack, Map.of(TTAspects.AER, -100), false));
+        assertEquals(Integer.MAX_VALUE, storage.charge.amount(TTAspects.AER));
+        assertTrue(WandVisHelper.payCosts(stack, null, Map.of(TTAspects.AER, -100), true, false));
+        assertEquals(Integer.MAX_VALUE, storage.charge.amount(TTAspects.AER));
+    }
+
+    @Test
+    void scaledCostsBeyondIntegerMaximumRemainUnaffordableEvenWithFullStorage() {
+        Storage storage = new Storage(WandVis.EMPTY.with(TTAspects.AER, Integer.MAX_VALUE));
+        WandCap cap = new WandCap(2.0F, Map.of(), 1, TTIds.rl("test_expensive_cap"));
+        WandRod rod = new WandRod(
+                Integer.MAX_VALUE, 1, TTIds.rl("test_expensive_rod"), null, false, false, false, null, storage);
+        ItemStack stack = ItemWand.create(TTItems.WAND.get(), cap, rod, false);
+        assertFalse(WandVisHelper.payCosts(stack, null, Map.of(TTAspects.AER, Integer.MAX_VALUE), true, false));
+        assertEquals(Integer.MAX_VALUE, storage.charge.amount(TTAspects.AER));
+        assertTrue(storage.writes.isEmpty());
+    }
+
+    @Test
+    void unrepresentablyLargeDrawsFailInsteadOfSilentlyUndercharging() {
+        Storage storage = new Storage(funded());
+        ItemStack stack = customWand(storage);
+        assertFalse(((ItemWand) stack.getItem()).drawVis(stack, null, Float.MAX_VALUE, false, false));
+        assertEquals(0, storage.reads);
+        assertTrue(storage.writes.isEmpty());
     }
 
     @Test

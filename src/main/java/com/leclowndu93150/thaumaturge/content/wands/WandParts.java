@@ -38,7 +38,8 @@ public record WandParts(WandCap cap, WandRod rod, boolean sceptre) {
     }
 
     public int maxCentivis() {
-        return rod.capacity() * (sceptre ? WandEconomy.SCEPTRE_CAPACITY_PER_VIS : WandEconomy.CENTIVIS_PER_VIS);
+        return WandVisNumbers.capacity(
+                rod.capacity(), sceptre ? WandEconomy.SCEPTRE_CAPACITY_PER_VIS : WandEconomy.CENTIVIS_PER_VIS);
     }
 
     public int craftCost() {

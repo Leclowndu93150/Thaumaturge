@@ -32,7 +32,6 @@ import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTWandParts;
-import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,6 @@ import org.jspecify.annotations.Nullable;
 @SuppressWarnings("removal")
 public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaster, IArchitect, IChanneledItem {
     private static final float REFINE_SPARKLE_SPREAD = 2.0F;
-    private static final DecimalFormat VIS_FORMAT = new DecimalFormat("#######.##");
     private static final String STAFF_ROD_SUFFIX = "_staff";
     private static final int NO_AURA_MESSAGE_INTERVAL_TICKS = 20;
 
@@ -168,8 +166,11 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
         if (amount <= 0.0F) {
             return true;
         }
-        Map<ResourceKey<IAspect>, Integer> split =
-                WandVisHelper.evenSplit(Math.round(amount * WandEconomy.CENTIVIS_PER_VIS));
+        double centivis = (double) amount * WandEconomy.CENTIVIS_PER_VIS;
+        if (!Double.isFinite(centivis) || centivis > Integer.MAX_VALUE) {
+            return false;
+        }
+        Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.evenSplit((int) Math.round(centivis));
         return WandVisHelper.payCosts(stack, player, split, !simulate, crafting);
     }
 
@@ -411,8 +412,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
         builder.add(Component.translatable(
-                        "tooltip.thaumaturge.wand.capacity",
-                        WandVisHelper.getMaxVis(stack) / WandEconomy.CENTIVIS_PER_VIS)
+                        "tooltip.thaumaturge.wand.capacity", WandVisNumbers.format(WandVisHelper.getMaxVis(stack)))
                 .withStyle(ChatFormatting.GOLD));
         WandVis vis = WandVisHelper.getAllVis(stack);
         HolderLookup.Provider registries = context.registries();
@@ -425,7 +425,7 @@ public class ItemWand extends Item implements FocusCaster, AreaPreviewer, ICaste
             if (amount <= 0) {
                 continue;
             }
-            Component chunk = Component.literal(VIS_FORMAT.format(amount / (float) WandEconomy.CENTIVIS_PER_VIS))
+            Component chunk = Component.literal(WandVisNumbers.format(amount))
                     .withStyle(WandTooltips.primalColor(registries, primal));
             if (amounts == null) {
                 amounts = Component.empty().append(chunk);
