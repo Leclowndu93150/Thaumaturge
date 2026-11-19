@@ -204,6 +204,22 @@ public final class GolemSpaceNavigation extends PathNavigation {
         var first = flying
                 ? new GolemPathGeometry.Surface(WorldFrame.INSTANCE, start)
                 : GolemPathGeometry.surface(level, mob, start.x, start.z, start.y - 1.0, start.y + 0.1);
+        if (first == null && !flying) {
+            first = GolemPathGeometry.startingSurface(level, mob, start.x, start.z, start.y - 1.0, start.y + 0.1);
+            if (Thaumaturge.LOGGER.isDebugEnabled()) {
+                AABB body = GolemPathGeometry.body(mob, start);
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} start={} body={} grounded={} bodyClear={} frames={} edgeRecovery={}",
+                        level.getGameTime(),
+                        mob.getUUID(),
+                        start,
+                        body,
+                        mob.onGround(),
+                        GolemPathGeometry.clear(level, mob, body),
+                        LevelSpaces.framesTouching(level, body),
+                        first != null);
+            }
+        }
         if (first == null) {
             Thaumaturge.LOGGER.debug(
                     "[golem-task] tick={} golem={} path target={} no starting surface at {}",

@@ -41,6 +41,11 @@ public final class GolemPathGeometry {
     }
 
     public static boolean clear(Level level, Mob mob, AABB worldBody) {
+        return clear(level, mob, worldBody, 0.0);
+    }
+
+    private static boolean clear(Level level, Mob mob, AABB worldBody, double inset) {
+        AABB collisionBody = worldBody.deflate(inset, 0, inset);
         CollisionContext context = CollisionContext.of(mob);
         for (SpaceFrame frame : LevelSpaces.framesTouching(level, worldBody)) {
             AABB local = localBounds(frame, worldBody);
@@ -56,7 +61,7 @@ public final class GolemPathGeometry {
                     return false;
                 }
                 for (AABB box : state.getCollisionShape(level, pos, context).toAabbs()) {
-                    if (intersects(worldBody, box.move(pos), frame)) {
+                    if (intersects(collisionBody, box.move(pos), frame)) {
                         return false;
                     }
                 }
@@ -67,6 +72,17 @@ public final class GolemPathGeometry {
 
     public static @Nullable Surface surface(
             Level level, Mob mob, double worldX, double worldZ, double minY, double maxY) {
+        return surface(level, mob, worldX, worldZ, minY, maxY, 0.0);
+    }
+
+    static @Nullable Surface startingSurface(
+            Level level, Mob mob, double worldX, double worldZ, double minY, double maxY) {
+        // Allow tiny contact overlaps at the start; all subsequent movement uses full clearance.
+        return surface(level, mob, worldX, worldZ, minY, maxY, 0.002);
+    }
+
+    private static @Nullable Surface surface(
+            Level level, Mob mob, double worldX, double worldZ, double minY, double maxY, double inset) {
         Vec3 top = new Vec3(worldX, maxY + EPSILON, worldZ);
         Vec3 bottom = new Vec3(worldX, minY - EPSILON, worldZ);
         List<Surface> candidates = new ArrayList<>();
@@ -106,7 +122,7 @@ public final class GolemPathGeometry {
         candidates.sort(Comparator.comparingDouble((Surface point) -> point.worldFeet().y)
                 .reversed());
         for (Surface candidate : candidates) {
-            if (clear(level, mob, body(mob, candidate.worldFeet()))) {
+            if (clear(level, mob, body(mob, candidate.worldFeet()), inset)) {
                 return candidate;
             }
         }

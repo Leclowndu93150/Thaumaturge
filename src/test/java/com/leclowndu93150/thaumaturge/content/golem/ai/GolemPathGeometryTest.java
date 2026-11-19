@@ -47,6 +47,22 @@ class GolemPathGeometryTest {
     }
 
     @Test
+    void startingSurfaceToleratesOnlyTinyDeckEdgeOverlap() {
+        Fixture fixture = new Fixture();
+        fixture.blocks.put(BlockPos.ZERO, Blocks.STONE.defaultBlockState());
+        fixture.blocks.put(new BlockPos(10, 0, 0), Blocks.STONE.defaultBlockState());
+        MovingFrame frame = new MovingFrame(new Vec3(-9.0008, 1, 0), new Quaterniond());
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE, frame));
+            assertNull(GolemPathGeometry.surface(fixture.level, fixture.mob, 0.7999, 0.5, 0, 1.1));
+            assertNotNull(GolemPathGeometry.startingSurface(fixture.level, fixture.mob, 0.7999, 0.5, 0, 1.1));
+            assertNull(GolemPathGeometry.startingSurface(fixture.level, fixture.mob, 0.81, 0.5, 0, 1.1));
+            fixture.blocks.put(new BlockPos(10, 0, 0), Blocks.MAGMA_BLOCK.defaultBlockState());
+            assertNull(GolemPathGeometry.startingSurface(fixture.level, fixture.mob, 0.7999, 0.5, 0, 1.1));
+        }
+    }
+
+    @Test
     void translatedDeckAnchorsFollowMotionAndDisappearFromTheirOldPosition() {
         Fixture fixture = new Fixture();
         fixture.blocks.put(BlockPos.ZERO, Blocks.STONE.defaultBlockState());

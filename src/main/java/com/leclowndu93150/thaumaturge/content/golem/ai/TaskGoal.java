@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.ai;
 
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
@@ -79,9 +80,33 @@ public abstract class TaskGoal extends Goal {
     }
 
     protected boolean mayTake(Task task, BlockPos target) {
-        return SealAccess.allows(SealHandler.getSealEntity(golem.level(), task.origin()), golem)
-                && task.canBePerformedBy(golem)
-                && golem.isWithinRestriction(target);
+        if (!SealAccess.allows(SealHandler.getSealEntity(golem.level(), task.origin()), golem)) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} rejected=seal_access",
+                    golem.level().getGameTime(),
+                    golem.getUUID(),
+                    task.id());
+            return false;
+        }
+        if (!task.canBePerformedBy(golem)) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} rejected=task_rules_or_capacity",
+                    golem.level().getGameTime(),
+                    golem.getUUID(),
+                    task.id());
+            return false;
+        }
+        if (!golem.isWithinRestriction(target)) {
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} task={} rejected=restriction target={} home={}",
+                    golem.level().getGameTime(),
+                    golem.getUUID(),
+                    task.id(),
+                    target,
+                    golem.getRestrictCenter());
+            return false;
+        }
+        return true;
     }
 
     protected boolean shouldTestPath(BlockPos target) {
