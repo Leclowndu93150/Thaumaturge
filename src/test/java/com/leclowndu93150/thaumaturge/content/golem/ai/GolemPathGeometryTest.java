@@ -16,8 +16,10 @@ import com.leclowndu93150.thaumaturge.content.world.space.WorldFrame;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -150,6 +152,55 @@ class GolemPathGeometryTest {
     }
 
     @Test
+    void findsRouteAcrossFrozenSlantedStairs() {
+        Fixture fixture = new Fixture(true);
+        when(fixture.mob.getBbHeight()).thenReturn(0.9F);
+        when(fixture.mob.maxUpStep()).thenReturn(0.6F);
+        when(fixture.mob.getMaxFallDistance()).thenReturn(3);
+        when(fixture.mob.position()).thenReturn(new Vec3(-13.333007372921205, -54.906839681035, 3.349010566944626));
+        for (int x = 20481032; x <= 20481037; x++)
+            for (int z = 20483073; z <= 20483080; z++)
+                fixture.blocks.put(new BlockPos(x, 128, z), Blocks.JUNGLE_WOOD.defaultBlockState());
+        for (int x = 20481032; x <= 20481036; x++)
+            for (int z = 20483074; z <= 20483080; z++)
+                if (x != 20481034 || z < 20483076 || z > 20483078)
+                    fixture.blocks.put(new BlockPos(x, 132, z), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 129, 20483078), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 130, 20483077), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 131, 20483076), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 129, 20483075), Blocks.CHEST.defaultBlockState());
+        var rotation = new Quaterniond(-0.2404247224, 0.0247894693, -0.0380474143, 0.9696050286).normalize();
+        var pivot = rotation.transform(new Vector3d(20481034.805882357, 130.1345588235294, 20483077.158823516));
+        var frame = new MovingFrame(
+                new Vec3(-14.7734937668 - pivot.x, -52.6517181396 - pivot.y, 5.2165203094 - pivot.z), rotation);
+        try (var spaces =
+                mockStatic(LevelSpaces.class, org.mockito.Mockito.withSettings().stubOnly())) {
+            spaces.when(() -> LevelSpaces.trackedFrame(fixture.mob)).thenReturn(frame);
+            spaces.when(() -> LevelSpaces.frameOf(any(), any(BlockPos.class))).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(any(), any(BlockPos.class)))
+                    .thenAnswer(call -> Vec3.atCenterOf(call.getArgument(1)));
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE, frame));
+            var navigation = new GolemSpaceNavigation(fixture.mob, fixture.level, mock(PathNavigation.class), false);
+            assertNotNull(navigation.createPath(Set.of(new BlockPos(-14, -52, 1)), 0, false, 1, 40));
+        }
+    }
+
+    @Test
+    void jumpMustClearSolidWalls() {
+        Fixture fixture = new Fixture();
+        var navigation = new GolemSpaceNavigation(fixture.mob, fixture.level, mock(PathNavigation.class), false);
+        var start = new Vec3(0.5, 1, 0.5);
+        var target = new Vec3(1.5, 1, 0.5);
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE));
+            assertTrue(navigation.jumpClear(start, target));
+            fixture.blocks.put(new BlockPos(1, 1, 0), Blocks.STONE.defaultBlockState());
+            fixture.blocks.put(new BlockPos(1, 2, 0), Blocks.STONE.defaultBlockState());
+            assertFalse(navigation.jumpClear(start, target));
+        }
+    }
+
+    @Test
     void hazardousSupportAndLavaClearanceAreRejected() {
         Fixture fixture = new Fixture();
         fixture.blocks.put(BlockPos.ZERO, Blocks.MAGMA_BLOCK.defaultBlockState());
@@ -163,11 +214,18 @@ class GolemPathGeometryTest {
     }
 
     private static final class Fixture {
-        final Level level = mock(Level.class);
+        final Level level;
         final Mob mob = mock(Mob.class);
         final Map<BlockPos, BlockState> blocks = new HashMap<>();
 
         Fixture() {
+            this(false);
+        }
+
+        Fixture(boolean stubOnly) {
+            level = stubOnly
+                    ? mock(Level.class, org.mockito.Mockito.withSettings().stubOnly())
+                    : mock(Level.class);
             when(level.isLoaded(any())).thenReturn(true);
             when(level.getBlockState(any()))
                     .thenAnswer(invocation ->

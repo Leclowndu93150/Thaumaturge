@@ -145,6 +145,9 @@ public final class GolemSpaceNavigation extends PathNavigation {
             stop();
             return;
         }
+        if (!flying && mob.onGround() && mob.position().subtract(next).horizontalDistanceSqr() > 0.75 * 0.75) {
+            mob.getJumpControl().jump();
+        }
         mob.getMoveControl().setWantedPosition(next.x, next.y, next.z, speedModifier);
     }
 
@@ -175,7 +178,10 @@ public final class GolemSpaceNavigation extends PathNavigation {
         for (int i = route.getNextNodeIndex(); i < route.points.size(); i++) {
             Vec3 next = route.points.get(i).worldFeet();
             if (previous.distanceToSqr(next) > 3.0) return false;
-            if (checkCollision && i == route.getNextNodeIndex() && !edgeClear(previous, next)) return false;
+            if (checkCollision
+                    && i == route.getNextNodeIndex()
+                    && !edgeClear(previous, next)
+                    && !jumpClear(previous, next)) return false;
             previous = next;
         }
         return previous.distanceToSqr(LevelSpaces.worldCenter(level, route.getTarget())) <= route.reachSqr;
@@ -258,8 +264,10 @@ public final class GolemSpaceNavigation extends PathNavigation {
                 // points.size());
                 return new SpacePath(points, target, reachSqr);
             }
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    if (Math.abs(dx) == 2 && Math.abs(dz) == 2) continue;
+                    if (flying && (Math.abs(dx) > 1 || Math.abs(dz) > 1)) continue;
                     for (int dy = flying ? -1 : 0; dy <= (flying ? 1 : 0); dy++) {
                         if (dx == 0 && dz == 0 && dy == 0) continue;
                         double x = from.x + dx * GRID;
@@ -280,7 +288,9 @@ public final class GolemSpaceNavigation extends PathNavigation {
                         BlockPos node = key(to);
                         // Check the best-known cost before the very expensive edge collision sweep.
                         if (cost >= best.getOrDefault(node, Double.POSITIVE_INFINITY)) continue;
-                        if (!edgeClear(from, to, surfaces)) continue;
+                        boolean longEdge = Math.abs(dx) == 2 || Math.abs(dz) == 2;
+                        boolean supported = edgeClear(from, to, surfaces);
+                        if (longEdge ? supported || !jumpClear(from, to) : !supported) continue;
                         best.put(node, cost);
                         open.add(new Step(surface, step, cost, to.distanceTo(goal)));
                     }
@@ -313,6 +323,19 @@ public final class GolemSpaceNavigation extends PathNavigation {
 
     private boolean edgeClear(Vec3 from, Vec3 to) {
         return edgeClear(from, to, new HashMap<>());
+    }
+
+    boolean jumpClear(Vec3 from, Vec3 to) {
+        double horizontal = from.subtract(to).horizontalDistanceSqr();
+        if (horizontal <= 0.75 * 0.75 || horizontal > 1.3 || to.y - from.y > JUMP_HEIGHT || to.y - from.y < -1)
+            return false;
+        for (int i = 1; i < 8; i++) {
+            double t = (double) i / 8;
+            double height = Math.min(1.2, (to.y - from.y) * t + 0.7 * Math.sin(Math.PI * t));
+            Vec3 point = new Vec3(from.x + (to.x - from.x) * t, from.y + height + 0.001, from.z + (to.z - from.z) * t);
+            if (!GolemPathGeometry.clear(level, mob, GolemPathGeometry.body(mob, point))) return false;
+        }
+        return true;
     }
 
     private boolean edgeClear(Vec3 from, Vec3 to, Map<SurfaceQuery, Optional<GolemPathGeometry.Surface>> cache) {
