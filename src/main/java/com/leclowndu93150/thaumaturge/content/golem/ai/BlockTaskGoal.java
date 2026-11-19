@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.golem.ai;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
@@ -29,8 +28,8 @@ public final class BlockTaskGoal extends TaskGoal {
     protected boolean claim(ServerLevel level) {
         standingSpot = null;
         var tasks = TaskBoard.of(level).openBlockTasks(golem.getUUID(), golem);
-        Thaumaturge.LOGGER.debug(
-                "[golem-task] tick={} golem={} openBlockTasks={}", level.getGameTime(), golem.getUUID(), tasks.size());
+        // Thaumaturge.LOGGER.debug(
+        // "[golem-task] tick={} golem={} openBlockTasks={}", level.getGameTime(), golem.getUUID(), tasks.size());
         for (Task task : tasks) {
             BlockPos target = task.pos();
             if (!mayTake(task, target) || !shouldTestPath(target)) continue;
