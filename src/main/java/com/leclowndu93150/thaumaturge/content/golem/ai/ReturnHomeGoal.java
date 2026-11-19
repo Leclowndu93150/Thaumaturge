@@ -33,6 +33,7 @@ public final class ReturnHomeGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (golem.getTask() != null || golem.recentlyFinishedTask()) return false;
         if (wait > 0) {
             wait--;
             return false;

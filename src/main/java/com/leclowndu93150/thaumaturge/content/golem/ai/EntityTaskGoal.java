@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.ai;
 
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
@@ -21,11 +22,36 @@ public final class EntityTaskGoal extends TaskGoal {
 
     @Override
     protected boolean claim(ServerLevel level) {
-        for (Task task : TaskBoard.of(level).openEntityTasks(golem.getUUID(), golem)) {
+        var tasks = TaskBoard.of(level).openEntityTasks(golem.getUUID(), golem);
+        Thaumaturge.LOGGER.debug(
+                "[golem-task] tick={} golem={} openEntityTasks={}", level.getGameTime(), golem.getUUID(), tasks.size());
+        for (Task task : tasks) {
             Entity target = task.entity();
-            if (target == null || !mayTake(task, target.blockPosition()) || !shouldTestPath(target.blockPosition()))
+            if (target == null) continue;
+            boolean allowed = mayTake(task, target.blockPosition());
+            boolean retry = shouldTestPath(target.blockPosition());
+            if (!allowed || !retry) {
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} task={} target={} allowed={} retry={}",
+                        level.getGameTime(),
+                        golem.getUUID(),
+                        task.id(),
+                        target.getUUID(),
+                        allowed,
+                        retry);
                 continue;
+            }
             PathResult result = pathEndsNear(target);
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} pos={} task={} target={} targetPos={} result={} deferred={}",
+                    level.getGameTime(),
+                    golem.getUUID(),
+                    golem.position(),
+                    task.id(),
+                    target.getUUID(),
+                    target.position(),
+                    result,
+                    GolemPathSearchBudget.wasDeferred(level, golem.getUUID()));
             if (result == PathResult.REACHABLE) {
                 float halfWidth = target.getBbWidth() / 2.0F;
                 reachSqr = BASE_REACH_SQR + halfWidth * halfWidth;
@@ -70,7 +96,7 @@ public final class EntityTaskGoal extends TaskGoal {
         if (golem.distanceToSqr(target) < reachSqr) {
             return PathResult.REACHABLE;
         }
-        Path path = golem.getNavigation().createPath(target, 0);
+        Path path = golem.getNavigation().createPath(target, 1);
         Node end = path == null ? null : path.getEndNode();
         if (end == null) {
             return PathResult.NO_ROUTE;

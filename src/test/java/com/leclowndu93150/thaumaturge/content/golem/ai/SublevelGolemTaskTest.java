@@ -45,7 +45,7 @@ class SublevelGolemTaskTest {
         when(item.position()).thenReturn(worldItem);
         when(item.blockPosition()).thenReturn(BlockPos.containing(worldItem));
         when(golem.isWithinRestriction(BlockPos.containing(worldItem))).thenReturn(true);
-        when(navigation.createPath(item, 0)).thenReturn(path);
+        when(navigation.createPath(item, 1)).thenReturn(path);
         when(path.getEndNode()).thenReturn(tooFar, withinReach);
         when(task.entity()).thenReturn(item);
         when(task.canBePerformedBy(golem)).thenReturn(true);
@@ -64,6 +64,31 @@ class SublevelGolemTaskTest {
             assertFalse(goal.claim(level));
             assertTrue(goal.claim(level));
             verify(task).claim();
+        }
+    }
+
+    @Test
+    void blockTasksSearchForAnApproachRatherThanTheTargetCenter() {
+        ServerLevel level = mock(ServerLevel.class);
+        EntityThaumaturgeGolem golem = mock(EntityThaumaturgeGolem.class);
+        PathNavigation navigation = mock(PathNavigation.class);
+        Task task = mock(Task.class);
+        TaskBoard board = mock(TaskBoard.class);
+        BlockPos target = new BlockPos(4, 1, 0);
+        Vec3 center = Vec3.atCenterOf(target);
+        when(golem.level()).thenReturn(level);
+        when(golem.getNavigation()).thenReturn(navigation);
+        when(golem.distanceToSqr(center)).thenReturn(16.0);
+        when(golem.isWithinRestriction(target)).thenReturn(true);
+        when(task.pos()).thenReturn(target);
+        when(task.canBePerformedBy(golem)).thenReturn(true);
+        when(board.openBlockTasks(null, golem)).thenReturn(List.of(task));
+        try (var spaces = mockStatic(LevelSpaces.class);
+                var boards = mockStatic(TaskBoard.class)) {
+            boards.when(() -> TaskBoard.of(level)).thenReturn(board);
+            spaces.when(() -> LevelSpaces.worldCenter(level, target)).thenReturn(center);
+            assertFalse(new BlockTaskGoal(golem).claim(level));
+            verify(navigation).createPath(target, 1);
         }
     }
 

@@ -89,7 +89,7 @@ public final class BlockTaskGoal extends TaskGoal {
         if (golem.distanceToSqr(worldTarget) < reachSqr) {
             return PathResult.REACHABLE;
         }
-        Path path = golem.getNavigation().createPath(pos, 0);
+        Path path = golem.getNavigation().createPath(pos, 1);
         Node end = path == null ? null : path.getEndNode();
         if (end == null) {
             return PathResult.NO_ROUTE;

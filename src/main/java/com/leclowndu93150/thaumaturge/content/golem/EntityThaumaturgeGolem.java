@@ -147,6 +147,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private boolean accessorySyncOverBudget;
     private final GolemHands hands = new GolemHands(this);
     private Task task;
+    private int lastTaskEndTick = -20;
     private @Nullable DeckFetter deckFetter;
 
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
@@ -900,7 +901,12 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     public void setTask(@Nullable Task task) {
+        if (this.task != null && task == null) lastTaskEndTick = tickCount;
         this.task = task;
+    }
+
+    public boolean recentlyFinishedTask() {
+        return tickCount - lastTaskEndTick < 20;
     }
 
     private void releaseTask() {

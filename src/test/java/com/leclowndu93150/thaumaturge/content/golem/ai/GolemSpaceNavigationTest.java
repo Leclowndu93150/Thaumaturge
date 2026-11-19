@@ -41,6 +41,41 @@ class GolemSpaceNavigationTest {
         runScenario(false, true);
     }
 
+    @Test
+    void reachesAnItemOnARaisedDeckFromTheAdjacentFloor() {
+        Level level = mock(Level.class);
+        Mob mob = mock(Mob.class);
+        PathNavigation nativeNavigation = mock(PathNavigation.class);
+        when(mob.position()).thenReturn(new Vec3(0.5, 0, 0.5));
+        when(mob.getBbWidth()).thenReturn(0.4F);
+        when(mob.getBbHeight()).thenReturn(1.0F);
+        when(mob.maxUpStep()).thenReturn(0.5F);
+        when(mob.getMaxFallDistance()).thenReturn(3);
+        try (var spaces = mockStatic(LevelSpaces.class);
+                var geometry = mockStatic(GolemPathGeometry.class)) {
+            spaces.when(() -> LevelSpaces.trackedFrame(mob)).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.frameOf(eq(level), any(BlockPos.class)))
+                    .thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> Vec3.atCenterOf(call.getArgument(1)));
+            spaces.when(() -> LevelSpaces.framesTouching(eq(level), any()))
+                    .thenReturn(List.of(WorldFrame.INSTANCE, mock(SpaceFrame.class)));
+            geometry.when(() -> GolemPathGeometry.clear(eq(level), eq(mob), any()))
+                    .thenReturn(true);
+            geometry.when(() -> GolemPathGeometry.surface(
+                            eq(level), eq(mob), anyDouble(), anyDouble(), anyDouble(), anyDouble()))
+                    .thenAnswer(call -> {
+                        double x = call.getArgument(2), z = call.getArgument(3);
+                        if (x >= 2 || x < 0 || Math.abs(z - 0.5) > 0.1) return null;
+                        return new GolemPathGeometry.Surface(WorldFrame.INSTANCE, new Vec3(x, 0, z));
+                    });
+            GolemSpaceNavigation navigation = new GolemSpaceNavigation(mob, level, nativeNavigation, false);
+            BlockPos target = new BlockPos(2, 0, 0);
+            assertNull(navigation.createPath(Set.of(target), 0, false, 0, 16));
+            assertNotNull(navigation.createPath(Set.of(target), 0, false, 1, 16));
+        }
+    }
+
     private static void runScenario(boolean moveDeck, boolean missingDeck) {
         Level level = mock(Level.class);
         Mob mob = mock(Mob.class);
