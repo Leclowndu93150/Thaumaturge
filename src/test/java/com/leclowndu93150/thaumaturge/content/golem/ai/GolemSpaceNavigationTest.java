@@ -14,7 +14,9 @@ import static org.mockito.Mockito.when;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.content.world.space.SpaceFrame;
 import com.leclowndu93150.thaumaturge.content.world.space.WorldFrame;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
@@ -22,10 +24,46 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.junit.jupiter.api.Test;
 
 class GolemSpaceNavigationTest {
+    @Test
+    void findsRouteUpRealFullBlockStairs() {
+        Level level = mock(Level.class);
+        Mob mob = mock(Mob.class);
+        PathNavigation nativeNavigation = mock(PathNavigation.class);
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        for (int x = -2; x <= 7; x++)
+            for (int z = -2; z <= 2; z++) {
+                blocks.put(new BlockPos(x, 0, z), Blocks.STONE.defaultBlockState());
+            }
+        for (int x = 2; x <= 5; x++)
+            for (int y = 1; y <= Math.min(x - 1, 3); y++) {
+                blocks.put(new BlockPos(x, y, 0), Blocks.STONE.defaultBlockState());
+            }
+        when(level.isLoaded(any())).thenReturn(true);
+        when(level.getBlockState(any()))
+                .thenAnswer(call -> blocks.getOrDefault(call.getArgument(0), Blocks.AIR.defaultBlockState()));
+        when(mob.position()).thenReturn(new Vec3(0.5, 1, 0.5));
+        when(mob.getBbWidth()).thenReturn(0.4F);
+        when(mob.getBbHeight()).thenReturn(1.0F);
+        when(mob.maxUpStep()).thenReturn(0.6F);
+        when(mob.getMaxFallDistance()).thenReturn(3);
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.trackedFrame(mob)).thenReturn(mock(SpaceFrame.class));
+            spaces.when(() -> LevelSpaces.frameOf(eq(level), any(BlockPos.class)))
+                    .thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> Vec3.atCenterOf(call.getArgument(1)));
+            spaces.when(() -> LevelSpaces.framesTouching(eq(level), any())).thenReturn(List.of(WorldFrame.INSTANCE));
+            var navigation = new GolemSpaceNavigation(mob, level, nativeNavigation, false);
+            assertNotNull(navigation.createPath(Set.of(new BlockPos(5, 4, 0)), 0, false, 1, 16));
+        }
+    }
+
     @Test
     void walksFromWorldAcrossDeckAndBackOntoWorld() {
         runScenario(false, false);
@@ -73,6 +111,42 @@ class GolemSpaceNavigationTest {
             BlockPos target = new BlockPos(2, 0, 0);
             assertNull(navigation.createPath(Set.of(target), 0, false, 0, 16));
             assertNotNull(navigation.createPath(Set.of(target), 0, false, 1, 16));
+        }
+    }
+
+    @Test
+    void climbsFullBlockStepsToAnUpperDeck() {
+        Level level = mock(Level.class);
+        Mob mob = mock(Mob.class);
+        PathNavigation nativeNavigation = mock(PathNavigation.class);
+        when(mob.position()).thenReturn(new Vec3(0.5, 1, 0.5));
+        when(mob.getBbWidth()).thenReturn(0.4F);
+        when(mob.getBbHeight()).thenReturn(1.0F);
+        when(mob.maxUpStep()).thenReturn(0.6F);
+        when(mob.getMaxFallDistance()).thenReturn(3);
+        try (var spaces = mockStatic(LevelSpaces.class);
+                var geometry = mockStatic(GolemPathGeometry.class)) {
+            spaces.when(() -> LevelSpaces.trackedFrame(mob)).thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.frameOf(eq(level), any(BlockPos.class)))
+                    .thenReturn(WorldFrame.INSTANCE);
+            spaces.when(() -> LevelSpaces.worldCenter(eq(level), any(BlockPos.class)))
+                    .thenAnswer(call -> Vec3.atCenterOf(call.getArgument(1)));
+            spaces.when(() -> LevelSpaces.framesTouching(eq(level), any()))
+                    .thenReturn(List.of(WorldFrame.INSTANCE, mock(SpaceFrame.class)));
+            geometry.when(() -> GolemPathGeometry.clear(eq(level), eq(mob), any()))
+                    .thenReturn(true);
+            geometry.when(() -> GolemPathGeometry.surface(
+                            eq(level), eq(mob), anyDouble(), anyDouble(), anyDouble(), anyDouble()))
+                    .thenAnswer(call -> {
+                        double x = call.getArgument(2), z = call.getArgument(3);
+                        double min = call.getArgument(4), max = call.getArgument(5);
+                        if (x < 0 || x > 5 || Math.abs(z - 0.5) > 0.1) return null;
+                        double y = 1 + Math.min(3, Math.max(0, Math.floor(x)));
+                        if (y < min || y > max) return null;
+                        return new GolemPathGeometry.Surface(WorldFrame.INSTANCE, new Vec3(x, y, z));
+                    });
+            var navigation = new GolemSpaceNavigation(mob, level, nativeNavigation, false);
+            assertNotNull(navigation.createPath(Set.of(new BlockPos(4, 4, 0)), 0, false, 1, 16));
         }
     }
 
