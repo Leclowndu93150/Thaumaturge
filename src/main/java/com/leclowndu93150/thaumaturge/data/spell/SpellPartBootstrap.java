@@ -387,12 +387,14 @@ public final class SpellPartBootstrap {
                 .complexity(3)
                 .aspect(TTAspects.POTENTIA)
                 .research("focus_amplify")
+                .max(1)
                 .register(ctx, TTSpellParts.AMPLIFY);
         levelled(change(SpellStats.DURATION, StatChange.Operation.MULTIPLY, 1.0F, 0.5F, true), 2.0F)
                 .glyph("lingering")
                 .complexity(2)
                 .aspect(TTAspects.VINCULUM)
                 .research("focus_amplify")
+                .max(1)
                 .register(ctx, TTSpellParts.EXTEND);
         levelled(change(SpellStats.RADIUS, StatChange.Operation.ADD, 0.0F, 1.0F, true), 3.0F)
                 .glyph("spread")
