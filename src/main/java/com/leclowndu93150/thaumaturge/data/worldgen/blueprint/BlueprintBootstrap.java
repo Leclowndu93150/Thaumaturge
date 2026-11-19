@@ -11,6 +11,7 @@ import java.util.Map;
 import net.minecraft.core.Direction;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,7 +53,10 @@ public final class BlueprintBootstrap {
                         Map.of(
                                 'I', part(block(Blocks.IRON_BARS), toBlock(TTBlocks.PLACEHOLDER_IRON_BARS.get())),
                                 'C', part(block(Blocks.CAULDRON), toBlock(TTBlocks.PLACEHOLDER_CAULDRON.get())),
-                                'A', part(block(Blocks.ANVIL), toBlock(TTBlocks.PLACEHOLDER_ANVIL.get())),
+                                'A',
+                                        part(
+                                                new BlueprintSource.TagSource(BlockTags.ANVIL),
+                                                toBlock(TTBlocks.PLACEHOLDER_ANVIL.get())),
                                 'P',
                                         part(
                                                 state(Blocks.PISTON
