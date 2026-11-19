@@ -46,6 +46,7 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
             .apply(i, ArchitectDelivery::new));
 
     private static final String METHOD = "method";
+    private static final String BLOCK_TYPE = "block_type";
     private static final int FULL = 0;
     private static final int DIM_ALL = 0;
     private static final int DIM_X = 1;
@@ -74,7 +75,9 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
             if (hit.getType() != HitResult.Type.BLOCK) {
                 continue;
             }
-            List<BlockPos> found = collect(casterStack, ctx.level(), hit.getBlockPos(), hit.getDirection(), method);
+            int blockType = blockType(ctx.node(), method);
+            List<BlockPos> found =
+                    collect(casterStack, ctx.level(), hit.getBlockPos(), hit.getDirection(), method, blockType);
             found.sort(Comparator.comparingDouble(pos -> pos.distSqr(hit.getBlockPos())));
             for (BlockPos pos : found) {
                 out.add(new SpellTarget(
@@ -98,7 +101,8 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
 
     @Override
     public List<BlockPos> previewArea(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
-        return collect(stack, level, pos, side, methodOf(stack, level));
+        int method = methodOf(stack, level);
+        return collect(stack, level, pos, side, method, blockTypeOf(stack, level, method));
     }
 
     @Override
@@ -132,26 +136,38 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
     }
 
     public static int methodOf(ItemStack casterStack, Level level) {
+        return planNode(casterStack, level)
+                .map(node -> Math.clamp(node.settings().getOrDefault(METHOD, FULL), 0, 1))
+                .orElse(FULL);
+    }
+
+    private static int blockTypeOf(ItemStack stack, Level level, int method) {
+        return planNode(stack, level).map(node -> blockType(node, method)).orElse(0);
+    }
+
+    public static int blockType(SpellNode node, int method) {
+        return Math.clamp(node.settings().getOrDefault(BLOCK_TYPE, method == FULL ? 0 : 1), 0, 1);
+    }
+
+    private static Optional<SpellNode> planNode(ItemStack casterStack, Level level) {
         if (!(casterStack.getItem() instanceof FocusCaster caster)) {
-            return FULL;
+            return Optional.empty();
         }
         Spell spell = Spells.spellOf(caster.socketedFocus(casterStack));
         if (spell == null) {
-            return FULL;
+            return Optional.empty();
         }
         for (SpellNode node : spell.nodes()) {
             Optional<SpellPart> part = Spells.part(level.registryAccess(), node.part());
             if (part.isPresent() && part.get().behavior() instanceof ArchitectDelivery) {
-                return part.get()
-                        .setting(METHOD)
-                        .map(spec -> spec.clamp(node.settings().getOrDefault(METHOD, spec.defaultValue())))
-                        .orElse(FULL);
+                return Optional.of(node);
             }
         }
-        return FULL;
+        return Optional.empty();
     }
 
-    private static List<BlockPos> collect(ItemStack stack, Level level, BlockPos origin, Direction side, int method) {
+    private static List<BlockPos> collect(
+            ItemStack stack, Level level, BlockPos origin, Direction side, int method, int blockType) {
         if (stack.isEmpty()) {
             return new ArrayList<>();
         }
@@ -159,9 +175,14 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
         int ay = CasterManager.getAreaY(stack);
         int az = CasterManager.getAreaZ(stack);
         SpaceFrame frame = LevelSpaces.frameOf(level, origin);
-        return method == FULL
+        List<BlockPos> result = method == FULL
                 ? volume(level, origin, side, ax, ay, az, frame)
-                : surface(level, origin, side, ax, az, frame);
+                : surface(level, origin, side, ax, az, frame, blockType != 0);
+        if (method == FULL && blockType != 0) {
+            var block = level.getBlockState(origin).getBlock();
+            result.removeIf(pos -> !level.getBlockState(pos).is(block));
+        }
+        return result;
     }
 
     static List<BlockPos> volume(
@@ -183,8 +204,8 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
         return affected;
     }
 
-    private static List<BlockPos> surface(
-            Level level, BlockPos origin, Direction side, int ax, int az, SpaceFrame frame) {
+    static List<BlockPos> surface(
+            Level level, BlockPos origin, Direction side, int ax, int az, SpaceFrame frame, boolean sameType) {
         BlockState match = level.getBlockState(origin);
         List<Direction.Axis> plane = planeAxes(side);
         Direction.Axis first = plane.get(0);
@@ -195,7 +216,8 @@ public record ArchitectDelivery(double range) implements SpellBehavior, AreaPrev
                         && Math.abs(pos.get(second) - origin.get(second)) <= az,
                 pos -> !match.isAir()
                         && sameSpace(level, frame, pos)
-                        && level.getBlockState(pos).equals(match)
+                        && !level.getBlockState(pos).isAir()
+                        && (!sameType || level.getBlockState(pos).is(match.getBlock()))
                         && exposed(level, pos, frame),
                 side,
                 true);

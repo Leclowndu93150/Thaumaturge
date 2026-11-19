@@ -231,6 +231,7 @@ public final class SpellPartBootstrap {
                 .research("focus_plan")
                 .max(1)
                 .options("method", 0.0F, "full", "surface")
+                .options("block_type", 0.0F, "all", "same")
                 .register(ctx, TTSpellParts.PLAN);
     }
 

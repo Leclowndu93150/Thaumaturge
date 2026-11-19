@@ -3,11 +3,13 @@ package com.leclowndu93150.thaumaturge.client.screen.casters.focal;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
+import com.leclowndu93150.thaumaturge.api.spell.TTSpellParts;
 import com.leclowndu93150.thaumaturge.api.spell.part.SettingSpec;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.screen.casters.SpellPartIcons;
 import com.leclowndu93150.thaumaturge.content.spell.SpellText;
+import com.leclowndu93150.thaumaturge.content.spell.delivery.ArchitectDelivery;
 import com.leclowndu93150.thaumaturge.content.spell.engine.SpellAnalyzer;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +171,7 @@ public final class NodeInspector {
     private void spinner(
             GuiGraphics graphics, int x, int right, int y, SpellNode node, SettingSpec spec, int mouseX, int mouseY) {
         FocalDraw.text(graphics, host.font(), SpellText.setting(spec), x, y + ROW_TEXT_Y, FocalColors.GREY);
-        int value = spec.clamp(node.settings().getOrDefault(spec.key(), spec.defaultValue()));
+        int value = settingValue(node, spec);
         Component label = spec.label(value);
         int valueW = Math.max(VALUE_MIN_W, host.font().width(label) + VALUE_PAD);
         int plusX = right - SPIN;
@@ -223,8 +225,12 @@ public final class NodeInspector {
         for (Spinner spinner : spinners) {
             if (FocalDraw.over(mouseX, mouseY, spinner.x(), spinner.y(), SPIN, SPIN)) {
                 host.edit(spell -> spell.withRoot(SpellPaths.update(spell.root(), selection.path(), node -> {
-                    int current = node.settings()
-                            .getOrDefault(spinner.spec().key(), spinner.spec().defaultValue());
+                    int current = settingValue(node, spinner.spec());
+                    if (node.part().equals(TTSpellParts.PLAN)
+                            && spinner.spec().key().equals("method")
+                            && !node.settings().containsKey("block_type")) {
+                        node = node.withSetting("block_type", ArchitectDelivery.blockType(node, current));
+                    }
                     return node.withSetting(spinner.spec().key(), spinner.spec().offset(current, spinner.delta()));
                 })));
                 host.playClick();
@@ -232,6 +238,13 @@ public final class NodeInspector {
             }
         }
         return false;
+    }
+
+    private static int settingValue(SpellNode node, SettingSpec spec) {
+        if (node.part().equals(TTSpellParts.PLAN) && spec.key().equals("block_type")) {
+            return ArchitectDelivery.blockType(node, node.settings().getOrDefault("method", 0));
+        }
+        return spec.clamp(node.settings().getOrDefault(spec.key(), spec.defaultValue()));
     }
 
     private record Spinner(SettingSpec spec, int x, int y, int delta) {}

@@ -242,7 +242,7 @@ public final class ResearchTextEn {
                 "I have learned to manipulate blocks in the world with foci effects such as Exchange, but their practical use is a bit limited.<BR>I should discover a way to fine tune exactly which blocks I can apply such foci effects to.");
         add.accept(
                 "research.thaumaturge.focus_plan.stage_1",
-                "I have designed a medium pattern that will allow me to plan which blocks I manipulate. This medium works much like Touch, except I will be shown a ghostly outline if which blocks will be manipulated. The range is also much greater (16 blocks). By pressing the focus modify key ('G' by default) I can alter the size of the area. By pressing CTRL + G I can alter the axis in which the size will be changed.<BR>This medium has two modes of operation which I can select between when I add it to a focus: Full and Surface. Full mode affects all possible blocks that match the size, while surface mode will only affect blocks that have an exposed side.<BR>This focus medium cannot be used in combination with any other mediums.");
+                "I have designed a medium pattern that lets me plan which blocks I manipulate. A ghostly outline shows the affected area, up to 16 blocks away. The focus modify key ('G' by default) changes the size, and CTRL + G selects the axis.<BR>Shape selects a Full volume or connected exposed Surface. Block Type independently selects All blocks or only the Same type as the selected block.<BR>This focus medium cannot be used in combination with any other mediums.");
         add.accept("research.thaumaturge.focus_rift.title", "Focus Effect: Rift");
         add.accept(
                 "research.thaumaturge.focus_rift.stage_0",
