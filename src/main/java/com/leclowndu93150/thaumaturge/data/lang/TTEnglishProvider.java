@@ -633,6 +633,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.vishroom", "Vishroom");
         add("block.thaumaturge.potted_sapling_greatwood", "Potted Greatwood Sapling");
         add("block.thaumaturge.potted_sapling_silverwood", "Potted Silverwood Sapling");
+        add("block.thaumaturge.potted_ethereal_bloom", "Potted Ethereal Bloom");
         add("block.thaumaturge.potted_shimmerleaf", "Potted Shimmerleaf");
         add("block.thaumaturge.potted_cinderpearl", "Potted Cinderpearl");
         add("block.thaumaturge.potted_vishroom", "Potted Vishroom");

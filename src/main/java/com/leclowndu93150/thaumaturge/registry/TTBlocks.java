@@ -110,6 +110,7 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintRock;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSoil;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEtherealBloom;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.PottedEtherealBloomBlock;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGoo;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooRefs;
@@ -1370,6 +1371,11 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
+    public static final DeferredBlock<PottedEtherealBloomBlock> POTTED_ETHEREAL_BLOOM = BLOCKS.registerBlock(
+            "potted_ethereal_bloom",
+            PottedEtherealBloomBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING).lightLevel(state -> 12));
+
     public static final DeferredBlock<FlowerPotBlock> POTTED_SHIMMERLEAF =
             pottedMagicPlant("potted_shimmerleaf", PLANT_SHIMMERLEAF);
     public static final DeferredBlock<FlowerPotBlock> POTTED_CINDERPEARL =
@@ -1399,6 +1405,7 @@ public final class TTBlocks {
         FlowerPotBlock flowerPot = (FlowerPotBlock) Blocks.FLOWER_POT;
         flowerPot.addPlant(SAPLING_GREATWOOD.getId(), POTTED_SAPLING_GREATWOOD);
         flowerPot.addPlant(SAPLING_SILVERWOOD.getId(), POTTED_SAPLING_SILVERWOOD);
+        flowerPot.addPlant(ETHEREAL_BLOOM.getId(), POTTED_ETHEREAL_BLOOM);
         flowerPot.addPlant(PLANT_SHIMMERLEAF.getId(), POTTED_SHIMMERLEAF);
         flowerPot.addPlant(PLANT_CINDERPEARL.getId(), POTTED_CINDERPEARL);
         flowerPot.addPlant(PLANT_VISHROOM.getId(), POTTED_VISHROOM);

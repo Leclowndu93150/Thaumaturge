@@ -345,6 +345,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.ETHEREAL_BLOOM.get());
         dropSelf(TTBlocks.PLANT_CINDERPEARL.get());
         dropSelf(TTBlocks.PLANT_VISHROOM.get());
+        add(TTBlocks.POTTED_ETHEREAL_BLOOM.get(), createPotFlowerItemTable(TTBlocks.ETHEREAL_BLOOM.get()));
         add(TTBlocks.POTTED_SHIMMERLEAF.get(), createPotFlowerItemTable(TTBlocks.PLANT_SHIMMERLEAF.get()));
         add(TTBlocks.POTTED_CINDERPEARL.get(), createPotFlowerItemTable(TTBlocks.PLANT_CINDERPEARL.get()));
         add(TTBlocks.POTTED_VISHROOM.get(), createPotFlowerItemTable(TTBlocks.PLANT_VISHROOM.get()));

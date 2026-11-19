@@ -1875,6 +1875,7 @@ public final class TTModelProvider implements DataProvider {
         cross(TTBlocks.PLANT_SHIMMERLEAF.get());
         cross(TTBlocks.PLANT_CINDERPEARL.get());
         cross(TTBlocks.PLANT_VISHROOM.get());
+        flowerPotCross(TTBlocks.POTTED_ETHEREAL_BLOOM.get(), TTBlocks.ETHEREAL_BLOOM.get());
         flowerPotCross(TTBlocks.POTTED_SHIMMERLEAF.get(), TTBlocks.PLANT_SHIMMERLEAF.get());
         flowerPotCross(TTBlocks.POTTED_CINDERPEARL.get(), TTBlocks.PLANT_CINDERPEARL.get());
         flowerPotCross(TTBlocks.POTTED_VISHROOM.get(), TTBlocks.PLANT_VISHROOM.get());

@@ -525,7 +525,9 @@ public final class TTBlockEntities {
             BLOCK_ENTITIES.register(
                     "ethereal_bloom",
                     () -> new BlockEntityType<>(
-                            BlockEntityEtherealBloom::new, Set.of(TTBlocks.ETHEREAL_BLOOM.get()), null));
+                            BlockEntityEtherealBloom::new,
+                            Set.of(TTBlocks.ETHEREAL_BLOOM.get(), TTBlocks.POTTED_ETHEREAL_BLOOM.get()),
+                            null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityItemGrate>> ITEM_GRATE =
             BLOCK_ENTITIES.register(
