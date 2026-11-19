@@ -65,12 +65,104 @@ public final class GolemNavigationGameTests {
         stairs(helper, false, false, 3, false, true);
     }
 
+    @GameTest(template = "golem_navigation", batch = "collect-detour", timeoutTicks = 600)
+    public static void collectsDirectlyAboveViaStairs(GameTestHelper helper) {
+        stairs(helper, false, false, 3, false, true, true);
+    }
+
+    @GameTest(template = "golem_navigation", batch = "saved-layout", timeoutTicks = 600)
+    public static void collectsOnSavedPlatformLayout(GameTestHelper helper) {
+        var level = helper.getLevel();
+        for (int x = 1; x <= 6; x++)
+            for (int z = 1; z <= 8; z++) helper.setBlock(new BlockPos(x, 2, z), Blocks.JUNGLE_WOOD);
+        for (int x = 1; x <= 5; x++)
+            for (int z = 2; z <= 8; z++) {
+                if (x != 3 || z < 4 || z > 6) helper.setBlock(new BlockPos(x, 6, z), Blocks.JUNGLE_WOOD);
+            }
+        helper.setBlock(new BlockPos(3, 3, 6), Blocks.JUNGLE_WOOD);
+        helper.setBlock(new BlockPos(3, 4, 5), Blocks.JUNGLE_WOOD);
+        helper.setBlock(new BlockPos(3, 5, 4), Blocks.JUNGLE_WOOD);
+        helper.setBlock(new BlockPos(3, 3, 3), Blocks.CHEST);
+        var min = helper.absolutePos(new BlockPos(1, 2, 1));
+        var max = helper.absolutePos(new BlockPos(6, 6, 8));
+        var bounds = new BoundingBox3i(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+        var sublevel = SubLevelAssemblyHelper.assembleBlocks(level, min, BlockPos.betweenClosed(min, max), bounds);
+        helper.runAtTickTime(10, () -> {
+            var physics = SubLevelContainer.getContainer(level).physicsSystem().getPipeline();
+            physics.teleport(
+                    sublevel,
+                    new Vector3d(sublevel.logicalPose().position()),
+                    new org.joml.Quaterniond(-0.000031158459, -0.003452062, 0.00015504, 0.99999404).normalize());
+            sublevel.updateLastPose();
+            var anchor = sublevel.getPlot().getCenterBlock();
+            var start = anchor.offset(4, 1, 1);
+            var pickup = anchor.offset(4, 4, 1);
+            var chest = anchor.offset(2, 1, 2);
+            var startWorld = LevelSpaces.toWorld(level, net.minecraft.world.phys.Vec3.atBottomCenterOf(start));
+            var shift = new Vector3d(
+                    Math.floor(startWorld.x) + 0.675886023 - startWorld.x,
+                    0,
+                    Math.floor(startWorld.z) + 0.858996726 - startWorld.z);
+            physics.teleport(
+                    sublevel,
+                    new Vector3d(sublevel.logicalPose().position()).add(shift),
+                    sublevel.logicalPose().orientation());
+            sublevel.updateLastPose();
+            startWorld = LevelSpaces.toWorld(level, net.minecraft.world.phys.Vec3.atBottomCenterOf(start));
+            var mob = TTEntities.THAUMATURGE_GOLEM.get().create(level);
+            if (mob == null) {
+                helper.fail("Could not create golem");
+                return;
+            }
+            mob.moveTo(startWorld.x, startWorld.y + 0.01, startWorld.z, 0, 0);
+            mob.setPersistenceRequired();
+            mob.setValidSpawn();
+            level.addFreshEntity(mob);
+            mob.updateEntityAttributes();
+            var pickupSeal = new SealPos(pickup, Direction.UP);
+            var storeSeal = new SealPos(chest, Direction.UP);
+            var owner = java.util.UUID.randomUUID();
+            if (!SealHandler.addSealEntity(
+                            level, SealEntity.place(pickupSeal, TTSeals.PICKUP.getId(), TTSeals.PICKUP.get(), owner))
+                    || !SealHandler.addSealEntity(
+                            level, SealEntity.place(storeSeal, TTSeals.FILL.getId(), TTSeals.FILL.get(), owner))) {
+                helper.fail("Could not place seals");
+                return;
+            }
+            var itemPos = LevelSpaces.toWorld(
+                    level,
+                    net.minecraft.world.phys.Vec3.atBottomCenterOf(pickup.above())
+                            .add(0, 0, 0.3));
+            var item = new ItemEntity(level, itemPos.x, itemPos.y + 0.1, itemPos.z, new ItemStack(Items.DIAMOND));
+            item.setDeltaMovement(0, 0, 0);
+            level.addFreshEntity(item);
+            helper.succeedWhen(() -> {
+                if (!(level.getBlockEntity(chest) instanceof ChestBlockEntity inventory)
+                        || inventory.countItem(Items.DIAMOND) != 1)
+                    throw new GameTestAssertException("Golem did not deliver item: " + mob.position());
+                SealHandler.removeSealEntity(level, pickupSeal, true);
+                SealHandler.removeSealEntity(level, storeSeal, true);
+            });
+        });
+    }
+
     private static void stairs(GameTestHelper helper, boolean descending, boolean move, int height, boolean walk) {
         stairs(helper, descending, move, height, walk, false);
     }
 
     private static void stairs(
             GameTestHelper helper, boolean descending, boolean move, int height, boolean walk, boolean collect) {
+        stairs(helper, descending, move, height, walk, collect, false);
+    }
+
+    private static void stairs(
+            GameTestHelper helper,
+            boolean descending,
+            boolean move,
+            int height,
+            boolean walk,
+            boolean collect,
+            boolean detour) {
         var level = helper.getLevel();
         for (int x = 1; x <= 12; x++)
             for (int z = 2; z <= 4; z++) {
@@ -83,6 +175,9 @@ public final class GolemNavigationGameTests {
                     helper.setBlock(new BlockPos(x, y, z), Blocks.STONE);
                 }
             }
+        if (detour) {
+            for (int x = 1; x <= 3; x++) helper.setBlock(new BlockPos(x, 2 + height, 3), Blocks.STONE);
+        }
         if (collect) helper.setBlock(new BlockPos(2, 3, 2), Blocks.CHEST);
         BlockPos min = helper.absolutePos(new BlockPos(1, 2, 2));
         BlockPos max = helper.absolutePos(new BlockPos(12, 2 + height, 4));
@@ -118,7 +213,7 @@ public final class GolemNavigationGameTests {
             }
             if (collect) {
                 var chestPos = plotAnchor.offset(1, 1, 0);
-                var pickupPos = plotAnchor.offset(9, height, 1);
+                var pickupPos = plotAnchor.offset(detour ? 0 : 9, height, 1);
                 var pickupSeal = new SealPos(pickupPos, Direction.UP);
                 var storeSeal = new SealPos(chestPos, Direction.UP);
                 var owner = java.util.UUID.randomUUID();

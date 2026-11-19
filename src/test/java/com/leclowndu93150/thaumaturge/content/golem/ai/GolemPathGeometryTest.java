@@ -107,6 +107,49 @@ class GolemPathGeometryTest {
     }
 
     @Test
+    void verticalSurfaceDoesNotProvideWalkingSupport() {
+        Fixture fixture = new Fixture();
+        fixture.blocks.put(BlockPos.ZERO, Blocks.STONE.defaultBlockState());
+        MovingFrame frame = new MovingFrame(new Vec3(3, 2, 4), new Quaterniond().rotateZ(Math.PI / 2));
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE, frame));
+            assertNull(GolemPathGeometry.surface(fixture.level, fixture.mob, 2.5, 4.5, 2.1, 2.9));
+        }
+    }
+
+    @Test
+    void slightlyTiltedChestProvidesSupportAtItsEdge() {
+        Fixture fixture = new Fixture();
+        when(fixture.mob.getBbHeight()).thenReturn(0.9F);
+        for (int x = 20481032; x <= 20481037; x++)
+            for (int z = 20483073; z <= 20483080; z++)
+                fixture.blocks.put(new BlockPos(x, 128, z), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 129, 20483078), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 130, 20483077), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 131, 20483076), Blocks.JUNGLE_WOOD.defaultBlockState());
+        fixture.blocks.put(new BlockPos(20481034, 129, 20483075), Blocks.CHEST.defaultBlockState());
+        var rotation = new Quaterniond(-0.00003798537, -0.00345219625, 0.00014551207, 0.99999403954).normalize();
+        var pivot = new Vector3d(20481034.805882357, 130.1345588235294, 20483077.158823516);
+        var rotatedPivot = rotation.transform(pivot);
+        var frame = new MovingFrame(
+                new Vec3(
+                        -13.03687858581543 - rotatedPivot.x,
+                        -57.866676330566406 - rotatedPivot.y,
+                        -2.4940266609191895 - rotatedPivot.z),
+                rotation);
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE, frame));
+            assertNotNull(GolemPathGeometry.surface(
+                    fixture.level,
+                    fixture.mob,
+                    -12.824113519422195,
+                    -4.641003550940565,
+                    -62.00120125558357,
+                    -57.99120125558357));
+        }
+    }
+
+    @Test
     void hazardousSupportAndLavaClearanceAreRejected() {
         Fixture fixture = new Fixture();
         fixture.blocks.put(BlockPos.ZERO, Blocks.MAGMA_BLOCK.defaultBlockState());

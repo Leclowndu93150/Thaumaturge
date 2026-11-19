@@ -123,7 +123,7 @@ public final class GolemPathGeometry {
                 .reversed());
         for (Surface candidate : candidates) {
             // Ignore tiny transform-rounding overlaps with the supporting surface.
-            if (clear(level, mob, body(mob, candidate.worldFeet().add(0, 1.0E-5, 0)), inset)) {
+            if (clear(level, mob, body(mob, candidate.worldFeet().add(0, 0.001, 0)), inset)) {
                 return candidate;
             }
         }
