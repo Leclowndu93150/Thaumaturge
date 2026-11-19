@@ -31,13 +31,17 @@ public final class BlockTaskGoal extends TaskGoal {
             BlockPos target = task.pos();
             if (!mayTake(task, target) || !shouldTestPath(target)) continue;
             // TaskBoard already ranks candidates. Evaluate at most one expensive path per claim.
-            if (pathEndsNear(target)) {
+            PathResult result = pathEndsNear(target);
+            if (result == PathResult.REACHABLE) {
                 standingSpot = nearestOpenSide(target);
                 take(task);
                 return true;
             }
-            // A budget miss is not a failed path and must be eligible for retry next tick.
-            if (!GolemPathSearchBudget.exhausted(level)) rememberFailedPath(target);
+            // A partial path may become usable as the deck moves. Neither partial
+            // routes nor budget-deferred searches should be cached as failures.
+            if (result == PathResult.NO_ROUTE && !GolemPathSearchBudget.wasDeferred(level, golem.getUUID())) {
+                rememberFailedPath(target);
+            }
             break;
         }
         return false;
@@ -80,15 +84,15 @@ public final class BlockTaskGoal extends TaskGoal {
                 .orElse(null);
     }
 
-    private boolean pathEndsNear(BlockPos pos) {
+    private PathResult pathEndsNear(BlockPos pos) {
         Vec3 worldTarget = LevelSpaces.worldCenter(golem.level(), pos);
         if (golem.distanceToSqr(worldTarget) < reachSqr) {
-            return true;
+            return PathResult.REACHABLE;
         }
         Path path = golem.getNavigation().createPath(pos, 0);
         Node end = path == null ? null : path.getEndNode();
         if (end == null) {
-            return false;
+            return PathResult.NO_ROUTE;
         }
         BlockPos targetInPath = BlockPos.containing(
                 LevelSpaces.frameOf(golem.level(), end.asBlockPos()).toLocal(worldTarget));
@@ -98,6 +102,12 @@ public final class BlockTaskGoal extends TaskGoal {
         if (dx == 0 && dz == 0 && dy == HEAD_HEIGHT) {
             dy--;
         }
-        return dx * dx + dy * dy + dz * dz < PATH_SLACK_SQR;
+        return dx * dx + dy * dy + dz * dz < PATH_SLACK_SQR ? PathResult.REACHABLE : PathResult.PARTIAL;
+    }
+
+    private enum PathResult {
+        REACHABLE,
+        PARTIAL,
+        NO_ROUTE
     }
 }

@@ -32,9 +32,9 @@ public final class EntityTaskGoal extends TaskGoal {
                 take(task);
                 return true;
             }
-            // A partial path may become reachable after a moving deck or target changes.
-            // Cache only when no route exists at all.
-            if (result == PathResult.NO_ROUTE && !GolemPathSearchBudget.exhausted(level)) {
+            // A partial route has an endpoint, but a moving target/deck may make
+            // it reachable on the very next evaluation. Only cache absent routes.
+            if (result == PathResult.NO_ROUTE && !GolemPathSearchBudget.wasDeferred(level, golem.getUUID())) {
                 rememberFailedPath(target.blockPosition());
             }
             break;

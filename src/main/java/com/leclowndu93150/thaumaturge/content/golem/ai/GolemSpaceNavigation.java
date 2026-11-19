@@ -121,6 +121,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
         }
         if (route.isDone()) return;
         routeAge++;
+        // Frame transforms can change every tick. Check route continuity immediately,
+        // but only repeat expensive collision/surface sweeps periodically.
         if (!valid(route, routeAge % VALIDATE_EVERY == 0)) {
             BlockPos target = route.getTarget();
             stop();
@@ -178,7 +180,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
 
     private @Nullable SpacePath findPath(BlockPos target, Vec3 goal, int accuracy, float range) {
         // Include re-pathing from the navigator, not just task-claim checks, in the budget.
-        if (level instanceof ServerLevel server && !GolemPathSearchBudget.tryAcquire(server)) return null;
+        if (level instanceof ServerLevel server && !GolemPathSearchBudget.tryAcquire(server, mob.getUUID()))
+            return null;
         Vec3 start = mob.position();
         if (start.distanceToSqr(goal) > range * range) return null;
         var first = flying
