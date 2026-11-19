@@ -122,7 +122,8 @@ public final class GolemPathGeometry {
         candidates.sort(Comparator.comparingDouble((Surface point) -> point.worldFeet().y)
                 .reversed());
         for (Surface candidate : candidates) {
-            if (clear(level, mob, body(mob, candidate.worldFeet()), inset)) {
+            // Ignore tiny transform-rounding overlaps with the supporting surface.
+            if (clear(level, mob, body(mob, candidate.worldFeet().add(0, 1.0E-5, 0)), inset)) {
                 return candidate;
             }
         }

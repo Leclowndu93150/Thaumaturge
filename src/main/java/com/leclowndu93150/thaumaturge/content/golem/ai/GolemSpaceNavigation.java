@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.ai;
 
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.content.world.space.WorldFrame;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import org.jspecify.annotations.Nullable;
 /** Routes between physical decks; the native navigator still owns paths inside one frame. */
 public final class GolemSpaceNavigation extends PathNavigation {
     private static final double GRID = 0.5;
+    private static final double JUMP_HEIGHT = 1.0;
+    private static final double SURFACE_RAY_MARGIN = 0.01;
     private static final int MAX_VISITED = 2048;
     private static final int REPATH_TICKS = 10;
     private static final int VALIDATE_EVERY = 5;
@@ -123,7 +126,8 @@ public final class GolemSpaceNavigation extends PathNavigation {
         routeAge++;
         // Frame transforms can change every tick. Check route continuity immediately,
         // but only repeat expensive collision/surface sweeps periodically.
-        if (!valid(route, routeAge % VALIDATE_EVERY == 0)) {
+        // A jump temporarily overlaps the edge being climbed, so check collision after landing.
+        if (!valid(route, routeAge % VALIDATE_EVERY == 0 && (flying || mob.onGround()))) {
             BlockPos target = route.getTarget();
             stop();
             moveTo(createPath(target, 1), speedModifier);
@@ -181,23 +185,23 @@ public final class GolemSpaceNavigation extends PathNavigation {
     private @Nullable SpacePath findPath(BlockPos target, Vec3 goal, int accuracy, float range) {
         // Include re-pathing from the navigator, not just task-claim checks, in the budget.
         if (level instanceof ServerLevel server && !GolemPathSearchBudget.tryAcquire(server, mob.getUUID())) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} path target={} deferred by budget",
-            // level.getGameTime(),
-            // mob.getUUID(),
-            // target);
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} path target={} deferred by budget",
+                    level.getGameTime(),
+                    mob.getUUID(),
+                    target);
             return null;
         }
         Vec3 start = mob.position();
         if (start.distanceToSqr(goal) > range * range) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} path target={} outside range={} start={} goal={}",
-            // level.getGameTime(),
-            // mob.getUUID(),
-            // target,
-            // range,
-            // start,
-            // goal);
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} path target={} outside range={} start={} goal={}",
+                    level.getGameTime(),
+                    mob.getUUID(),
+                    target,
+                    range,
+                    start,
+                    goal);
             return null;
         }
         var first = flying
@@ -205,31 +209,33 @@ public final class GolemSpaceNavigation extends PathNavigation {
                 : GolemPathGeometry.surface(level, mob, start.x, start.z, start.y - 1.0, start.y + 0.1);
         if (first == null && !flying) {
             first = GolemPathGeometry.startingSurface(level, mob, start.x, start.z, start.y - 1.0, start.y + 0.1);
-            // if (Thaumaturge.LOGGER.isDebugEnabled()) {
-            // AABB body = GolemPathGeometry.body(mob, start);
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} start={} body={} grounded={} bodyClear={} frames={} edgeRecovery={}",
-            // level.getGameTime(),
-            // mob.getUUID(),
-            // start,
-            // body,
-            // mob.onGround(),
-            // GolemPathGeometry.clear(level, mob, body),
-            // LevelSpaces.framesTouching(level, body),
-            // first != null);
-            // }
+            if (Thaumaturge.LOGGER.isDebugEnabled()) {
+                AABB body = GolemPathGeometry.body(mob, start);
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} start={} body={} grounded={} bodyClear={} frames={} edgeRecovery={}",
+                        level.getGameTime(),
+                        mob.getUUID(),
+                        start,
+                        body,
+                        mob.onGround(),
+                        GolemPathGeometry.clear(level, mob, body),
+                        LevelSpaces.framesTouching(level, body),
+                        first != null);
+            }
         }
         if (first == null) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} path target={} no starting surface at {}",
-            // level.getGameTime(),
-            // mob.getUUID(),
-            // target,
-            // start);
+            Thaumaturge.LOGGER.debug(
+                    "[golem-task] tick={} golem={} path target={} no starting surface at {}",
+                    level.getGameTime(),
+                    mob.getUUID(),
+                    target,
+                    start);
             return null;
         }
         double reachSqr = Math.max(1.0, accuracy * accuracy + 0.5);
-        PriorityQueue<Step> open = new PriorityQueue<>(Comparator.comparingDouble(step -> step.cost + step.estimate));
+        // Favor progress toward the target so tall stairs fit within the search budget.
+        PriorityQueue<Step> open =
+                new PriorityQueue<>(Comparator.comparingDouble(step -> step.cost + 1.5 * step.estimate));
         Map<BlockPos, Double> best = new HashMap<>();
         // Cache only within this synchronous search: no stale collision state across ticks.
         Map<SurfaceQuery, Optional<GolemPathGeometry.Surface>> surfaces = new HashMap<>();
@@ -244,13 +250,13 @@ public final class GolemSpaceNavigation extends PathNavigation {
             if (from.distanceToSqr(goal) <= reachSqr) {
                 List<GolemPathGeometry.Surface> points = new ArrayList<>();
                 for (Step cursor = step; cursor != null; cursor = cursor.previous) points.addFirst(cursor.surface);
-                // Thaumaturge.LOGGER.debug(
-                // "[golem-task] tick={} golem={} path target={} found visited={} points={}",
-                // level.getGameTime(),
-                // mob.getUUID(),
-                // target,
-                // visited,
-                // points.size());
+                Thaumaturge.LOGGER.debug(
+                        "[golem-task] tick={} golem={} path target={} found visited={} points={}",
+                        level.getGameTime(),
+                        mob.getUUID(),
+                        target,
+                        visited,
+                        points.size());
                 return new SpacePath(points, target, reachSqr);
             }
             for (int dx = -1; dx <= 1; dx++) {
@@ -266,9 +272,10 @@ public final class GolemSpaceNavigation extends PathNavigation {
                                         x,
                                         z,
                                         from.y - Math.min(3, mob.getMaxFallDistance()),
-                                        from.y + mob.maxUpStep());
+                                        from.y + Math.max(JUMP_HEIGHT, mob.maxUpStep()) + SURFACE_RAY_MARGIN);
                         if (surface == null) continue;
                         Vec3 to = surface.worldFeet();
+                        if (!flying && to.y - from.y > Math.max(JUMP_HEIGHT, mob.maxUpStep()) + 0.001) continue;
                         if (to.distanceToSqr(start) > range * range) continue;
                         double cost = step.cost + from.distanceTo(to);
                         BlockPos node = key(to);
@@ -281,15 +288,15 @@ public final class GolemSpaceNavigation extends PathNavigation {
                 }
             }
         }
-        // Thaumaturge.LOGGER.debug(
-        // "[golem-task] tick={} golem={} path target={} failed visited={} remaining={} start={} goal={}",
-        // level.getGameTime(),
-        // mob.getUUID(),
-        // target,
-        // visited,
-        // open.size(),
-        // start,
-        // goal);
+        Thaumaturge.LOGGER.debug(
+                "[golem-task] tick={} golem={} path target={} failed visited={} remaining={} start={} goal={}",
+                level.getGameTime(),
+                mob.getUUID(),
+                target,
+                visited,
+                open.size(),
+                start,
+                goal);
         return null;
     }
 
