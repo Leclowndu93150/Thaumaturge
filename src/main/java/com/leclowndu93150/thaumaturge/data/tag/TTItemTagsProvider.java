@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.tags.TagEntry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
@@ -194,5 +195,8 @@ public final class TTItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(TTItemTags.CURIOSITIES).add(TTItems.CURIO_ARCANE.get(), TTItems.CURIO_PRESERVED.get(), TTItems.CURIO_ANCIENT.get(), TTItems.CURIO_ELDRITCH.get(), TTItems.CURIO_KNOWLEDGE.get(),
                 TTItems.CURIO_TWISTED.get(), TTItems.CURIO_RITES.get(), TTItems.PECH_WAND.get());
         tag(Tags.Items.MINING_TOOL_TOOLS).add(TTItems.THAUMIUM_PICKAXE.get(), TTItems.VOID_PICKAXE.get(), TTItems.ELEMENTAL_PICKAXE.get(), TTItems.PRIMAL_CRUSHER.get());
+
+        tag(Tags.Items.CHESTS).add(TTItems.HUNGRY_CHEST.get());
+        tag(Tags.Items.CHESTS_WOODEN).add(TTItems.HUNGRY_CHEST.get());
     }
 }
