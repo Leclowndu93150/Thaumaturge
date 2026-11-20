@@ -2683,10 +2683,9 @@
   "tooltip.thaumaturge.thaumometer.inventory_scan": "在物品上懸停以掃描",
   "tooltip.thaumaturge.thaumostatic_harness.fuel": "%1$s x %2$s",
   "tooltip.thaumaturge.wand.capacity": "容量 %s",
-  "tooltip.thaumaturge.wand.cost": "魔力消耗 %s%%",
-  "tooltip.thaumaturge.wand.cost.except": "魔力消耗 %1$s%%（%2$s）",
-  "tooltip.thaumaturge.wand.cost.group": "%s %s%%",
-  "tooltip.thaumaturge.wand.cost.groups": "%s; %s",
+  "tooltip.thaumaturge.wand.discount": "魔力減免：%s%%",
+  "tooltip.thaumaturge.wand.discount.aspect": "%1$s：%2$s%%",
+  "tooltip.thaumaturge.wand.discount.aspects": "魔力減免：%s",
   "treePack.thaumaturge.name": "Thaumaturge",
   "trim_material.thaumaturge.brass": "練成黄铜質",
   "trim_material.thaumaturge.essentia_crystal": "魔力水晶質",
@@ -2736,5 +2735,9 @@
   "warp.thaumaturge.text.8": "肯定有方法可以抑制這些痛苦？",
   "warp.thaumaturge.text.9": "你忽然對破壞感到厭倦。",
   "warp.thaumaturge.text.hunger.1": "平凡的食物無法滿足你。",
-  "warp.thaumaturge.text.hunger.2": "你的飢餓感已開始消退。"
+  "warp.thaumaturge.text.hunger.2": "你的飢餓感已開始消退。",
+  "tooltip.thaumaturge.wand.cost": "魔力消耗 %s%%",
+  "tooltip.thaumaturge.wand.cost.except": "魔力消耗 %1$s%%（%2$s）",
+  "tooltip.thaumaturge.wand.cost.group": "%s %s%%",
+  "tooltip.thaumaturge.wand.cost.groups": "%s；%s"
 }
