@@ -587,7 +587,7 @@
   "commands.thaumaturge.tools.aura.vis_added": "已添加 %s 点魔力",
   "commands.thaumaturge.tools.aura.vis_drained": "已抽走 %s 点魔力",
   "commands.thaumaturge.tools.champion.not_mob": "精英修饰符只能用于生物：%s",
-  "commands.thaumaturge.tools.champion.spawned": "已生成%s精英%s",
+  "commands.thaumaturge.tools.champion.spawned": "已生成 %s 精英 %s",
   "commands.thaumaturge.tools.champion.unknown": "未知精英修饰符：%s",
   "commands.thaumaturge.tools.crystal": "已给予一枚%s水晶",
   "commands.thaumaturge.tools.failed": "命令 %s 执行失败，请查看服务器日志",
