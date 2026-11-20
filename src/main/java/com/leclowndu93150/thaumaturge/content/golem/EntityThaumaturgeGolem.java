@@ -502,6 +502,16 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
+    protected float getJumpPower() {
+        var frame = LevelSpaces.trackedFrame(this);
+        if (frame.isWorld()) return super.getJumpPower();
+        var up = frame.directionToWorld(new Vec3(0, 1, 0));
+        return up.y > 0.5
+                ? (float) (super.getJumpPower() * (1.0 + 0.6 * up.horizontalDistance()))
+                : super.getJumpPower();
+    }
+
+    @Override
     public boolean onClimbable() {
         return isBesideClimbableBlock();
     }

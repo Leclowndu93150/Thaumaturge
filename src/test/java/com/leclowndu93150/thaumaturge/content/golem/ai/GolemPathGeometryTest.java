@@ -109,6 +109,35 @@ class GolemPathGeometryTest {
     }
 
     @Test
+    void tiltedStairEdgeSupportsBodyAtDifferentAnglesAndPositions() {
+        Fixture fixture = new Fixture();
+        fixture.blocks.put(
+                BlockPos.ZERO,
+                Blocks.OAK_STAIRS
+                        .defaultBlockState()
+                        .setValue(
+                                net.minecraft.world.level.block.StairBlock.FACING, net.minecraft.core.Direction.WEST));
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            for (double angle : new double[] {0.01, 0.1, 0.3, 0.5}) {
+                for (double shift : new double[] {0.0, 0.17, 0.39}) {
+                    MovingFrame frame = new MovingFrame(new Vec3(3 + shift, 2, 4), new Quaterniond().rotateZ(angle));
+                    spaces.when(() -> LevelSpaces.framesTouching(any(), any()))
+                            .thenReturn(List.of(WorldFrame.INSTANCE, frame));
+                    Vec3 foot = frame.toWorld(new Vec3(0.52, 1, 0.5));
+                    var point = GolemPathGeometry.surface(
+                            fixture.level, fixture.mob, foot.x, foot.z, foot.y - 1, foot.y + 1);
+                    assertNotNull(point, "angle=" + angle + " shift=" + shift);
+                    assertTrue(GolemPathGeometry.clear(
+                            fixture.level,
+                            fixture.mob,
+                            GolemPathGeometry.body(
+                                    fixture.mob, point.worldFeet().add(0, 0.001, 0))));
+                }
+            }
+        }
+    }
+
+    @Test
     void verticalSurfaceDoesNotProvideWalkingSupport() {
         Fixture fixture = new Fixture();
         fixture.blocks.put(BlockPos.ZERO, Blocks.STONE.defaultBlockState());

@@ -126,6 +126,17 @@ public final class GolemPathGeometry {
             if (clear(level, mob, body(mob, candidate.worldFeet().add(0, 0.001, 0)), inset)) {
                 return candidate;
             }
+            if (!candidate.frame().isWorld()) {
+                Vec3 normal = candidate.frame().directionToWorld(new Vec3(0, 1, 0));
+                double maxRise = normal.y > 0.5 ? mob.getBbWidth() * normal.horizontalDistance() / normal.y + 0.002 : 0;
+                double step = Math.max(0.02, maxRise / 2);
+                for (double rise = Math.min(step, maxRise); rise > 0 && rise <= maxRise; rise += step) {
+                    Vec3 raised = candidate.worldFeet().add(0, rise, 0);
+                    if (clear(level, mob, body(mob, raised), inset)) {
+                        return new Surface(candidate.frame(), candidate.frame().toLocal(raised));
+                    }
+                }
+            }
         }
         return null;
     }

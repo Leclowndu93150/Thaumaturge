@@ -58,6 +58,13 @@ public final class BlockTaskGoal extends TaskGoal {
 
     @Override
     protected double distanceSqrTo(Task task) {
+        var frame = LevelSpaces.frameOf(golem.level(), destination(task));
+        if (!golem.onGround()
+                && !golem.properties().hasTrait(com.leclowndu93150.thaumaturge.registry.TTGolemTraits.FLYER.get())
+                && !frame.isWorld()
+                && frame.directionToWorld(new Vec3(0, 1, 0)).y < 0.99) {
+            return Double.MAX_VALUE;
+        }
         return golem.distanceToSqr(LevelSpaces.worldCenter(golem.level(), destination(task)));
     }
 
