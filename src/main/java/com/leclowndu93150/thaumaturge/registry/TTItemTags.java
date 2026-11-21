@@ -81,6 +81,8 @@ public final class TTItemTags {
     public static final TagKey<Item> ARMORS_LEGGINGS = common("armors/leggings");
     public static final TagKey<Item> ARMORS_BOOTS = common("armors/boots");
 
+    public static final TagKey<Item> DUST_MUNDUS = common("dust/mundus");
+
     public static final TagKey<Item> CANDLES = key("candles");
     public static final TagKey<Item> SCRIBING_TOOLS = key("scribing_tools");
     public static final TagKey<Item> FLOATING_DROPS = key("floating_drops");
