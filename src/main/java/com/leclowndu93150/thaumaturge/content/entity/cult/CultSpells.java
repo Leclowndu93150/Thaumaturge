@@ -76,6 +76,13 @@ public final class CultSpells {
             super(level, caster, direction);
         }
 
+        // This subclass uses vanilla SMALL_FIREBALL as its entity type. If it is saved,
+        // reloading the chunk recreates a vanilla fireball and loses our ignition check.
+        @Override
+        public boolean shouldBeSaved() {
+            return false;
+        }
+
         @Override
         protected void onHitBlock(BlockHitResult hit) {
             if (ThaumaturgeServerConfig.CULTIST_FIREBALLS_IGNITE_BLOCKS.get()) {
