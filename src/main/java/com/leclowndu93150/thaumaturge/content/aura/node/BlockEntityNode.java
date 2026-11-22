@@ -681,8 +681,12 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             fill(stolen, 1);
             moved = true;
         } else if (other.drain(stolen, 1)) {
-            if (random.nextInt(1 + (int) (aspectsBase.amountOf(stolen) / (shiny ? 1.5 : 1.0))) == 0) {
+            int base = aspectsBase.amountOf(stolen);
+            if (random.nextInt(1 + (int) (base / (shiny ? 1.5 : 1.0))) == 0) {
                 aspectsBase = raiseBase(aspectsBase, stolen, 1);
+                if (base == 0) {
+                    aspects = aspects.add(stolen, 1);
+                }
                 if (nodeModifier == NodeModifier.PALE && random.nextInt(100) == 0) {
                     nodeModifier = null;
                     regeneration = -1;
