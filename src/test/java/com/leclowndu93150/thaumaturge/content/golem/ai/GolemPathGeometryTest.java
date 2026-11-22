@@ -230,6 +230,34 @@ class GolemPathGeometryTest {
     }
 
     @Test
+    void jumpLandingNeedsMoreFootingThanAThinPost() {
+        Fixture fixture = new Fixture();
+        Vec3 feet = new Vec3(0.5, 1.0, 0.5);
+        var landing = new GolemPathGeometry.Surface(WorldFrame.INSTANCE, feet);
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE));
+            fixture.blocks.put(BlockPos.ZERO, Blocks.STONE.defaultBlockState());
+            assertTrue(GolemPathGeometry.safeJumpLanding(fixture.level, fixture.mob, landing));
+            // A narrow post provides a center hit, but not a full stable landing
+            // for the golem body. On thin moving stairs such a waypoint caused
+            // golems to step or jump directly into the void.
+            fixture.blocks.put(BlockPos.ZERO, Blocks.END_ROD.defaultBlockState());
+            assertFalse(GolemPathGeometry.safeJumpLanding(fixture.level, fixture.mob, landing));
+        }
+    }
+
+    @Test
+    void jumpCanCoverAReasonableCrossFrameGapButNotAnExcessiveOne() {
+        Fixture fixture = new Fixture();
+        var navigation = new GolemSpaceNavigation(fixture.mob, fixture.level, mock(PathNavigation.class), false);
+        try (var spaces = mockStatic(LevelSpaces.class)) {
+            spaces.when(() -> LevelSpaces.framesTouching(any(), any())).thenReturn(List.of(WorldFrame.INSTANCE));
+            assertTrue(navigation.jumpClear(new Vec3(0.5, 1, 0.5), new Vec3(1.85, 2, 0.5)));
+            assertFalse(navigation.jumpClear(new Vec3(0.5, 1, 0.5), new Vec3(2.25, 2, 0.5)));
+        }
+    }
+
+    @Test
     void hazardousSupportAndLavaClearanceAreRejected() {
         Fixture fixture = new Fixture();
         fixture.blocks.put(BlockPos.ZERO, Blocks.MAGMA_BLOCK.defaultBlockState());

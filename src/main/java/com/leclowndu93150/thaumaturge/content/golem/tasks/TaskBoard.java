@@ -86,9 +86,17 @@ public final class TaskBoard {
                         && (golemId == null || task.assignedGolem() == null || golemId.equals(task.assignedGolem())))
                 .filter(kind)
                 .sorted(Comparator.comparingDouble(
-                        task -> LevelSpaces.distanceSqr(golem.level(), Vec3.atCenterOf(task.pos()), golem.position())
-                                - task.priority() * PRIORITY_WEIGHT))
+                        task -> worldDistanceSqr(task, golem) - task.priority() * PRIORITY_WEIGHT))
                 .toList();
+    }
+
+    // EntityTarget positions are already in world space. Only block targets
+    // (which can be plot-local) require a local-to-world transform.
+    private static double worldDistanceSqr(Task task, Entity golem) {
+        Vec3 target = task.isEntityTask() && task.entity() != null
+                ? task.entity().position()
+                : LevelSpaces.worldCenter(golem.level(), task.pos());
+        return target.distanceToSqr(golem.position());
     }
 
     public static void attempt(ServerLevel level, Task task, IGolemAPI golem) {

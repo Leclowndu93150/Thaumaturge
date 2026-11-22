@@ -12,11 +12,14 @@ import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
+import com.leclowndu93150.thaumaturge.content.golem.GolemTrace;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,6 +33,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> {
     private static final ResourceLocation FALLBACK_TEXTURE = GolemSkins.COPPER;
@@ -38,6 +42,10 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
 
     private final GolemAccessoryRenderTable accessoryRenderers;
     private final CopperGolemRig model;
+    // Weak keys ensure despawned entities never remain in diagnostic state.
+    private final Map<EntityThaumaturgeGolem, RenderSample> lastRender = new WeakHashMap<>();
+
+    private record RenderSample(Vec3 position, long nanos, int tick) {}
 
     public GolemRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -62,6 +70,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
             PoseStack poseStack,
             MultiBufferSource buffers,
             int light) {
+        if (GolemTrace.DEBUG_TRACE) traceRenderedMovement(entity, partialTick);
         GolemRenderState state = build(entity, partialTick, light);
         if (state.props != null) {
             poseStack.pushPose();
@@ -87,6 +96,40 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
             poseStack.popPose();
         }
         super.render(entity, entityYaw, partialTick, poseStack, buffers, light);
+    }
+
+    private void traceRenderedMovement(EntityThaumaturgeGolem entity, float partialTick) {
+        // This is the interpolated entity origin used by Minecraft's renderer.
+        // Compare render frames, not server ticks, to identify visible position snaps.
+        Vec3 rendered = new Vec3(
+                Mth.lerp(partialTick, entity.xOld, entity.getX()),
+                Mth.lerp(partialTick, entity.yOld, entity.getY()),
+                Mth.lerp(partialTick, entity.zOld, entity.getZ()));
+        long now = System.nanoTime();
+        RenderSample prior = lastRender.put(entity, new RenderSample(rendered, now, entity.tickCount));
+        if (prior == null) return;
+        Vec3 delta = rendered.subtract(prior.position());
+        if (delta.horizontalDistanceSqr() < 0.65 * 0.65 && Math.abs(delta.y) < 0.45) return;
+        // A two-second render-thread stall is not a single-frame entity teleport.
+        // Keep that distinction explicit, rather than reporting it as a snap.
+        String event = now - prior.nanos() > 200_000_000L ? "render_gap" : "render_snap";
+        GolemTrace.log(
+                "[golem-client] event={} golem={} tick={} priorTick={} renderDelta={} "
+                        + "renderFrom={} renderTo={} frameMs={} partialTick={} old=({},{},{}) current={} velocity={}",
+                event,
+                entity.getUUID(),
+                entity.tickCount,
+                prior.tick(),
+                delta,
+                prior.position(),
+                rendered,
+                (now - prior.nanos()) / 1_000_000.0,
+                partialTick,
+                entity.xOld,
+                entity.yOld,
+                entity.zOld,
+                entity.position(),
+                entity.getDeltaMovement());
     }
 
     private static GolemRenderState build(EntityThaumaturgeGolem entity, float partialTick, int light) {

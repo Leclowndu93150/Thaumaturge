@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.ProvisionRequest;
 import com.leclowndu93150.thaumaturge.api.golems.SupplyOrder;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.content.golem.GolemTrace;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -385,14 +386,16 @@ public final class Task {
             return true;
         }
         if (golem.color() != 0 && seal.color() != 0 && golem.color() != seal.color()) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} task={} seal={} rejected=color golemColor={} sealColor={}",
-            // golem.level().getGameTime(),
-            // golem.asEntity().getUUID(),
-            // id,
-            // origin,
-            // golem.color(),
-            // seal.color());
+            if ((GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE)) {
+                GolemTrace.log(
+                        "[golem-task] tick={} golem={} task={} seal={} rejected=color golemColor={} sealColor={}",
+                        golem.level().getGameTime(),
+                        golem.asEntity().getUUID(),
+                        id,
+                        origin,
+                        golem.color(),
+                        seal.color());
+            }
             return false;
         }
         return seal.behavior().canPerform(seal, golem, this);

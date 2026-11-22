@@ -1,11 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
+import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
+import com.leclowndu93150.thaumaturge.content.golem.GolemTrace;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class ConstructFollowOwnerGoal extends Goal {
@@ -79,7 +83,26 @@ public final class ConstructFollowOwnerGoal extends Goal {
         if (!construct.getNavigation().moveTo(owner, speed)
                 && !construct.isLeashed()
                 && construct.distanceTo(owner) >= TELEPORT_MIN_DISTANCE) {
-            teleportNear(owner);
+            if (construct instanceof EntityThaumaturgeGolem) {
+                // A transient NO_ROUTE on a Sable deck must never become a hard
+                // teleport. Walk toward an intermediate point and retry instead.
+                Vec3 toward = DefaultRandomPos.getPosTowards(construct, 8, 4, owner.position(), Math.PI / 2.0);
+                if (GolemTrace.DEBUG_TRACE) {
+                    GolemTrace.log(
+                            "[golem-move] tick={} golem={} event=follow_path_failed "
+                                    + "owner={} distance={} fallback={} teleport_suppressed=true",
+                            construct.level().getGameTime(),
+                            construct.getUUID(),
+                            owner.getUUID(),
+                            construct.distanceTo(owner),
+                            toward);
+                }
+                if (toward != null) {
+                    construct.getNavigation().moveTo(toward.x, toward.y, toward.z, speed);
+                }
+            } else {
+                teleportNear(owner);
+            }
         }
     }
 

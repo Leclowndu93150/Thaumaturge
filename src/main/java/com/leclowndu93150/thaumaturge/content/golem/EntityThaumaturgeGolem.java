@@ -115,7 +115,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final int HOME_RANGE = 32;
     private static final int HOME_RANGE_SCOUT = 48;
     private static final double FETTER_CONTACT_DEPTH = 0.2;
+    // Walking speed is intentionally capped below a sprinting player. Trait and
+    // accessory bonuses must not turn routine navigation into a dash between waypoints.
     private static final double BASE_MOVEMENT_SPEED = 0.3;
+    private static final double MAX_GROUND_MOVEMENT_ATTRIBUTE = 0.27;
+    private static final float MAX_GROUND_NAVIGATION_MULTIPLIER = 1.0F;
     private static final double WORK_SPEED_PER_RANK = 0.025;
     private static final double LIGHT_WORK_BONUS = 0.2;
     private static final double HEAVY_WORK_PENALTY = 0.175;
@@ -125,7 +129,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final double STEP_HEIGHT = 0.6;
     private static final double FOLLOW_RANGE = 40.0;
     private static final double FOLLOW_RANGE_SCOUT = 56.0;
-    private static final double MELEE_SPEED = 1.15;
+    private static final double MELEE_SPEED = 1.0;
     private static final double FOLLOW_SPEED = 1.0;
     private static final float FOLLOW_START_DISTANCE = 10.0F;
     private static final float FOLLOW_STOP_DISTANCE = 2.0F;
@@ -141,7 +145,6 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public boolean redrawParts;
     public float wheelRotation;
     int rankXp;
-    private boolean firstRun = true;
     private final GolemAccessoryStateHolder accessoryStates = new GolemAccessoryStateHolder(this);
     private List<GolemAccessory> accessories = List.of();
     private boolean accessorySyncOverBudget;
@@ -149,6 +152,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private Task task;
     private int lastTaskEndTick = -20;
     private @Nullable DeckFetter deckFetter;
+    private @Nullable Vec3 lastTracedPosition;
 
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
         super(type, level);
@@ -161,7 +165,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MOVEMENT_SPEED, MAX_GROUND_MOVEMENT_ATTRIBUTE)
                 .add(Attributes.MAX_HEALTH, 10.0)
                 .add(Attributes.ATTACK_DAMAGE, 0.0)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
@@ -406,7 +410,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         setBaseAttribute(
                 Attributes.STEP_HEIGHT,
                 props.hasTrait(TTGolemTraits.WHEELED.get()) ? WHEELED_STEP_HEIGHT : STEP_HEIGHT);
-        setBaseAttribute(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED * speedFactor);
+        setBaseAttribute(
+                Attributes.MOVEMENT_SPEED,
+                props.hasTrait(TTGolemTraits.FLYER.get())
+                        ? BASE_MOVEMENT_SPEED * speedFactor
+                        : Math.min(MAX_GROUND_MOVEMENT_ATTRIBUTE * speedFactor, MAX_GROUND_MOVEMENT_ATTRIBUTE));
         setBaseAttribute(
                 Attributes.FOLLOW_RANGE,
                 (props.hasTrait(TTGolemTraits.SCOUT.get()) ? FOLLOW_RANGE_SCOUT : FOLLOW_RANGE)
@@ -478,7 +486,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         if (props.hasTrait(TTGolemTraits.WHEELED.get())) {
             speed += WHEELED_WORK_BONUS;
         }
-        return (float) speed;
+        // Bonuses can affect other behavior, but ground golems should walk at
+        // roughly a player's normal pace instead of sprinting between tasks.
+        return props.hasTrait(TTGolemTraits.FLYER.get())
+                ? (float) speed
+                : Math.min((float) speed, MAX_GROUND_NAVIGATION_MULTIPLIER);
     }
 
     private PathNavigation createGolemNavigation() {
@@ -569,6 +581,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             }
         }
         super.tick();
+        if (GolemTrace.DEBUG_TRACE && !level().isClientSide()) {
+            traceLargeMovement();
+        }
         if (!level().isClientSide() && isFettered()) {
             pauseForFetter();
             return;
@@ -579,12 +594,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             setNoGravity(true);
         }
         if (!level().isClientSide()) {
-            if (firstRun) {
-                firstRun = false;
-                if (hasRestriction() && !LevelSpaces.localBlock(this).equals(getRestrictCenter())) {
-                    goHome();
-                }
-            }
+            // Never snap a loaded golem to its exact home block. Home is a work radius,
+            // not a spawn coordinate; ReturnHomeGoal can navigate back when idle.
+            // Keep goHome() reserved for genuine emergencies (in-wall/void damage).
             if (task != null && task.isEnded()) {
                 task = null;
             }
@@ -623,6 +635,67 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         tickAbility(props.arms().ability());
         tickAbility(props.legs().ability());
         tickAbility(props.addon().ability());
+    }
+
+    /** Catch abrupt position writes, even when they bypass our goHome() helper. */
+    @Override
+    public void setPos(double x, double y, double z) {
+        // Entity construction may call setPos before its remaining state exists.
+        if (!GolemTrace.DEBUG_TRACE || tickCount == 0) {
+            super.setPos(x, y, z);
+            return;
+        }
+        Vec3 before = position();
+        super.setPos(x, y, z);
+        Vec3 change = position().subtract(before);
+        if (change.horizontalDistanceSqr() >= 1.0 || Math.abs(change.y) >= 0.85) {
+            GolemTrace.log(
+                    "[golem-position] side={} golem={} tick={} event=position_write from={} to={} delta={} "
+                            + "velocity={} caller={}",
+                    level().isClientSide() ? "client" : "server",
+                    getUUID(),
+                    tickCount,
+                    before,
+                    position(),
+                    change,
+                    getDeltaMovement(),
+                    StackWalker.getInstance()
+                            .walk(frames -> frames.skip(1)
+                                    .limit(4)
+                                    .map(f -> f.getClassName() + "#" + f.getMethodName())
+                                    .toList()));
+        }
+    }
+
+    /** Trace unexpected world-space interpolation rather than Sable's plot coordinates. */
+    @Override
+    public void lerpTo(double x, double y, double z, float yaw, float pitch, int steps) {
+        if (GolemTrace.DEBUG_TRACE && level().isClientSide()) {
+            Vec3 before = position();
+            Vec3 rawTarget = new Vec3(x, y, z);
+            // Sable can send coordinates in its far-away plot-space frame.
+            // Compare the actual world-space target, not raw (20-million-block) values.
+            Vec3 worldTarget = LevelSpaces.frameOf(level(), rawTarget).toWorld(rawTarget);
+            Vec3 delta = worldTarget.subtract(before);
+            if (delta.horizontalDistanceSqr() >= 0.5 * 0.5 || Math.abs(delta.y) >= 0.35) {
+                // If the frame cannot yet be resolved, do not flood logs with
+                // the same raw Sable plot coordinate every tracking update.
+                if (Math.abs(worldTarget.x) < 1.0E6 && Math.abs(worldTarget.z) < 1.0E6) {
+                    GolemTrace.log(
+                            "[golem-client] event=lerp_target golem={} tick={} from={} worldTarget={} "
+                                    + "rawTarget={} worldDelta={} steps={} frame={}",
+                            getUUID(),
+                            tickCount,
+                            before,
+                            worldTarget,
+                            rawTarget,
+                            delta,
+                            steps,
+                            LevelSpaces.trackedFrame(this));
+                }
+            }
+        }
+        super.lerpTo(x, y, z, yaw, pitch, steps);
     }
 
     @Override
@@ -699,12 +772,55 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         wheelRotation = GolemWheel.spun(wheelRotation, getX() - xo, getZ() - zo, yBodyRot);
     }
 
-    private void goHome() {
+    /** Tracks large server-side position corrections, including movement applied outside the golem's own tick. */
+    private void traceLargeMovement() {
+        Vec3 current = position();
+        Vec3 previous = lastTracedPosition;
+        lastTracedPosition = current;
+        if (previous == null) return;
+        Vec3 displacement = current.subtract(previous);
+        // Smaller than the original thresholds so sub-block upward snaps also
+        // show up, without reporting ordinary walking or the start of a jump.
+        if (Math.abs(displacement.y) < 0.5 && displacement.horizontalDistanceSqr() < 0.8 * 0.8) return;
+        Task currentTask = getTask();
+        GolemTrace.log(
+                "[golem-move] tick={} golem={} event=large_displacement from={} to={} displacement={} velocity={} "
+                        + "grounded={} horizontalCollision={} verticalCollision={} frame={} nav={} navTarget={} task={}",
+                level().getGameTime(),
+                getUUID(),
+                previous,
+                current,
+                displacement,
+                getDeltaMovement(),
+                onGround(),
+                horizontalCollision,
+                verticalCollision,
+                LevelSpaces.trackedFrame(this),
+                getNavigation().getClass().getSimpleName(),
+                getNavigation().getTargetPos(),
+                currentTask == null ? null : currentTask.id());
+    }
+
+    private void goHome(String reason) {
         Vec3 origin = position();
         for (BlockPos spot = getRestrictCenter(); spot.getY() < level().getMaxBuildHeight(); spot = spot.above()) {
             Vec3 target = Vec3.atBottomCenterOf(spot);
             if (level().noCollision(this, getBoundingBox().move(target.subtract(origin)))) {
                 Vec3 arrival = LevelSpaces.toWorld(level(), target);
+                if (GolemTrace.DEBUG_TRACE) {
+                    GolemTrace.log(
+                            "[golem-move] tick={} golem={} event=teleport_home reason={} from={} to={} home={} "
+                                    + "frame={} grounded={} navigationTarget={}",
+                            level().getGameTime(),
+                            getUUID(),
+                            reason,
+                            origin,
+                            arrival,
+                            getRestrictCenter(),
+                            LevelSpaces.trackedFrame(this),
+                            onGround(),
+                            getNavigation().getTargetPos());
+                }
                 teleportTo(arrival.x, arrival.y, arrival.z);
                 getNavigation().stop();
                 return;
@@ -734,7 +850,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             return;
         }
         if (hasRestriction() && (source.is(DamageTypes.IN_WALL) || source.is(DamageTypes.FELL_OUT_OF_WORLD))) {
-            goHome();
+            goHome(source.is(DamageTypes.IN_WALL) ? "in_wall_damage" : "fell_out_of_world");
         }
         super.actuallyHurt(source, damage);
     }

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemEvent;
+import com.leclowndu93150.thaumaturge.content.golem.GolemTrace;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
@@ -79,30 +81,62 @@ public abstract class TaskGoal extends Goal {
     }
 
     protected boolean mayTake(Task task, BlockPos target) {
+        if (!taskAllowed(task)) return false;
+        if (!golem.isWithinRestriction(target)) {
+            if (GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE) {
+                GolemTrace.log(
+                        "[golem-task] tick={} golem={} task={} rejected=restriction target={} home={}",
+                        golem.level().getGameTime(),
+                        golem.getUUID(),
+                        task.id(),
+                        target,
+                        golem.getRestrictCenter());
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /** An entity's blockPosition is world-space, not the local block key used by a Sable home. */
+    protected boolean mayTakeEntity(Task task, Entity target) {
+        if (!taskAllowed(task)) return false;
+        if (!golem.hasRestriction()) return true;
+        Vec3 homeWorld = LevelSpaces.worldCenter(golem.level(), golem.getRestrictCenter());
+        double radius = golem.getRestrictRadius();
+        boolean within = homeWorld.distanceToSqr(target.position()) < radius * radius;
+        if (!within && GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE) {
+            GolemTrace.log(
+                    "[golem-task] tick={} golem={} task={} rejected=entity_restriction "
+                            + "target={} worldHome={} radius={}",
+                    golem.level().getGameTime(),
+                    golem.getUUID(),
+                    task.id(),
+                    target.position(),
+                    homeWorld,
+                    radius);
+        }
+        return within;
+    }
+
+    private boolean taskAllowed(Task task) {
         if (!SealAccess.allows(SealHandler.getSealEntity(golem.level(), task.origin()), golem)) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} task={} rejected=seal_access",
-            // golem.level().getGameTime(),
-            // golem.getUUID(),
-            // task.id());
+            if (GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE) {
+                GolemTrace.log(
+                        "[golem-task] tick={} golem={} task={} rejected=seal_access",
+                        golem.level().getGameTime(),
+                        golem.getUUID(),
+                        task.id());
+            }
             return false;
         }
         if (!task.canBePerformedBy(golem)) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} task={} rejected=task_rules_or_capacity",
-            // golem.level().getGameTime(),
-            // golem.getUUID(),
-            // task.id());
-            return false;
-        }
-        if (!golem.isWithinRestriction(target)) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} golem={} task={} rejected=restriction target={} home={}",
-            // golem.level().getGameTime(),
-            // golem.getUUID(),
-            // task.id(),
-            // target,
-            // golem.getRestrictCenter());
+            if (GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE) {
+                GolemTrace.log(
+                        "[golem-task] tick={} golem={} task={} rejected=task_rules_or_capacity",
+                        golem.level().getGameTime(),
+                        golem.getUUID(),
+                        task.id());
+            }
             return false;
         }
         return true;
@@ -113,10 +147,14 @@ public abstract class TaskGoal extends Goal {
     }
 
     protected void rememberFailedPath(BlockPos target) {
+        rememberFailedPath(target, UNREACHABLE_RETRY_TICKS);
+    }
+
+    protected void rememberFailedPath(BlockPos target, int cooldownTicks) {
         if (unreachableUntil.size() >= MAX_REMEMBERED_FAILURES) {
             unreachableUntil.clear();
         }
-        unreachableUntil.put(target.immutable(), golem.level().getGameTime() + UNREACHABLE_RETRY_TICKS);
+        unreachableUntil.put(target.immutable(), golem.level().getGameTime() + cooldownTicks);
     }
 
     protected void take(Task task) {

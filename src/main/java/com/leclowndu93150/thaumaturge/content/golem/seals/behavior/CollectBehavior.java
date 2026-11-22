@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.StackFilter;
+import com.leclowndu93150.thaumaturge.content.golem.GolemTrace;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandoff;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.List;
@@ -38,46 +39,52 @@ public final class CollectBehavior implements ISealBehavior {
         var bounds = SealArea.bounds(seal);
         var items =
                 LevelSpaces.entitiesIn(level, ItemEntity.class, seal.pos().pos(), bounds, EntitySelector.NO_SPECTATORS);
-        // if (Thaumaturge.LOGGER.isDebugEnabled()) {
-        // Thaumaturge.LOGGER.debug(
-        // "[golem-task] tick={} collect seal={} localBounds={} worldBounds={} items={}",
-        // level.getGameTime(),
-        // seal.pos(),
-        // bounds,
-        // LevelSpaces.worldBox(level, seal.pos().pos(), bounds),
-        // items.size());
-        // }
+        if ((GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE)) {
+            GolemTrace.log(
+                    "[golem-task] tick={} collect seal={} localBounds={} worldBounds={} items={}",
+                    level.getGameTime(),
+                    seal.pos(),
+                    bounds,
+                    LevelSpaces.worldBox(level, seal.pos().pos(), bounds),
+                    items.size());
+        }
         for (ItemEntity item : items) {
-            // if (Thaumaturge.LOGGER.isDebugEnabled()) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} item={} pos={} alive={} grounded={} pickupDelay={} empty={} tracked={}",
-            // level.getGameTime(),
-            // item.getUUID(),
-            // item.position(),
-            // item.isAlive(),
-            // item.onGround(),
-            // item.hasPickUpDelay(),
-            // item.getItem().isEmpty(),
-            // claimedItems.tracks(item.getUUID()));
-            // }
+            if ((GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE)) {
+                GolemTrace.log(
+                        "[golem-task] tick={} item={} pos={} alive={} grounded={} pickupDelay={} empty={} tracked={}",
+                        level.getGameTime(),
+                        item.getUUID(),
+                        item.position(),
+                        item.isAlive(),
+                        item.onGround(),
+                        item.hasPickUpDelay(),
+                        item.getItem().isEmpty(),
+                        claimedItems.tracks(item.getUUID()));
+            }
             if (isLoose(item) && !claimedItems.tracks(item.getUUID()) && wanted(seal, item.getItem())) {
                 Task task = Task.onEntity(seal.pos(), item);
                 task.setPriority(seal.priority());
                 GolemDispatch.postTask(level, task);
                 claimedItems.record(task, item.getUUID());
-                // Thaumaturge.LOGGER.debug(
-                // "[golem-task] tick={} posted task={} seal={} item={} pos={}",
-                // level.getGameTime(),
-                // task.id(),
-                // seal.pos(),
-                // item.getUUID(),
-                // item.position());
+                if (GolemTrace.DEBUG_TRACE) {
+                    GolemTrace.log(
+                            "[golem-item] event=posted tick={} task={} seal={} item={} "
+                                    + "itemPos={} itemFrame={} stack={}",
+                            level.getGameTime(),
+                            task.id(),
+                            seal.pos(),
+                            item.getUUID(),
+                            item.position(),
+                            LevelSpaces.trackedFrame(item),
+                            item.getItem());
+                }
                 break;
+            } else if ((GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE)
+                    && isLoose(item)
+                    && !claimedItems.tracks(item.getUUID())) {
+                GolemTrace.log(
+                        "[golem-task] tick={} item={} rejected by collect filter", level.getGameTime(), item.getUUID());
             }
-            // else if (Thaumaturge.LOGGER.isDebugEnabled() && isLoose(item) && !claimedItems.tracks(item.getUUID())) {
-            // Thaumaturge.LOGGER.debug(
-            // "[golem-task] tick={} item={} rejected by collect filter", level.getGameTime(), item.getUUID());
-            // }
         }
     }
 
@@ -99,7 +106,21 @@ public final class CollectBehavior implements ISealBehavior {
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         ItemEntity item = claimedItem(task);
         if (item != null && !item.getItem().isEmpty() && wanted(seal, item.getItem())) {
+            ItemStack incoming = item.getItem().copy();
             ItemStack leftover = golem.hands().hold(item.getItem());
+            if (GolemTrace.DEBUG_TRACE) {
+                GolemTrace.log(
+                        "[golem-item] event=pickup tick={} golem={} task={} "
+                                + "item={} stack={} remaining={} golemPos={} itemPos={}",
+                        level.getGameTime(),
+                        golem.asEntity().getUUID(),
+                        task.id(),
+                        item.getUUID(),
+                        incoming,
+                        leftover,
+                        golem.asEntity().position(),
+                        item.position());
+            }
             if (leftover.isEmpty()) {
                 item.discard();
             } else {
@@ -107,6 +128,14 @@ public final class CollectBehavior implements ISealBehavior {
             }
             HandlingSound.play(golem, HandlingSound.HIGH);
             golem.animateSwing();
+        }
+        if (GolemTrace.DEBUG_TRACE && item == null) {
+            GolemTrace.log(
+                    "[golem-item] event=missing_on_completion tick={} golem={} task={} seal={}",
+                    level.getGameTime(),
+                    golem.asEntity().getUUID(),
+                    task.id(),
+                    seal.pos());
         }
         task.end();
         claimedItems.forget(task);
@@ -136,16 +165,16 @@ public final class CollectBehavior implements ISealBehavior {
             return false;
         }
         boolean canTake = golem.hands().canTake(item.getItem(), true);
-        // if (!canTake && Thaumaturge.LOGGER.isDebugEnabled()) {
-        // Thaumaturge.LOGGER.debug(
-        // "[golem-task] tick={} golem={} task={} collect rejected=hands_full item={} stack={} hands={}",
-        // golem.level().getGameTime(),
-        // golem.asEntity().getUUID(),
-        // task.id(),
-        // item.getUUID(),
-        // item.getItem(),
-        // golem.hands().contents());
-        // }
+        if (!canTake && (GolemTrace.DEBUG_TRACE && GolemTrace.VERBOSE_TASK_TRACE)) {
+            GolemTrace.log(
+                    "[golem-task] tick={} golem={} task={} collect rejected=hands_full item={} stack={} hands={}",
+                    golem.level().getGameTime(),
+                    golem.asEntity().getUUID(),
+                    task.id(),
+                    item.getUUID(),
+                    item.getItem(),
+                    golem.hands().contents());
+        }
         return canTake;
     }
 }

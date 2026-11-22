@@ -141,6 +141,50 @@ public final class GolemPathGeometry {
         return null;
     }
 
+    /**
+     * A ray through a single point can hit the very corner of a stair even when
+     * there is not enough footing for the golem's body. Test the actual standing
+     * width before accepting the landing of a planned jump. This is deliberately
+     * restricted to jump landings so existing Sable-native stair routes remain
+     * unchanged.
+     */
+    static boolean safeJumpLanding(Level level, Mob mob, Surface landing) {
+        Vec3 feet = landing.worldFeet();
+        if (!clear(level, mob, body(mob, feet.add(0, 0.002, 0)))) return false;
+        if (!supportedAt(level, mob, feet, 0.0, 0.0)) return false;
+        double offset = mob.getBbWidth() * 0.35;
+        int support = 0;
+        if (supportedAt(level, mob, feet, offset, 0)) support++;
+        if (supportedAt(level, mob, feet, -offset, 0)) support++;
+        if (supportedAt(level, mob, feet, 0, offset)) support++;
+        if (supportedAt(level, mob, feet, 0, -offset)) support++;
+        return support >= 2;
+    }
+
+    private static boolean supportedAt(Level level, Mob mob, Vec3 feet, double dx, double dz) {
+        Vec3 top = feet.add(dx, 0.06, dz);
+        Vec3 bottom = feet.add(dx, -0.60, dz);
+        CollisionContext context = CollisionContext.of(mob);
+        for (SpaceFrame frame : LevelSpaces.framesTouching(level, new AABB(top, bottom).inflate(0.05))) {
+            Vec3 localTop = frame.toLocal(top);
+            Vec3 localBottom = frame.toLocal(bottom);
+            for (BlockPos block : cells(new AABB(localTop, localBottom))) {
+                if (!level.isLoaded(block)) continue;
+                BlockState state = level.getBlockState(block);
+                if (hazard(state)) continue;
+                var hit = state.getCollisionShape(level, block, context).clip(localTop, localBottom, block);
+                if (hit != null
+                        && frame.directionToWorld(Vec3.atLowerCornerOf(
+                                                hit.getDirection().getNormal()))
+                                        .y
+                                > 0.5) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean hazard(BlockState state) {
         return WalkNodeEvaluator.isBurningBlock(state)
                 || state.getFluidState().is(FluidTags.LAVA)
