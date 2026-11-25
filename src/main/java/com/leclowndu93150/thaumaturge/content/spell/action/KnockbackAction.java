@@ -43,7 +43,20 @@ public record KnockbackAction(float base, float perPower, float lift, boolean pu
             horizontal = horizontal.normalize();
         }
         Vec3 push = horizontal.scale(pull ? -strength : strength).add(0.0, lift * strength, 0.0);
-        entity.push(push);
+        Vec3 velocity = entity.getDeltaMovement();
+        Vec3 nextVelocity = velocity.add(push);
+        // Repeated hits must not add the same impulse indefinitely.
+        Vec3 horizontalVelocity = new Vec3(nextVelocity.x, 0.0, nextVelocity.z);
+        double horizontalLimit = Math.max(MAX_STRENGTH, Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z));
+        if (horizontalVelocity.lengthSqr() > horizontalLimit * horizontalLimit) {
+            horizontalVelocity = horizontalVelocity.normalize().scale(horizontalLimit);
+            nextVelocity = new Vec3(horizontalVelocity.x, nextVelocity.y, horizontalVelocity.z);
+        }
+        if (push.y > 0.0) {
+            double verticalLimit = Math.max(velocity.y, lift * MAX_STRENGTH);
+            nextVelocity = new Vec3(nextVelocity.x, Math.min(nextVelocity.y, verticalLimit), nextVelocity.z);
+        }
+        entity.setDeltaMovement(nextVelocity);
         entity.hurtMarked = true;
     }
 }
