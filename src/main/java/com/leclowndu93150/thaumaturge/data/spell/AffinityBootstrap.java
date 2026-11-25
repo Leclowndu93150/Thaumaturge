@@ -260,12 +260,12 @@ public final class AffinityBootstrap {
     private static List<SpellAction> curse() {
         return List.of(
                 new DamageAction(DamageTypes.INDIRECT_MAGIC, 0.5F, 0.5F, 1.0F, false),
-                new MobEffectAction(MobEffects.POISON, 0.0F, SECOND, 0.0F, 0.5F, 3, 1.0F),
-                new MobEffectAction(MobEffects.MOVEMENT_SLOWDOWN, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.85F),
-                new MobEffectAction(MobEffects.WEAKNESS, 0.0F, SECOND, 0.0F, 0.5F, 3, 0.7F),
-                new MobEffectAction(MobEffects.DIG_SLOWDOWN, 0.0F, SECOND * 2, 0.0F, 0.5F, 3, 0.55F),
-                new MobEffectAction(MobEffects.HUNGER, 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.4F),
-                new MobEffectAction(MobEffects.UNLUCK, 0.0F, SECOND * 3, 0.0F, 0.5F, 3, 0.25F));
+                new MobEffectAction(MobEffects.POISON, 0.0F, SECOND, 0.0F, 0.5F, 2, 1.0F),
+                new MobEffectAction(MobEffects.MOVEMENT_SLOWDOWN, 0.0F, SECOND, 0.0F, 0.5F, 2, 0.85F),
+                new MobEffectAction(MobEffects.WEAKNESS, 0.0F, SECOND, 0.0F, 0.5F, 2, 0.7F),
+                new MobEffectAction(MobEffects.DIG_SLOWDOWN, 0.0F, SECOND, 0.0F, 0.5F, 2, 0.55F),
+                new MobEffectAction(MobEffects.HUNGER, 0.0F, SECOND, 0.0F, 0.5F, 2, 0.4F),
+                new MobEffectAction(MobEffects.UNLUCK, 0.0F, SECOND, 0.0F, 0.5F, 2, 0.25F));
     }
 
     private static MobEffectAction effect(
