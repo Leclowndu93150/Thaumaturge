@@ -51,6 +51,7 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.BooleanValue NO_SLEEP;
     public static final ModConfigSpec.BooleanValue NO_STRESS;
     public static final ModConfigSpec.BooleanValue SHOW_GOLEM_EMOTES;
+    public static final ModConfigSpec.BooleanValue ALLOW_WARDING_BLOCK_ENTITIES;
 
     public static final ModConfigSpec.IntValue FLUX_SCRUBBER_CHARGES_PER_ROLL;
     public static final ModConfigSpec.DoubleValue FLUX_SCRUBBER_ESSENTIA_CHANCE;
@@ -194,6 +195,13 @@ public final class ThaumaturgeCommonConfig {
         NO_SLEEP = builder.comment(
                         "Setting this to true will make you get the recipe book for salis mundus without having to sleep first.")
                 .define("noSleep", false);
+
+        builder.pop();
+        builder.push("warding");
+
+        ALLOW_WARDING_BLOCK_ENTITIES = builder.comment(
+                        "Allows the Warding focus to protect blocks with block entities, such as machines and containers. Warding does not replace their block state or block entity.")
+                .define("allowBlockEntities", true);
 
         builder.pop();
         builder.push("sounds");

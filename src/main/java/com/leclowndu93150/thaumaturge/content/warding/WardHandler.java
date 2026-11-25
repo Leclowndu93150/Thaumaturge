@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
@@ -11,8 +12,11 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -60,12 +64,23 @@ public final class WardHandler {
     public static boolean canWard(BlockGetter level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return !state.isAir()
-                && !state.hasBlockEntity()
+                && !isLeaves(state)
+                && !(state.getBlock() instanceof FallingBlock)
+                && (!state.hasBlockEntity()
+                        || ThaumaturgeCommonConfig.ALLOW_WARDING_BLOCK_ENTITIES.get() && !isAuraNode(state))
                 && (!state.getCollisionShape(level, pos).isEmpty()
                         || state.is(TTBlocks.WARDED_GLASS.get())
                         || state.is(TTBlocks.ARCANE_DOOR.get())
                         || state.is(TTBlocks.ARCANE_PRESSURE_PLATE.get()))
                 && state.getDestroySpeed(level, pos) >= 0.0F;
+    }
+
+    private static boolean isAuraNode(BlockState state) {
+        return state.is(TTBlocks.NODE.get()) || state.is(TTBlocks.JAR_NODE.get());
+    }
+
+    private static boolean isLeaves(BlockState state) {
+        return state.getBlock() instanceof LeavesBlock || state.is(BlockTags.LEAVES);
     }
 
     public static boolean ward(ServerLevel level, BlockPos pos, UUID owner) {

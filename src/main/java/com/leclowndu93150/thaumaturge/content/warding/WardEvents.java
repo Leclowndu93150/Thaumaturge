@@ -13,8 +13,10 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDestroyBlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -53,6 +55,20 @@ public final class WardEvents {
                 event.setCanceled(true);
             }
         });
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
+        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
+        if (event instanceof BlockEvent.EntityMultiPlaceEvent multiPlace) {
+            for (BlockSnapshot snapshot : multiPlace.getReplacedBlockSnapshots()) {
+                clearWard(level, snapshot.getPos());
+            }
+            return;
+        }
+        clearWard(level, event.getPos());
     }
 
     @SubscribeEvent

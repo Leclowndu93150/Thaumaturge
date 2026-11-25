@@ -81,6 +81,8 @@ final class ConfigLangEn {
             Map.entry("world.shieldCost", "Runic Shield Vis Cost"),
             Map.entry("world.allowChampionMobs", "Champion Mobs"),
             Map.entry("world.noSleep", "Salis Mundus Without Sleeping"),
+            Map.entry("warding", "Warding"),
+            Map.entry("warding.allowBlockEntities", "Allow Warding Block Entities"),
             Map.entry("sounds", "Sounds"),
             Map.entry("sounds.nostress", "No Stress"),
             Map.entry("golems", "Golems"),
