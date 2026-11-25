@@ -178,7 +178,7 @@ public final class AffinityBootstrap {
                 2,
                 "focus_mine",
                 sound(SoundEvents.CHAIN_PLACE),
-                List.of(effect(MobEffects.MOVEMENT_SLOWDOWN, 0, 1, 4.0F, 0.0F, 6)),
+                List.of(effect(MobEffects.MOVEMENT_SLOWDOWN, 0, 0.5F, 4.0F, 0.0F, 6)),
                 List.of(),
                 List.of());
         register(
