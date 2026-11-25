@@ -225,5 +225,9 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
         tag(Tags.Blocks.STRIPPED_LOGS).add(TTBlocks.STRIPPED_LOG_GREATWOOD.get()).add(TTBlocks.STRIPPED_LOG_SILVERWOOD.get());
 
         tag(Tags.Blocks.STRIPPED_WOODS).add(TTBlocks.STRIPPED_LOG_GREATWOOD.get()).add(TTBlocks.STRIPPED_LOG_SILVERWOOD.get());
+
+        tag(Tags.Blocks.CHESTS).add(TTBlocks.HUNGRY_CHEST.get());
+        tag(Tags.Blocks.CHESTS_WOODEN).add(TTBlocks.HUNGRY_CHEST.get());
+        tag(BlockTags.GUARDED_BY_PIGLINS).add(TTBlocks.HUNGRY_CHEST.get());
     }
 }
