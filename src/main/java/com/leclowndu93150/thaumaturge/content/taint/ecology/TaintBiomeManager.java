@@ -46,6 +46,54 @@ public final class TaintBiomeManager {
                         .is(TTBiomeTags.IS_TAINTED);
     }
 
+    public static boolean isTaintedColumn(ServerLevel level, BlockPos pos) {
+        if (isTainted(level, pos)) {
+            return true;
+        }
+        if (!LoadedChunks.contains(level, pos)) {
+            return false;
+        }
+        int quartX = QuartPos.fromBlock(pos.getX());
+        int quartZ = QuartPos.fromBlock(pos.getZ());
+        int targetQuartY = QuartPos.fromBlock(pos.getY());
+        int minQuartY = QuartPos.fromBlock(level.getMinBuildHeight());
+        int maxQuartY = QuartPos.fromBlock(level.getMaxBuildHeight() - 1);
+        for (int quartY = minQuartY; quartY <= maxQuartY; quartY++) {
+            if (quartY != targetQuartY
+                    && level.getNoiseBiome(quartX, quartY, quartZ).is(TTBiomeTags.IS_TAINTED)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasTaintedBiomeInBloomRange(ServerLevel level, BlockPos center) {
+        int radius = TaintBlooms.PROTECTION_RADIUS;
+        double radiusSq = radius * radius;
+        int minQuartX = QuartPos.fromBlock(center.getX() - radius);
+        int maxQuartX = QuartPos.fromBlock(center.getX() + radius);
+        int minQuartZ = QuartPos.fromBlock(center.getZ() - radius);
+        int maxQuartZ = QuartPos.fromBlock(center.getZ() + radius);
+        int minQuartY = QuartPos.fromBlock(level.getMinBuildHeight());
+        int maxQuartY = QuartPos.fromBlock(level.getMaxBuildHeight() - 1);
+        for (int quartZ = minQuartZ; quartZ <= maxQuartZ; quartZ++) {
+            for (int quartX = minQuartX; quartX <= maxQuartX; quartX++) {
+                BlockPos sample = quartCenter(quartX, minQuartY, quartZ);
+                double dx = center.getX() - sample.getX();
+                double dz = center.getZ() - sample.getZ();
+                if (dx * dx + dz * dz > radiusSq) {
+                    continue;
+                }
+                for (int quartY = minQuartY; quartY <= maxQuartY; quartY++) {
+                    if (isTainted(level, quartCenter(quartX, quartY, quartZ))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean isChangedColumn(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
         TaintColumns columns = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
@@ -56,7 +104,7 @@ public final class TaintBiomeManager {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()
                 || isTainted(level, pos)
                 || level.getBiome(pos).is(BiomeTags.IS_RIVER)
-                || TaintBlooms.isProtected(level, pos)) {
+                || TaintBlooms.isProtectedColumn(level, pos)) {
             return false;
         }
         return LevelSpaces.isPlot(level, pos) || replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
@@ -74,12 +122,31 @@ public final class TaintBiomeManager {
         int quartX = QuartPos.fromBlock(pos.getX());
         int quartZ = QuartPos.fromBlock(pos.getZ());
         BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
-        if (snapshot.columnHas(quartX, quartZ, biome -> biome.is(biomeKey))) {
+        boolean tainting = biomeKey.equals(TTBiomes.TAINTED_LANDS);
+        if (!tainting && snapshot.columnHas(quartX, quartZ, biome -> biome.is(biomeKey))) {
             return false;
         }
         Holder<Biome> replacement =
                 level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(biomeKey);
-        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, sampler) -> replacement);
+        // Biome changes apply to an entire x/z column, so Bloom protection spans that column's full height.
+        boolean canReplace = false;
+        for (int y = 0; y < snapshot.quartHeight(); y++) {
+            int quartY = snapshot.minQuartY() + y;
+            if (!snapshot.get(quartX, quartY, quartZ).is(biomeKey)
+                    && (!tainting || !TaintBlooms.isProtectedColumn(level, quartCenter(quartX, quartY, quartZ)))) {
+                canReplace = true;
+                break;
+            }
+        }
+        if (!canReplace) {
+            return false;
+        }
+        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, sampler) -> {
+            Holder<Biome> current = snapshot.get(x, y, z);
+            return current.is(biomeKey) || tainting && TaintBlooms.isProtectedColumn(level, quartCenter(x, y, z))
+                    ? current
+                    : replacement;
+        });
         setChanged(chunk, quartX, quartZ, biomeKey.equals(TTBiomes.TAINTED_LANDS));
         return true;
     }
@@ -108,7 +175,7 @@ public final class TaintBiomeManager {
 
     public static boolean restoreColumn(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null || LevelSpaces.isPlot(level, pos) || !isTainted(level, pos)) {
+        if (chunk == null || LevelSpaces.isPlot(level, pos) || !isTaintedColumn(level, pos)) {
             return false;
         }
         int quartX = QuartPos.fromBlock(pos.getX());
@@ -134,6 +201,56 @@ public final class TaintBiomeManager {
             return isTaintedBiome(restored) ? fallback : restored;
         });
         setChanged(chunk, quartX, quartZ, false);
+        return true;
+    }
+
+    public static boolean restoreProtectedBiomeSamples(ServerLevel level, BlockPos pos) {
+        LevelChunk chunk = loadedChunk(level, pos);
+        if (chunk == null || LevelSpaces.isPlot(level, pos) || !isTaintedColumn(level, pos)) {
+            return false;
+        }
+        int quartX = QuartPos.fromBlock(pos.getX());
+        int quartZ = QuartPos.fromBlock(pos.getZ());
+        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
+        if (!snapshot.columnHas(quartX, quartZ, TaintBiomeManager::isTaintedBiome)) {
+            return false;
+        }
+        boolean changed = isChangedColumn(level, pos);
+        boolean hasProtectedTaint = false;
+        boolean remainingTaintOutsideBloom = false;
+        for (int y = 0; y < snapshot.quartHeight(); y++) {
+            int quartY = snapshot.minQuartY() + y;
+            if (!isTaintedBiome(snapshot.get(quartX, quartY, quartZ))) {
+                continue;
+            }
+            if (TaintBlooms.isProtectedColumn(level, quartCenter(quartX, quartY, quartZ))) {
+                hasProtectedTaint = true;
+            } else {
+                remainingTaintOutsideBloom = true;
+            }
+        }
+        if (!hasProtectedTaint) {
+            return false;
+        }
+        BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
+        Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
+        Holder<Biome> fallback =
+                level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
+        boolean[] taintRemains = {remainingTaintOutsideBloom};
+        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, ignored) -> {
+            Holder<Biome> current = snapshot.get(x, y, z);
+            if (!isTaintedBiome(current)) {
+                return current;
+            }
+            if (!TaintBlooms.isProtectedColumn(level, quartCenter(x, y, z))) {
+                taintRemains[0] = true;
+                return current;
+            }
+            int[] offset = changed ? new int[] {0, 0} : nearestCleanOffset(source, x, y, z, sampler);
+            Holder<Biome> restored = source.getNoiseBiome(x + offset[0], y, z + offset[1], sampler);
+            return isTaintedBiome(restored) ? fallback : restored;
+        });
+        setChanged(chunk, quartX, quartZ, changed && taintRemains[0]);
         return true;
     }
 
@@ -178,6 +295,10 @@ public final class TaintBiomeManager {
 
     private static boolean isTaintedBiome(Holder<Biome> biome) {
         return biome.is(TTBiomeTags.IS_TAINTED);
+    }
+
+    private static BlockPos quartCenter(int quartX, int quartY, int quartZ) {
+        return new BlockPos(QuartPos.toBlock(quartX) + 2, QuartPos.toBlock(quartY) + 2, QuartPos.toBlock(quartZ) + 2);
     }
 
     private static int[] nearestCleanOffset(

@@ -29,4 +29,9 @@ public final class TaintBlooms {
         TaintBloomIndex index = level.getExistingDataOrNull(TTAttachments.TAINT_BLOOMS.get());
         return index != null && index.covers(level, pos, PROTECTION_RADIUS_SQ);
     }
+
+    public static boolean isProtectedColumn(ServerLevel level, BlockPos pos) {
+        TaintBloomIndex index = level.getExistingDataOrNull(TTAttachments.TAINT_BLOOMS.get());
+        return index != null && index.coversColumn(pos, PROTECTION_RADIUS_SQ);
+    }
 }

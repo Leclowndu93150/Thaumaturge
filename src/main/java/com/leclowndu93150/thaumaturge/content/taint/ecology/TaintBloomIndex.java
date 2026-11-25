@@ -29,4 +29,15 @@ public final class TaintBloomIndex {
         }
         return false;
     }
+
+    public boolean coversColumn(BlockPos pos, double radiusSq) {
+        for (BlockPos bloom : blooms) {
+            double dx = bloom.getX() - pos.getX();
+            double dz = bloom.getZ() - pos.getZ();
+            if (dx * dx + dz * dz <= radiusSq) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

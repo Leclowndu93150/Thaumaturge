@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class BlockEntityEtherealBloom extends BlockEntity {
     private static final int WORK_INTERVAL = 20;
     private static final int SAMPLES_PER_WORK = 4;
-    private static final int VERTICAL_SAMPLE_RANGE = 4;
+    private static final int VERTICAL_SAMPLE_RANGE = TaintBlooms.PROTECTION_RADIUS;
     private static final int IDLE_WORK_LIMIT = 300;
     private static final int SLEEP_RECHECK_INTERVAL = 1200;
     private static final float PRESSURE_CLEAN_AMOUNT = 0.005F;
@@ -98,6 +98,9 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
     }
 
     private boolean hasNearbyEcology(ServerLevel level, BlockPos origin) {
+        if (TaintBiomeManager.hasTaintedBiomeInBloomRange(level, origin)) {
+            return true;
+        }
         int radius = TaintBlooms.PROTECTION_RADIUS;
         for (int chunkX = SectionPos.blockToSectionCoord(origin.getX() - radius);
                 chunkX <= SectionPos.blockToSectionCoord(origin.getX() + radius);
@@ -109,9 +112,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
                         SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
                         origin.getY(),
                         SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
-                if (LoadedChunks.contains(level, cursor)
-                        && (TaintEcology.getSaturation(level, cursor) > 0.0F
-                                || TaintBiomeManager.isTainted(level, cursor))) {
+                if (LoadedChunks.contains(level, cursor) && TaintEcology.getSaturation(level, cursor) > 0.0F) {
                     return true;
                 }
             }
@@ -132,7 +133,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
             if (!LoadedChunks.contains(level, cursor)) {
                 continue;
             }
-            worked |= TaintBiomeManager.restoreColumn(level, cursor);
+            worked |= TaintBiomeManager.restoreProtectedBiomeSamples(level, cursor);
             for (int y = VERTICAL_SAMPLE_RANGE; y >= -VERTICAL_SAMPLE_RANGE; y--) {
                 if (x * x + y * y + z * z > RADIUS_SQ) {
                     continue;
