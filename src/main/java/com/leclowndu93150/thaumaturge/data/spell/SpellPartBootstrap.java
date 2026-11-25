@@ -484,13 +484,13 @@ public final class SpellPartBootstrap {
                 .setting("count", 2, 7, 1, 3, 1.0F)
                 .setting("arc", 30, 120, 15, 60, -1.0F)
                 .register(ctx, TTSpellParts.FAN);
-        PartBuilder.of(new EchoModifier(10, 0.6F))
+        PartBuilder.of(new EchoModifier(10, 0.5F))
                 .glyph("echo")
                 .color(MODIFIER)
                 .complexity(4)
                 .aspect(TTAspects.PERMUTATIO)
                 .research("focus_echo")
-                .setting("repeats", 1, 3, 1, 1, 4.0F)
+                .setting("repeats", 1, 2, 1, 1, 4.0F)
                 .register(ctx, TTSpellParts.ECHO);
     }
 
