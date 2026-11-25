@@ -173,6 +173,9 @@ final class NodeUpkeep {
             return;
         }
         receiver.aspectsBase = receiver.aspectsBase.add(aspect, 1);
+        if (base == 0) {
+            receiver.held = receiver.held.add(aspect, 1);
+        }
         if (receiver.trait() == NodeModifier.PALE && random.nextInt(PALE_RECOVERY_ODDS) == 0) {
             receiver.assignTrait(null);
         }
