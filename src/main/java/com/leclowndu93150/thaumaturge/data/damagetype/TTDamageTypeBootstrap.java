@@ -46,5 +46,12 @@ public final class TTDamageTypeBootstrap {
                         DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
                         0.1F,
                         DamageEffects.BURNING));
+        context.register(
+                TTDamageTypes.FOCUS_FROST,
+                new DamageType(
+                        "thaumaturge.focus_frost",
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0.1F,
+                        DamageEffects.HURT));
     }
 }

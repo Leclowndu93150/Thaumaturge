@@ -24,6 +24,7 @@ public final class TTDamageTypes {
     public static final ResourceKey<DamageType> SWARM = key("swarm");
     public static final ResourceKey<DamageType> DISSOLVE = key("dissolve");
     public static final ResourceKey<DamageType> FOCUS_FIRE = key("focus_fire");
+    public static final ResourceKey<DamageType> FOCUS_FROST = key("focus_frost");
 
     public static final ResourceKey<DamageType> ELDRITCH_SPELL = key("eldritch_spell");
 

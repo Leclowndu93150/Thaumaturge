@@ -1269,6 +1269,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("death.attack.thaumaturge.focus_fire", "%1$s was burned to a crisp by magic");
         add("death.attack.thaumaturge.focus_fire.player", "%1$s was burned to a crisp by %2$s's magic");
         add("death.attack.thaumaturge.focus_fire.item", "%1$s was burned to a crisp by %2$s using %3$s");
+        add("death.attack.thaumaturge.focus_frost", "%1$s was frozen by magic");
+        add("death.attack.thaumaturge.focus_frost.player", "%1$s was frozen by %2$s's magic");
+        add("death.attack.thaumaturge.focus_frost.item", "%1$s was frozen by %2$s using %3$s");
         add("block.thaumaturge.focal_manipulator", "Focal Manipulator");
         add("gui.thaumaturge.golembuilder.stat.health", "Health");
         add("gui.thaumaturge.golembuilder.stat.armor", "Armour");

@@ -65,7 +65,7 @@ public final class AffinityBootstrap {
                 "focus_elemental",
                 sound(SoundEvents.POWDER_SNOW_BREAK),
                 List.of(
-                        new DamageAction(DamageTypes.FREEZE, 3.0F, 1.0F, 1.0F, false),
+                        new DamageAction(TTDamageTypes.FOCUS_FROST, 3.0F, 1.0F, 1.0F, false),
                         new FreezeAction(0.0F, SECOND),
                         effect(MobEffects.MOVEMENT_SLOWDOWN, 0, 0.5F, 0.0F, 0.3F, 2)),
                 List.of(new FreezeWaterAction(0.0F, 1.5F, 8.0F)),
