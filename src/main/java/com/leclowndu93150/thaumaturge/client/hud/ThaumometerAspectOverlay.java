@@ -10,7 +10,6 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
@@ -94,14 +93,13 @@ public final class ThaumometerAspectOverlay {
                 return;
             }
             advanceAnimation(pos.immutable());
-            drawTags(
-                    event.getPoseStack(),
-                    mc,
-                    pos.getX(),
-                    pos.getY() + SPACE_ABOVE_LIFT,
-                    pos.getZ(),
-                    nodeAspects,
-                    Direction.UP);
+            AspectReadoutPlacement.Placement placement = AspectReadoutPlacement.find(
+                    mc.level,
+                    pos,
+                    mc.player.getDirection().getOpposite(),
+                    true,
+                    mc.gameRenderer.getMainCamera().getPosition());
+            drawPlacedTags(event.getPoseStack(), mc, pos, placement, nodeAspects, tagScale * 4.0F, false);
             return;
         }
         if (mc.level.getBlockEntity(pos) instanceof BlockEntityEssentiaReservoir reservoir) {
@@ -114,22 +112,14 @@ public final class ThaumometerAspectOverlay {
                 return;
             }
             advanceAnimation(pos.immutable());
-            Direction dir = mc.level.getBlockState(pos.above()).isAir() && mc.player.getEyeY() > pos.getY() + 1.0
-                    ? Direction.UP
-                    : mc.player.getDirection().getOpposite();
-            if (dir != Direction.UP) {
-                dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
-            }
-            drawTags(
-                    event.getPoseStack(),
-                    mc,
-                    pos.getX(),
-                    pos.getY() + dir.getStepY() / 2.0,
-                    pos.getZ(),
-                    stored,
-                    dir,
-                    1.2F,
-                    true);
+            boolean topVisible = AspectReadoutPlacement.viewerAbove(mc.level, pos, mc.player.getEyePosition());
+            AspectReadoutPlacement.Placement placement = AspectReadoutPlacement.find(
+                    mc.level,
+                    pos,
+                    mc.player.getDirection().getOpposite(),
+                    topVisible,
+                    mc.gameRenderer.getMainCamera().getPosition());
+            drawPlacedTags(event.getPoseStack(), mc, pos, placement, stored, 1.2F, true);
             return;
         }
         ItemStack pick = ScanningManager.stackOf(mc.player, ScanTarget.block(pos));
@@ -144,21 +134,19 @@ public final class ThaumometerAspectOverlay {
             return;
         }
         advanceAnimation(pos.immutable());
-        boolean topFree = mc.level.getBlockState(pos.above()).isAir();
-        boolean topVisible = mc.player.getEyeY() > pos.getY() + 1.0;
-        Direction dir = topFree && topVisible ? Direction.UP : hit.getDirection();
-        if (dir != Direction.UP && mc.level.getBlockEntity(pos) instanceof AbstractBlockEntityJar) {
-            dir = AspectReadoutPlacement.visibleSide(
-                    mc.level, pos, mc.player.getDirection().getOpposite());
+        boolean topFree = AspectReadoutPlacement.canHost(mc.level.getBlockState(pos.above()));
+        boolean topVisible = AspectReadoutPlacement.viewerAbove(mc.level, pos, mc.player.getEyePosition());
+        AspectReadoutPlacement.Placement placement = AspectReadoutPlacement.find(
+                mc.level,
+                pos,
+                mc.player.getDirection().getOpposite(),
+                topFree && topVisible,
+                mc.gameRenderer.getMainCamera().getPosition());
+        if (placement == null) {
+            resetAnimation();
+            return;
         }
-        drawTags(
-                event.getPoseStack(),
-                mc,
-                pos.getX() + dir.getStepX() / 2.0,
-                pos.getY() + dir.getStepY() / 2.0,
-                pos.getZ() + dir.getStepZ() / 2.0,
-                aspects,
-                dir);
+        drawPlacedTags(event.getPoseStack(), mc, pos, placement, aspects, tagScale * 4.0F, false);
     }
 
     private static boolean holdsThaumometer(Player player) {
@@ -217,6 +205,46 @@ public final class ThaumometerAspectOverlay {
                 aspect -> player != null && AspectPools.isDiscovered(player, aspect),
                 true,
                 0.0F,
+                columnSpacing,
+                centerHorizontally);
+    }
+
+    private static void drawPlacedTags(
+            PoseStack poseStack,
+            Minecraft mc,
+            BlockPos origin,
+            AspectReadoutPlacement.Placement placement,
+            AspectList aspects,
+            float columnSpacing,
+            boolean centerHorizontally) {
+        if (placement == null) {
+            resetAnimation();
+            return;
+        }
+        BlockPos diagonal = placement.diagonal();
+        if (diagonal != null) {
+            drawTags(
+                    poseStack,
+                    mc,
+                    diagonal.getX() + 0.5,
+                    diagonal.getY(),
+                    diagonal.getZ() + 0.5,
+                    aspects,
+                    null,
+                    columnSpacing,
+                    centerHorizontally);
+            return;
+        }
+        Direction side = placement.side();
+        double y = origin.getY() + (side == Direction.UP ? SPACE_ABOVE_LIFT : side.getStepY() / 2.0);
+        drawTags(
+                poseStack,
+                mc,
+                origin.getX() + side.getStepX() / 2.0,
+                y,
+                origin.getZ() + side.getStepZ() / 2.0,
+                aspects,
+                side,
                 columnSpacing,
                 centerHorizontally);
     }

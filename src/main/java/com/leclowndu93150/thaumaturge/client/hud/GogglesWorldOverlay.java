@@ -39,6 +39,7 @@ public final class GogglesWorldOverlay {
     private static final double TAG_SCALE_GROW_TICKS = 10.0D;
     private static final float SPACE_ABOVE_LIFT = 0.4F;
     private static final float JAR_READOUT_LIFT = 0.25F;
+    private static final float BUFFER_TOP_READOUT_LOWERING = 1.0F / 3.0F;
     private static final float TAG_ALPHA = 0.75F;
 
     private static @Nullable BlockPos lastTarget;
@@ -85,26 +86,41 @@ public final class GogglesWorldOverlay {
         double now = mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
         float scale = advanceAnimation(pos, now);
 
-        boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
         boolean rechargePedestal = be instanceof BlockEntityRechargePedestal;
-        Direction dir = rechargePedestal || spaceAbove
-                ? Direction.UP
-                : mc.player.getDirection().getOpposite();
-        if (!spaceAbove && !rechargePedestal && be != null) {
-            dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
+        AspectReadoutPlacement.Placement placement = AspectReadoutPlacement.find(
+                mc.level,
+                pos,
+                mc.player.getDirection().getOpposite(),
+                true,
+                mc.gameRenderer.getMainCamera().getPosition());
+        if (placement == null) {
+            resetAnimation();
+            return;
         }
-        double y = pos.getY() + (rechargePedestal ? 1.1F : spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
+        Direction dir = placement.side();
+        BlockPos diagonal = placement.diagonal();
+        double x = diagonal == null ? pos.getX() : diagonal.getX() + 0.5;
+        double y = diagonal == null
+                ? pos.getY()
+                        + (rechargePedestal && dir == Direction.UP
+                                ? 1.1F
+                                : dir == Direction.UP ? SPACE_ABOVE_LIFT : 0.0F)
+                : diagonal.getY();
+        double z = diagonal == null ? pos.getZ() : diagonal.getZ() + 0.5;
         if (be instanceof AbstractBlockEntityJar && dir == Direction.UP) {
             y += JAR_READOUT_LIFT - scale * 2.0F;
+        }
+        if (be instanceof BlockEntityTubeBuffer && dir == Direction.UP) {
+            y -= BUFFER_TOP_READOUT_LOWERING;
         }
         drawTags(
                 event.getPoseStack(),
                 mc,
-                pos.getX(),
+                x,
                 y,
-                pos.getZ(),
+                z,
                 aspects,
-                dir,
+                diagonal == null ? dir : null,
                 scale,
                 readout.showAmounts(),
                 be instanceof AbstractBlockEntityJar ? scale * 0.4F : 0.0F,
