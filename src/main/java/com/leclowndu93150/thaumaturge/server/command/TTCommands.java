@@ -333,8 +333,11 @@ public final class TTCommands {
                                                 ctx -> giveJar(ctx, IntegerArgumentType.getInteger(ctx, "amount")))))))
                 .then(admin("reservoir")
                         .executes(bySource("reservoir", source -> failure(source, "reservoir.usage")))
-                        .then(Commands.argument("aspects", StringArgumentType.greedyString())
-                                .executes(guarded("reservoir", TTCommands::giveReservoir))))
+                        .then(AspectPairArguments.create(
+                                VISIBLE_ASPECT_PAIRS,
+                                ASPECT_NAMES,
+                                ASPECT_PAIRS,
+                                guarded("reservoir", TTCommands::giveReservoir))))
                 .then(admin("node")
                         .executes(guarded("node", ctx -> spawnNode(ctx, RANDOM, NO_MODIFIER, "")))
                         .then(Commands.argument("type", StringArgumentType.word())
@@ -532,7 +535,7 @@ public final class TTCommands {
         AspectList contents = parseAspectPairs(
                 ctx.getSource(),
                 aspects,
-                StringArgumentType.getString(ctx, "aspects"),
+                AspectPairArguments.getPairs(ctx),
                 "reservoir",
                 BlockEntityEssentiaReservoir.CAPACITY);
         if (contents == null) {
