@@ -30,6 +30,7 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(Tags.Blocks.GLASS_BLOCKS).add(TTBlocks.WARDED_GLASS.get());
         tag(TTBlockTags.CONNECTED_ELDRITCH_STONE)
                 .add(TTBlocks.ELDRITCH_STONE.get())
                 .add(TTBlocks.ELDRITCH_STONE_INERT.get())
