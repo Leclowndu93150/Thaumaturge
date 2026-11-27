@@ -860,6 +860,8 @@ public final class TTItems {
             ITEMS.registerSimpleBlockItem(TTBlocks.PLANK_GREATWOOD);
     public static final DeferredItem<BlockItem> PLANK_SILVERWOOD =
             ITEMS.registerSimpleBlockItem(TTBlocks.PLANK_SILVERWOOD);
+    public static final DeferredItem<BlockItem> PLANK_SILVERWOOD_CHISELED =
+            ITEMS.registerSimpleBlockItem(TTBlocks.PLANK_SILVERWOOD_CHISELED);
 
     //
 

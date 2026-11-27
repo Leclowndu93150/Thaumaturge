@@ -377,7 +377,9 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.SAPLINGS).add(TTBlocks.SAPLING_GREATWOOD.get()).add(TTBlocks.SAPLING_SILVERWOOD.get());
 
         tag(TTBlockTags.PLANKS_GREATWOOD).add(TTBlocks.PLANK_GREATWOOD.get());
-        tag(TTBlockTags.PLANKS_SILVERWOOD).add(TTBlocks.PLANK_SILVERWOOD.get());
+        tag(TTBlockTags.PLANKS_SILVERWOOD)
+                .add(TTBlocks.PLANK_SILVERWOOD.get())
+                .add(TTBlocks.PLANK_SILVERWOOD_CHISELED.get());
         tag(TTBlockTags.PLANKS).addTags(TTBlockTags.PLANKS_GREATWOOD, TTBlockTags.PLANKS_SILVERWOOD);
         tag(BlockTags.PLANKS).addTags(TTBlockTags.PLANKS_GREATWOOD, TTBlockTags.PLANKS_SILVERWOOD);
 

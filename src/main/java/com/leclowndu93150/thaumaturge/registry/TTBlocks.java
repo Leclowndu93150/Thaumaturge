@@ -1304,6 +1304,15 @@ public final class TTBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
+    public static final DeferredBlock<Block> PLANK_SILVERWOOD_CHISELED = BLOCKS.registerBlock(
+            "plank_silverwood_chiseled",
+            Block::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+
     private static BlockBehaviour.Properties leavesProps() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)

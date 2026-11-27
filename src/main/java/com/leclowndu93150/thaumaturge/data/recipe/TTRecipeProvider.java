@@ -227,6 +227,12 @@ public final class TTRecipeProvider extends RecipeProvider {
 
         planksFromLogs(output, TTItems.PLANK_GREATWOOD.get(), TTItemTags.GREATWOOD_LOGS, 4);
         planksFromLogs(output, TTItems.PLANK_SILVERWOOD.get(), TTItemTags.SILVERWOOD_LOGS, 4);
+        stonecutterResultFromBase(
+                output,
+                RecipeCategory.BUILDING_BLOCKS,
+                TTItems.PLANK_SILVERWOOD_CHISELED.get(),
+                TTItems.PLANK_SILVERWOOD.get(),
+                1);
         woodFromLogs(output, TTItems.WOOD_GREATWOOD.get(), TTItems.LOG_GREATWOOD.get());
         woodFromLogs(output, TTItems.STRIPPED_WOOD_GREATWOOD.get(), TTItems.STRIPPED_LOG_GREATWOOD.get());
         woodFromLogs(output, TTItems.WOOD_SILVERWOOD.get(), TTItems.LOG_SILVERWOOD.get());

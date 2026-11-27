@@ -273,6 +273,7 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.LEAVES_SILVERWOOD.get());
                         output.accept(TTItems.PLANK_GREATWOOD.get());
                         output.accept(TTItems.PLANK_SILVERWOOD.get());
+                        output.accept(TTItems.PLANK_SILVERWOOD_CHISELED.get());
                         output.accept(TTItems.PLANT_SHIMMERLEAF.get());
                         output.accept(TTItems.ETHEREAL_BLOOM.get());
                         output.accept(TTItems.PLANT_CINDERPEARL.get());

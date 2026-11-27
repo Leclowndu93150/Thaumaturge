@@ -180,6 +180,11 @@ final class PlainBlockModels {
                 Map.of("all", TTIds.rl("block/plank_silverwood")));
         model(
                 output,
+                "plank_silverwood_chiseled",
+                Optional.of(ResourceLocation.withDefaultNamespace("block/cube_all")),
+                Map.of("all", TTIds.rl("block/plank_silverwood_chiseled")));
+        model(
+                output,
                 "purifying_fluid",
                 Optional.empty(),
                 Map.of("particle", ResourceLocation.withDefaultNamespace("block/water_still")));

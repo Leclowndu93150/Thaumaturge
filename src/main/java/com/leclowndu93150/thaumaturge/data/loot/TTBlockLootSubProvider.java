@@ -335,6 +335,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.STRIPPED_WOOD_SILVERWOOD.get());
         dropSelf(TTBlocks.PLANK_GREATWOOD.get());
         dropSelf(TTBlocks.PLANK_SILVERWOOD.get());
+        dropSelf(TTBlocks.PLANK_SILVERWOOD_CHISELED.get());
         add(
                 TTBlocks.LEAVES_GREATWOOD.get(),
                 createLeavesDrops(TTBlocks.LEAVES_GREATWOOD.get(), TTBlocks.SAPLING_GREATWOOD.get()));

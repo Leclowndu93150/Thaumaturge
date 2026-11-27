@@ -606,6 +606,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.leaves_silverwood", "Silverwood Leaves");
         add("block.thaumaturge.plank_greatwood", "Greatwood Planks");
         add("block.thaumaturge.plank_silverwood", "Silverwood Planks");
+        add("block.thaumaturge.plank_silverwood_chiseled", "Chiseled Silverwood Planks");
     }
 
     private void langDynamicTrees() {

@@ -1826,6 +1826,7 @@ public final class TTModelProvider implements DataProvider {
         flatItemFromBlock(TTItems.SAPLING_SILVERWOOD.get(), TTBlocks.SAPLING_SILVERWOOD.get());
         simpleFromExisting(TTBlocks.PLANK_GREATWOOD.get(), "plank_greatwood");
         simpleFromExisting(TTBlocks.PLANK_SILVERWOOD.get(), "plank_silverwood");
+        simpleFromExisting(TTBlocks.PLANK_SILVERWOOD_CHISELED.get(), "plank_silverwood_chiseled");
         simpleFromExisting(TTBlocks.LEAVES_GREATWOOD.get(), "leaves_greatwood");
         simpleFromExisting(TTBlocks.LEAVES_SILVERWOOD.get(), "leaves_silverwood");
         TrunkModels.register(
@@ -3138,6 +3139,7 @@ public final class TTModelProvider implements DataProvider {
                         Optional.empty()));
         connectedCube(TTBlocks.STONE_ANCIENT_TILE.get(), "ancient_tile");
         connectedCube(TTBlocks.STONE_ANCIENT_GLYPHED.get(), "ancient_glyph");
+        connectedCube(TTBlocks.PLANK_SILVERWOOD_CHISELED.get(), "plank_silverwood_chiseled");
         for (Block block : List.of(TTBlocks.ELDRITCH_STONE.get(), TTBlocks.ELDRITCH_STONE_INERT.get())) {
             connected(
                     block,
