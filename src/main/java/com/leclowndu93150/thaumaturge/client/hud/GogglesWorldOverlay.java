@@ -13,6 +13,7 @@ import com.leclowndu93150.thaumaturge.content.aura.BlockEntityRechargePedestal;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
+import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -89,7 +90,7 @@ public final class GogglesWorldOverlay {
         Direction dir = rechargePedestal || spaceAbove
                 ? Direction.UP
                 : mc.player.getDirection().getOpposite();
-        if (!spaceAbove && (be instanceof AbstractBlockEntityJar || be instanceof BlockEntityEssentiaReservoir)) {
+        if (!spaceAbove && !rechargePedestal && be != null) {
             dir = AspectReadoutPlacement.visibleSide(mc.level, pos, dir);
         }
         double y = pos.getY() + (rechargePedestal ? 1.1F : spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
@@ -117,6 +118,9 @@ public final class GogglesWorldOverlay {
         }
         if (blockEntity instanceof AbstractBlockEntityJar jar) {
             return new AspectReadout(jar.getAspects(), true);
+        }
+        if (blockEntity instanceof BlockEntityTubeBuffer buffer) {
+            return new AspectReadout(buffer.heldAspects(), true);
         }
         if (blockEntity instanceof BlockEntityInfusionMatrix matrix) {
             return new AspectReadout(matrix.remainingEssentia(), true);
