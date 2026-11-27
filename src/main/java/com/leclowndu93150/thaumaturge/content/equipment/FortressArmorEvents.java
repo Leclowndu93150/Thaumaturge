@@ -37,13 +37,14 @@ public final class FortressArmorEvents {
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        if (!(event.getEntity() instanceof Player player) || !event.getSlot().isArmor()) {
+        if (!event.getSlot().isArmor()) {
             return;
         }
+        LivingEntity wearer = event.getEntity();
         int pieces = 0;
         int maskedPieces = 0;
         for (EquipmentSlot slot : SET_SLOTS) {
-            ItemStack piece = player.getItemBySlot(slot);
+            ItemStack piece = wearer.getItemBySlot(slot);
             if (piece.getItem() instanceof FortressArmorItem) {
                 pieces++;
                 if (FortressArmorItem.mask(piece) != FortressArmorItem.NO_MASK) {
@@ -51,11 +52,11 @@ public final class FortressArmorEvents {
                 }
             }
         }
-        applyBonus(player, player.getAttribute(Attributes.ARMOR), SET_ARMOR_ID, (pieces > 0 ? 1 : 0) + maskedPieces);
-        applyBonus(player, player.getAttribute(Attributes.ARMOR_TOUGHNESS), SET_TOUGHNESS_ID, pieces > 0 ? 1 : 0);
+        applyBonus(wearer, wearer.getAttribute(Attributes.ARMOR), SET_ARMOR_ID, (pieces > 0 ? 1 : 0) + maskedPieces);
+        applyBonus(wearer, wearer.getAttribute(Attributes.ARMOR_TOUGHNESS), SET_TOUGHNESS_ID, pieces > 0 ? 1 : 0);
     }
 
-    private static void applyBonus(Player player, AttributeInstance attribute, ResourceLocation id, int amount) {
+    private static void applyBonus(LivingEntity wearer, AttributeInstance attribute, ResourceLocation id, int amount) {
         if (attribute == null) {
             return;
         }
@@ -67,14 +68,14 @@ public final class FortressArmorEvents {
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        absorbSpecialDamage(event, event.getEntity());
         if (event.getEntity() instanceof Player victim) {
-            absorbSpecialDamage(event, victim);
             angryGhostRetaliation(event, victim);
         }
         sippingFiendLifesteal(event);
     }
 
-    private static void absorbSpecialDamage(LivingIncomingDamageEvent event, Player victim) {
+    private static void absorbSpecialDamage(LivingIncomingDamageEvent event, LivingEntity victim) {
         boolean magic = event.getSource().is(DamageTypeTags.WITCH_RESISTANT_TO);
         boolean fire = event.getSource().is(DamageTypeTags.IS_FIRE);
         if (!magic && !fire) {
