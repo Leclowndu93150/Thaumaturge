@@ -1,8 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.spell.modifier;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehavior;
 import com.leclowndu93150.thaumaturge.api.spell.behavior.SpellBehaviorType;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStat;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellState;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -22,6 +24,7 @@ public record EchoModifier(int interval, float falloff) implements SpellBehavior
             .apply(i, EchoModifier::new));
 
     private static final String REPEATS = "repeats";
+    private static final SpellStat ECHO_REPLAY = new SpellStat(TTIds.rl("echo_replay"), 0.0F);
 
     @Override
     public SpellBehaviorType<?> type() {
@@ -31,7 +34,10 @@ public record EchoModifier(int interval, float falloff) implements SpellBehavior
     @Override
     public void execute(CastContext ctx, List<SpellTarget> incoming) {
         ctx.proceed(incoming);
-        SpellState echo = ctx.state();
+        if (ctx.state().has(ECHO_REPLAY)) {
+            return;
+        }
+        SpellState echo = ctx.state().with(ECHO_REPLAY, 1.0F);
         int repeats = ctx.setting(REPEATS);
         for (int repeat = 1; repeat <= repeats; repeat++) {
             echo = echo.multiply(SpellStats.POWER, falloff);
