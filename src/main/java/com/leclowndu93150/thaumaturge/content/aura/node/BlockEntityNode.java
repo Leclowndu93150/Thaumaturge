@@ -447,8 +447,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
             return change;
         }
         List<Holder<IAspect>> depleted = new ArrayList<>();
-        for (AspectInstance entry : aspects.entries()) {
-            if (entry.amount() < aspectsBase.amountOf(entry.aspect())) {
+        for (AspectInstance entry : aspectsBase.entries()) {
+            if (aspects.amountOf(entry.aspect()) < entry.amount()) {
                 depleted.add(entry.aspect());
             }
         }
@@ -499,6 +499,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     private void starve() {
+        // alternative behavior: preserve brightness under either stabilizer.
+        // if (lock > 0 && nodeModifier != NodeModifier.FADING) return;
         if (nodeModifier == NodeModifier.BRIGHT) {
             nodeModifier = null;
         } else if (nodeModifier == null) {
@@ -554,6 +556,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                 } else {
                     aspects = reduce(aspects, entry.aspect(), aspects.amountOf(entry.aspect()));
                     aspectsBase = reduce(aspectsBase, entry.aspect(), remaining + 1);
+                    // matching guard: only unlocked nodes lose brightness as aspects decay.
+                    // if (lock == 0) {
                     if (random.nextInt(DECAY_MODIFIER_ODDS) == 0) {
                         if (nodeModifier == NodeModifier.BRIGHT) {
                             nodeModifier = null;
@@ -564,6 +568,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                     if (nodeModifier == NodeModifier.PALE && random.nextInt(DECAY_FADE_ODDS) == 0) {
                         nodeModifier = NodeModifier.FADING;
                     }
+                    // }
                 }
                 nodeChange();
                 change = true;

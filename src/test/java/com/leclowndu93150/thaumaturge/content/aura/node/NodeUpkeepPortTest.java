@@ -172,6 +172,33 @@ class NodeUpkeepPortTest {
     }
 
     @Test
+    void fullyDrainedAspectCanRefillFromAura() throws Exception {
+        Method feeding = BlockEntityNode.class.getDeclaredMethod(
+                "handleFeeding", ServerLevel.class, BlockPos.class, boolean.class);
+        feeding.setAccessible(true);
+        RandomSource random = mock(RandomSource.class);
+        ServerLevel level = generatedLevel(random);
+        Holder<IAspect> aspect = Holder.direct(mock(IAspect.class));
+        for (int lock : new int[] {0, 1, 2}) {
+            BlockEntityNode node = node();
+            node.aspectsBase = AspectList.ofEntries(List.of(new AspectInstance(aspect, 1)));
+            node.aspects = node.aspectsBase;
+            node.setNodeModifier(NodeModifier.BRIGHT);
+            setInt(node, "lock", lock);
+            setInt(node, "count", 8000);
+            assertTrue(node.drain(aspect, 1));
+            try (MockedStatic<com.leclowndu93150.thaumaturge.api.aura.AuraHelper> aura =
+                    mockStatic(com.leclowndu93150.thaumaturge.api.aura.AuraHelper.class)) {
+                aura.when(() -> com.leclowndu93150.thaumaturge.api.aura.AuraHelper.drainVis(
+                                level, BlockPos.ZERO, 3.0F, false))
+                        .thenReturn(3.0F);
+                feeding.invoke(node, level, BlockPos.ZERO, false);
+            }
+            assertEquals(1, node.aspects.amountOf(aspect));
+        }
+    }
+
+    @Test
     void addonPrimalIsExcludedFromPearlReplacementRolls() {
         ResourceKey<IAspect> addonKey =
                 ResourceKey.create(IAspect.REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("test", "addon_primal"));
