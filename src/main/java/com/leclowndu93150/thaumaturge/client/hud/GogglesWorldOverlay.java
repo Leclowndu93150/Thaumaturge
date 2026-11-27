@@ -108,6 +108,7 @@ public final class GogglesWorldOverlay {
                                 ? 1.1F
                                 : dir == Direction.UP ? SPACE_ABOVE_LIFT : 0.0F)
                 : diagonal.getY();
+        y += AspectReadoutPlacement.topReadoutVerticalAdjustment(be, dir);
         double z = diagonal == null ? pos.getZ() : diagonal.getZ() + 0.5;
         if (be instanceof AbstractBlockEntityJar && dir == Direction.UP) {
             y += JAR_READOUT_LIFT - scale * 2.0F;

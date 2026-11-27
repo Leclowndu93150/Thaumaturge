@@ -24,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -236,7 +237,10 @@ public final class ThaumometerAspectOverlay {
             return;
         }
         Direction side = placement.side();
-        double y = origin.getY() + (side == Direction.UP ? SPACE_ABOVE_LIFT : side.getStepY() / 2.0);
+        BlockEntity target = mc.level == null ? null : mc.level.getBlockEntity(origin);
+        double y = origin.getY()
+                + (side == Direction.UP ? SPACE_ABOVE_LIFT : side.getStepY() / 2.0)
+                + (target == null ? 0.0F : AspectReadoutPlacement.topReadoutVerticalAdjustment(target, side));
         drawTags(
                 poseStack,
                 mc,

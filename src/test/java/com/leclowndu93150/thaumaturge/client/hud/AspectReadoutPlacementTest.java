@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,5 +68,16 @@ final class AspectReadoutPlacementTest {
         assertFalse(AspectReadoutPlacement.isViewerFacing(Direction.WEST, viewerDirection));
         assertFalse(AspectReadoutPlacement.isViewerFacing(Direction.NORTH, viewerDirection));
         assertFalse(AspectReadoutPlacement.isViewerFacing(Direction.UP, viewerDirection));
+    }
+
+    @Test
+    void onlyTopReadoutForJarredNodesIsLoweredByAThirdOfABlock() {
+        BlockEntityJarNode jarredNode = mock(BlockEntityJarNode.class);
+        BlockEntityNode regularNode = mock(BlockEntityNode.class);
+
+        assertEquals(-1.0F / 3.0F, AspectReadoutPlacement.topReadoutVerticalAdjustment(jarredNode, Direction.UP));
+        assertEquals(0.0F, AspectReadoutPlacement.topReadoutVerticalAdjustment(jarredNode, Direction.NORTH));
+        assertEquals(0.0F, AspectReadoutPlacement.topReadoutVerticalAdjustment(jarredNode, null));
+        assertEquals(0.0F, AspectReadoutPlacement.topReadoutVerticalAdjustment(regularNode, Direction.UP));
     }
 }

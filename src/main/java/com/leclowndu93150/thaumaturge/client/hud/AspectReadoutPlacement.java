@@ -1,17 +1,21 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.world.LoadedChunks;
 import com.leclowndu93150.thaumaturge.content.world.space.LevelSpaces;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jspecify.annotations.Nullable;
 
 final class AspectReadoutPlacement {
+    private static final float JAR_NODE_TOP_LOWERING = 1.0F / 3.0F;
+
     record Placement(@Nullable Direction side, @Nullable BlockPos diagonal) {}
 
     private AspectReadoutPlacement() {}
@@ -35,6 +39,10 @@ final class AspectReadoutPlacement {
 
     static boolean canHost(BlockState state) {
         return state.isAir() || state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES);
+    }
+
+    static float topReadoutVerticalAdjustment(BlockEntity blockEntity, @Nullable Direction side) {
+        return blockEntity instanceof BlockEntityJarNode && side == Direction.UP ? -JAR_NODE_TOP_LOWERING : 0.0F;
     }
 
     static boolean isViewerFacing(Direction side, Vec3 towardViewer) {
