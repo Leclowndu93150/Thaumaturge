@@ -260,7 +260,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         float totalCharge = 0.0F;
         for (int index = 0; index < count; index++) {
             NodeRenderState.AspectLayer layer = state.layers.get(index);
-            float charge = NodeAnimation.charge(layer.amount);
+            float charge = NodeAnimation.charge(layer.amount, state.jarred);
             totalCharge += charge;
             boolean translucent = layer.blend == TRANSLUCENT_BLEND;
             sink.layer(

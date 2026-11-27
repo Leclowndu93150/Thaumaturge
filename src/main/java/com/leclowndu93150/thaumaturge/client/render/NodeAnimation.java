@@ -6,10 +6,17 @@ import org.jspecify.annotations.Nullable;
 
 /** Animation envelopes for the node's independently moving shells. */
 public final class NodeAnimation {
+    private static final int MAX_NORMAL_NODE_VISUAL_AMOUNT = 800;
+
     private NodeAnimation() {}
 
     public static float charge(int amount) {
-        return Mth.clamp(amount / 50.0F, 0.0F, 1.0F);
+        return Math.min(Math.max(0, amount), MAX_NORMAL_NODE_VISUAL_AMOUNT) / 50.0F;
+    }
+
+    public static float charge(int amount, boolean jarred) {
+        float charge = charge(amount);
+        return jarred ? Math.min(charge, 1.0F) : charge;
     }
 
     public static float shellRadius(float charge, float ticks, int shell) {

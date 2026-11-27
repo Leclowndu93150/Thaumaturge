@@ -55,6 +55,7 @@ public final class JarNodeItemSpecialRenderer extends BlockEntityWithoutLevelRen
         NodeRenderState state = new NodeRenderState();
         state.type = data.type();
         state.modifier = data.modifier().orElse(null);
+        state.jarred = true;
         state.visible = true;
         state.size = NODE_SIZE;
         state.ticks = (Util.getMillis() % (long) TICKS_WRAP) / 50.0F;
