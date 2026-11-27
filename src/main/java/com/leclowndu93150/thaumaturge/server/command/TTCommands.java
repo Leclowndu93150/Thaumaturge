@@ -24,6 +24,7 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEvent;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEventTypes;
@@ -65,6 +66,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -118,6 +120,7 @@ public final class TTCommands {
     private static final int MAX_ASPECT_GRANT = 10000;
     private static final int MAX_FLUX_LEVEL = 8;
     private static final int MAX_FOCUS_TIER = 3;
+    private static final int VISIBLE_ASPECT_PAIRS = 16;
     private static final int EFFECT_DURATION_TICKS = 600;
     private static final int SPAWNED_SLIME_SIZE = 2;
     private static final int NODE_HEIGHT_ABOVE_SOURCE = 2;
@@ -169,6 +172,11 @@ public final class TTCommands {
                             Arrays.stream(NodeModifier.values()).map(NodeModifier::getSerializedName),
                             Stream.of(NO_MODIFIER)),
                     builder);
+    private static final SuggestionProvider<CommandSourceStack> ASPECT_NAMES =
+            (ctx, builder) -> SharedSuggestionProvider.suggest(aspectSuggestionNames(ctx.getSource()), builder);
+    private static final SuggestionProvider<CommandSourceStack> ASPECT_PAIRS =
+            (ctx, builder) -> AspectPairSuggestions.suggest(
+                    builder, aspectSuggestionNames(ctx.getSource()).toList());
 
     private static final DynamicCommandExceptionType ERROR_INVALID_TRAIT = new DynamicCommandExceptionType(
             value -> Component.translatable(KEY + "unknown_trait", String.valueOf(value)));
@@ -178,6 +186,8 @@ public final class TTCommands {
             value -> Component.translatable(KEY + "unknown_research", String.valueOf(value)));
     private static final DynamicCommandExceptionType ERROR_INVALID_ASPECT = new DynamicCommandExceptionType(
             value -> Component.translatable(KEY + "unknown_aspect", String.valueOf(value)));
+    private static final DynamicCommandExceptionType ERROR_INVALID_NODE_MODIFIER = new DynamicCommandExceptionType(
+            value -> Component.translatable("commands.thaumaturge.tools.node.unknown_modifier", String.valueOf(value)));
 
     private TTCommands() {}
 
@@ -342,14 +352,44 @@ public final class TTCommands {
                                                         StringArgumentType.getString(ctx, "type"),
                                                         StringArgumentType.getString(ctx, "modifier"),
                                                         "")))
-                                        .then(Commands.argument("aspects", StringArgumentType.greedyString())
-                                                .executes(guarded(
+                                        .then(AspectPairArguments.create(
+                                                VISIBLE_ASPECT_PAIRS,
+                                                ASPECT_NAMES,
+                                                ASPECT_PAIRS,
+                                                guarded(
                                                         "node",
                                                         ctx -> spawnNode(
                                                                 ctx,
                                                                 StringArgumentType.getString(ctx, "type"),
                                                                 StringArgumentType.getString(ctx, "modifier"),
-                                                                StringArgumentType.getString(ctx, "aspects"))))))))
+                                                                AspectPairArguments.getPairs(ctx))))))))
+                .then(admin("node_jar")
+                        .executes(guarded("node_jar", ctx -> giveNodeJar(ctx, RANDOM, null, "")))
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .suggests(NODE_TYPES)
+                                .executes(guarded(
+                                        "node_jar",
+                                        ctx -> giveNodeJar(ctx, StringArgumentType.getString(ctx, "type"), null, "")))
+                                .then(Commands.argument("modifier", StringArgumentType.word())
+                                        .suggests(NODE_MODIFIERS)
+                                        .executes(guarded(
+                                                "node_jar",
+                                                ctx -> giveNodeJar(
+                                                        ctx,
+                                                        StringArgumentType.getString(ctx, "type"),
+                                                        StringArgumentType.getString(ctx, "modifier"),
+                                                        "")))
+                                        .then(AspectPairArguments.create(
+                                                VISIBLE_ASPECT_PAIRS,
+                                                ASPECT_NAMES,
+                                                ASPECT_PAIRS,
+                                                guarded(
+                                                        "node_jar",
+                                                        ctx -> giveNodeJar(
+                                                                ctx,
+                                                                StringArgumentType.getString(ctx, "type"),
+                                                                StringArgumentType.getString(ctx, "modifier"),
+                                                                AspectPairArguments.getPairs(ctx))))))))
                 .then(admin("link")
                         .then(Commands.literal("unlink").executes(bySource("link", TTCommands::shareUnlink))))
                 .then(admin("focus")
@@ -514,6 +554,80 @@ public final class TTCommands {
         }
         success(ctx.getSource(), "reservoir.given", contents.totalAmount(), contents.size());
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static int giveNodeJar(
+            CommandContext<CommandSourceStack> ctx, String typeName, @Nullable String modifierName, String aspectSpec)
+            throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        ServerLevel level = ctx.getSource().getLevel();
+        BlockPos pos = BlockPos.containing(ctx.getSource().getPosition());
+        HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        NodeData data;
+        if (RANDOM.equals(typeName)) {
+            data = NodeGenerator.rollRandomNodeData(
+                    level,
+                    pos,
+                    level.getRandom(),
+                    false,
+                    false,
+                    false,
+                    NodeGenerator.DEFAULT_SPECIAL_RARITY,
+                    NodeGenerator.DEFAULT_BASE_AURA);
+            if (data == null) {
+                return failure(ctx.getSource(), "node.failed");
+            }
+            if (modifierName != null || !aspectSpec.isBlank()) {
+                NodeModifier modifier =
+                        modifierName == null ? data.modifier().orElse(null) : parseNodeModifier(modifierName);
+                if (modifierName != null && modifier == null && !NO_MODIFIER.equals(modifierName)) {
+                    throw ERROR_INVALID_NODE_MODIFIER.create(modifierName);
+                }
+                AspectList list =
+                        aspectSpec.isBlank() ? data.aspects() : parseNodeAspects(ctx.getSource(), aspects, aspectSpec);
+                if (list == null) {
+                    return 0;
+                }
+                data = new NodeData(data.type(), Optional.ofNullable(modifier), list, list);
+            }
+        } else {
+            NodeType type = Arrays.stream(NodeType.values())
+                    .filter(candidate -> candidate.getSerializedName().equals(typeName))
+                    .findFirst()
+                    .orElse(null);
+            if (type == null) {
+                return failure(ctx.getSource(), "node.unknown_type", typeName);
+            }
+            NodeModifier modifier = modifierName == null ? null : parseNodeModifier(modifierName);
+            if (modifierName != null && modifier == null && !NO_MODIFIER.equals(modifierName)) {
+                throw ERROR_INVALID_NODE_MODIFIER.create(modifierName);
+            }
+            AspectList list = aspectSpec.isBlank()
+                    ? defaultNodeAspects(aspects)
+                    : parseNodeAspects(ctx.getSource(), aspects, aspectSpec);
+            if (list == null) {
+                return 0;
+            }
+            data = new NodeData(type, Optional.ofNullable(modifier), list, list);
+        }
+
+        ItemStack stack = new ItemStack(TTItems.JAR_NODE.get());
+        stack.set(TTDataComponents.NODE_DATA.get(), data);
+        if (!player.getInventory().add(stack)) {
+            player.drop(stack, false);
+        }
+        success(ctx.getSource(), "node_jar.given", data.aspects().size());
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static @Nullable NodeModifier parseNodeModifier(String modifierName) {
+        if (NO_MODIFIER.equals(modifierName)) {
+            return null;
+        }
+        return Arrays.stream(NodeModifier.values())
+                .filter(candidate -> candidate.getSerializedName().equals(modifierName))
+                .findFirst()
+                .orElse(null);
     }
 
     private static int revokeGate(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -993,6 +1107,16 @@ public final class TTCommands {
     private static @Nullable AspectList parseNodeAspects(
             CommandSourceStack source, HolderLookup.RegistryLookup<IAspect> aspects, String spec) {
         return parseAspectPairs(source, aspects, spec, "node", Integer.MAX_VALUE);
+    }
+
+    private static Stream<String> aspectSuggestionNames(CommandSourceStack source) {
+        return source.registryAccess()
+                .lookupOrThrow(IAspect.REGISTRY_KEY)
+                .listElementIds()
+                .map(key -> key.location())
+                .flatMap(id -> id.getNamespace().equals(TTIds.MODID)
+                        ? Stream.of(id.getPath(), id.toString())
+                        : Stream.of(id.toString()));
     }
 
     private static @Nullable AspectList parseAspectPairs(

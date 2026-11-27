@@ -154,11 +154,13 @@ public final class CommandTextEn {
         add.accept("commands.thaumaturge.tools.node.created", "Node created");
         add.accept("commands.thaumaturge.tools.node.failed", "Could not place a node here");
         add.accept("commands.thaumaturge.tools.node.unknown_type", "Unknown node type: %s");
+        add.accept("commands.thaumaturge.tools.node.unknown_modifier", "Unknown node modifier: %s");
         add.accept(
                 "commands.thaumaturge.tools.node.pairs",
                 "Aspects must come in pairs: <aspect> <amount> [<aspect> <amount> ...]");
         add.accept("commands.thaumaturge.tools.node.bad_amount", "Amounts must be positive whole numbers: %s");
         add.accept("commands.thaumaturge.tools.node.capacity", "Total aspect amount is too large: %s");
+        add.accept("commands.thaumaturge.tools.node_jar.given", "Gave a node in a jar with %s aspect types");
         add.accept("commands.thaumaturge.tools.link.removed", "Removed %s research links");
         add.accept("commands.thaumaturge.tools.unknown_spell_part", "Unknown spell part: %s");
     }
