@@ -13,6 +13,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,6 +64,24 @@ final class GogglesWorldOverlayReadoutTest {
 
         assertSame(remaining, readout.aspects());
         assertTrue(readout.showAmounts());
+        verifyNoInteractions(level);
+    }
+
+    @Test
+    void jarredNodesExposeTheirAspectReadoutWithoutANodeScan() {
+        Level level = mock(Level.class);
+        BlockPos pos = new BlockPos(1, 2, 3);
+        BlockEntityJarNode jarredNode = mock(BlockEntityJarNode.class);
+        AspectList aspects = mock(AspectList.class);
+        when(jarredNode.getAspects()).thenReturn(aspects);
+
+        GogglesWorldOverlay.AspectReadout readout =
+                GogglesWorldOverlay.readAspects(level, jarredNode, pos, Direction.UP);
+
+        assertSame(aspects, readout.aspects());
+        assertTrue(readout.showAmounts());
+        assertFalse(GogglesWorldOverlay.requiresNodeScan(jarredNode));
+        assertTrue(GogglesWorldOverlay.requiresNodeScan(mock(BlockEntityNode.class)));
         verifyNoInteractions(level);
     }
 }

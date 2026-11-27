@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.BlockEntityRechargePedestal;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
@@ -72,7 +73,8 @@ public final class GogglesWorldOverlay {
         }
         BlockPos pos = hit.getBlockPos();
         BlockEntity be = mc.level.getBlockEntity(pos);
-        if (be instanceof BlockEntityNode node
+        if (requiresNodeScan(be)
+                && be instanceof BlockEntityNode node
                 && !PlayerResearchAccess.of(mc.player).knows(ScanNode.researchKey(mc.level, pos))) {
             resetAnimation();
             return;
@@ -129,6 +131,9 @@ public final class GogglesWorldOverlay {
     }
 
     static AspectReadout readAspects(Level level, @Nullable BlockEntity blockEntity, BlockPos pos, Direction side) {
+        if (blockEntity instanceof BlockEntityJarNode jarNode) {
+            return new AspectReadout(jarNode.getAspects(), true);
+        }
         if (blockEntity instanceof BlockEntityEssentiaReservoir reservoir) {
             return new AspectReadout(reservoir.contents(), true);
         }
@@ -149,6 +154,10 @@ public final class GogglesWorldOverlay {
         return query == null
                 ? new AspectReadout(AspectList.EMPTY, false)
                 : new AspectReadout(query.queryAspects(), false);
+    }
+
+    static boolean requiresNodeScan(@Nullable BlockEntity blockEntity) {
+        return blockEntity instanceof BlockEntityNode && !(blockEntity instanceof BlockEntityJarNode);
     }
 
     static float advanceAnimation(BlockPos target, double now) {
