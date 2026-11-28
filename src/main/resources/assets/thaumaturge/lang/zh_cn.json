@@ -2735,9 +2735,5 @@
   "warp.thaumaturge.text.8": "肯定有什么办法可以遏制这些头疼事！",
   "warp.thaumaturge.text.9": "突然间，你厌倦了破坏。",
   "warp.thaumaturge.text.hunger.1": "平常的食物似乎无法抑制你的饥饿感。",
-  "warp.thaumaturge.text.hunger.2": "你的饥饿感开始消退。",
-  "tooltip.thaumaturge.wand.cost": "魔力消耗 %s%%",
-  "tooltip.thaumaturge.wand.cost.except": "魔力消耗 %1$s%%（%2$s）",
-  "tooltip.thaumaturge.wand.cost.group": "%s %s%%",
-  "tooltip.thaumaturge.wand.cost.groups": "%s；%s"
+  "warp.thaumaturge.text.hunger.2": "你的饥饿感开始消退。"
 }
