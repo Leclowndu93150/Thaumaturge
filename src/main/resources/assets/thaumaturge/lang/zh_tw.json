@@ -1651,7 +1651,7 @@
   "nodetype.thaumaturge.unstable": "震盪",
   "pack.thaumaturge.dynamic_trees": "Thaumaturge 動態的樹",
   "research.thaumaturge.advanced_alchemical_furnace.stage_0": "源質冶煉廠能用，但速度太慢。有了虛鋼與原初珍珠，我能造出胃口大得多的東西。把珍珠與虛鋼、煉金構材一起放進奧術工作台，就能做出高等煉金構材，而珍珠會在合成後保留下來，只是每次都會變小一點。<BR>這座熔爐以三乘三為底座，中央是一座源質冶煉廠，四周圍繞高等煉金構材，上層四角放置奧術蒸餾器，其間放置普通煉金構材。在上面撒上世界鹽，它便會活過來。<BR>它不燒燃料，而是從附近的魔力中繼器或節點汲取火、混沌與水要素來保持高溫，在此期間丟到其核心上的物品會被迅速分解。源質聚集在內部，可以用管道從每一側的噴嘴抽出。若結構被破壞，其中儲存的一切都會化為咒波逸散。",
-  "research.thaumaturge.advanced_alchemical_furnace.title": "高級煉金熔爐",
+  "research.thaumaturge.advanced_alchemical_furnace.title": "亙古煉金爐",
   "research.thaumaturge.advanced_turret.stage_0": "最近關於進階奧術中樞的研究成果使我能夠自動砲台進行一些必要的改進。",
   "research.thaumaturge.advanced_turret.stage_1": "高級自動弩與其簡易版本的工作方式類似，不過略有改進。<BR>額外的鐵板為其提供了額外的生命值，更復雜的機械結構使其火力更猛。<BR>此外，你還可以指定它的攻擊目標類型。",
   "research.thaumaturge.advanced_turret.title": "高等自動十字弩",

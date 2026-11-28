@@ -1651,7 +1651,7 @@
   "nodetype.thaumaturge.unstable": "震荡",
   "pack.thaumaturge.dynamic_trees": "Thaumaturge 动态的树",
   "research.thaumaturge.advanced_alchemical_furnace.stage_0": "源质冶炼厂能用，但速度太慢。有了虚空金属与元始珍珠，我能造出胃口大得多的东西。把珍珠与虚空金属、炼金构材一起放进奥术工作台，就能做出高级炼金构材，而珍珠会在合成后保留下来，只是每次都会变小一点。<BR>这座熔炉以三乘三为底座，中央是一座源质冶炼厂，四周围绕高级炼金构材，上层四角放置奥术蒸馏器，其间放置普通炼金构材。在上面撒上世界盐，它便会活过来。<BR>它不烧燃料，而是从附近的魔力中继器或节点汲取火、混沌与水要素来保持高温，在此期间丢到其核心上的物品会被迅速分解。源质聚集在内部，可以用管道从每一侧的喷嘴抽出。若结构被破坏，其中储存的一切都会化为咒波逸散。",
-  "research.thaumaturge.advanced_alchemical_furnace.title": "高级炼金熔炉",
+  "research.thaumaturge.advanced_alchemical_furnace.title": "荒古炼金炉",
   "research.thaumaturge.advanced_turret.stage_0": "我最近发现的高级人工智能或许可以让我对我的自动炮塔做一些需要改进的调整。",
   "research.thaumaturge.advanced_turret.stage_1": "高级自动弩与其简易版本的工作方式类似，不过略有改进。<BR>额外的铁板为其提供了额外的生命值，更复杂的机械结构使其火力更猛。<BR>此外，你还可以指定它的攻击目标类型。",
   "research.thaumaturge.advanced_turret.title": "高级自动弩",
