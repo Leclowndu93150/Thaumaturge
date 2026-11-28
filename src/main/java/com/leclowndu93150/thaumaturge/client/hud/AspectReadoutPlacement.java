@@ -16,29 +16,37 @@ import org.jspecify.annotations.Nullable;
 final class AspectReadoutPlacement {
     private static final float JAR_NODE_TOP_LOWERING = 1.0F / 3.0F;
 
-    record Placement(@Nullable Direction side, @Nullable BlockPos diagonal) {}
+    record Placement(@Nullable Direction side, @Nullable BlockPos diagonal, boolean renderThroughGlass) {}
 
     private AspectReadoutPlacement() {}
 
     static @Nullable Placement find(
             Level level, BlockPos pos, Direction preferred, boolean preferTop, Vec3 viewerWorldPosition) {
-        if (preferTop && LoadedChunks.contains(level, pos.above()) && canHost(level.getBlockState(pos.above()))) {
-            return new Placement(Direction.UP, null);
+        BlockPos top = pos.above();
+        if (preferTop && LoadedChunks.contains(level, top)) {
+            BlockState topState = level.getBlockState(top);
+            if (canHost(topState)) {
+                return new Placement(Direction.UP, null, isGlassHost(topState));
+            }
         }
         Vec3 towardViewer = towardViewer(level, pos, viewerWorldPosition);
         Direction side = visibleSide(level, pos, preferred, towardViewer);
         if (side != null) {
-            return new Placement(side, null);
+            return new Placement(side, null, isGlassHost(level.getBlockState(pos.relative(side))));
         }
         BlockPos diagonal = frontDiagonal(
                 pos,
                 towardViewer,
                 candidate -> LoadedChunks.contains(level, candidate) && canHost(level.getBlockState(candidate)));
-        return diagonal == null ? null : new Placement(null, diagonal);
+        return diagonal == null ? null : new Placement(null, diagonal, isGlassHost(level.getBlockState(diagonal)));
     }
 
     static boolean canHost(BlockState state) {
-        return state.isAir() || state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES);
+        return state.isAir() || isGlassHost(state);
+    }
+
+    static boolean isGlassHost(BlockState state) {
+        return state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES);
     }
 
     static float topReadoutVerticalAdjustment(BlockEntity blockEntity, @Nullable Direction side) {

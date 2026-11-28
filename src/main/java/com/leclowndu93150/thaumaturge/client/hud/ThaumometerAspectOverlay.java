@@ -50,7 +50,8 @@ public final class ThaumometerAspectOverlay {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+        boolean beforeTranslucentBlocks = event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES;
+        if (!beforeTranslucentBlocks && event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -63,6 +64,9 @@ public final class ThaumometerAspectOverlay {
         }
         HitResult result = ScanRaycastHelper.performRaycast(mc.player, ClipContext.Fluid.SOURCE_ONLY);
         if (result instanceof EntityHitResult entityResult) {
+            if (beforeTranslucentBlocks) {
+                return;
+            }
             Entity entityTarget = entityResult.getEntity();
             AspectList aspects =
                     scannedAspects(mc.player, EntityAspects.of(entityTarget), ScanKeys.entity(entityTarget.getType()));
@@ -100,7 +104,15 @@ public final class ThaumometerAspectOverlay {
                     mc.player.getDirection().getOpposite(),
                     true,
                     mc.gameRenderer.getMainCamera().getPosition());
-            drawPlacedTags(event.getPoseStack(), mc, pos, placement, nodeAspects, tagScale * 4.0F, false);
+            drawPlacedTags(
+                    event.getPoseStack(),
+                    mc,
+                    pos,
+                    placement,
+                    nodeAspects,
+                    tagScale * 4.0F,
+                    false,
+                    beforeTranslucentBlocks);
             return;
         }
         if (mc.level.getBlockEntity(pos) instanceof BlockEntityEssentiaReservoir reservoir) {
@@ -120,7 +132,7 @@ public final class ThaumometerAspectOverlay {
                     mc.player.getDirection().getOpposite(),
                     topVisible,
                     mc.gameRenderer.getMainCamera().getPosition());
-            drawPlacedTags(event.getPoseStack(), mc, pos, placement, stored, 1.2F, true);
+            drawPlacedTags(event.getPoseStack(), mc, pos, placement, stored, 1.2F, true, beforeTranslucentBlocks);
             return;
         }
         ItemStack pick = ScanningManager.stackOf(mc.player, ScanTarget.block(pos));
@@ -147,7 +159,11 @@ public final class ThaumometerAspectOverlay {
             resetAnimation();
             return;
         }
-        drawPlacedTags(event.getPoseStack(), mc, pos, placement, aspects, tagScale * 4.0F, false);
+        if (placement.renderThroughGlass() != beforeTranslucentBlocks) {
+            return;
+        }
+        drawPlacedTags(
+                event.getPoseStack(), mc, pos, placement, aspects, tagScale * 4.0F, false, beforeTranslucentBlocks);
     }
 
     private static boolean holdsThaumometer(Player player) {
@@ -217,9 +233,13 @@ public final class ThaumometerAspectOverlay {
             AspectReadoutPlacement.Placement placement,
             AspectList aspects,
             float columnSpacing,
-            boolean centerHorizontally) {
+            boolean centerHorizontally,
+            boolean beforeTranslucentBlocks) {
         if (placement == null) {
             resetAnimation();
+            return;
+        }
+        if (placement.renderThroughGlass() != beforeTranslucentBlocks) {
             return;
         }
         BlockPos diagonal = placement.diagonal();

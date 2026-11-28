@@ -52,7 +52,8 @@ public final class GogglesWorldOverlay {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
+        boolean beforeTranslucentBlocks = event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES;
+        if (!beforeTranslucentBlocks && event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -97,6 +98,9 @@ public final class GogglesWorldOverlay {
                 mc.gameRenderer.getMainCamera().getPosition());
         if (placement == null) {
             resetAnimation();
+            return;
+        }
+        if (placement.renderThroughGlass() != beforeTranslucentBlocks) {
             return;
         }
         Direction dir = placement.side();
